@@ -1,4 +1,4 @@
-import { ApiMessage, ApiMessageThreadItem } from "./api.types";
+import { ApiMessage, ApiMessageThreadItem } from "./api.types.js";
 
 export type Message = {
   id: string;

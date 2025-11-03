@@ -4,6 +4,8 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 import axios from "axios";
 import { wrapper } from "axios-cookiejar-support";
 import { CookieJar } from "tough-cookie";
+import type { ApiOffersPage } from "./features/offers/api.types.js";
+import { apiOfferToDomain } from "./features/offers/domain.js";
 
 const jar = new CookieJar();
 const client = wrapper(
@@ -26,5 +28,14 @@ if (loginResponse.status !== 200) {
   process.exit(1);
 }
 
-// await logOffers(client);
-// await logMessageThreads(client);
+const offersData = await client.post<ApiOffersPage>("/api/search/offers", {
+  search: null,
+  filters: {},
+  pageSize: 2147483647,
+  page: 0,
+  orderDirection: "desc",
+  orderBy: "created",
+});
+
+const offers = apiOfferToDomain(offersData.data.results);
+console.log(offers[0].id);

@@ -1,5 +1,5 @@
-import type { NewOfferRow, OfferRow } from "../../db/schema";
-import { ApiOffer } from "./api.types";
+import type { NewOfferRow, OfferRow } from "../../db/schema.js";
+import { ApiOffer } from "./api.types.js";
 
 export type Offer = {
   id: string; // API id is a string
@@ -11,16 +11,16 @@ export type Offer = {
   updatedAt: Date;
 };
 
-export function apiOfferToDomain(a: ApiOffer): Offer {
-  return {
-    id: a.id,
-    number: a.number,
-    residenceAddress: a.residenceAddress ?? null,
-    hasUnreadMessages: a.hasUnreadMessages ?? false,
-    unreadMessagesCount: a.unreadMessagesCount ?? 0,
-    createdAt: new Date(a.created),
-    updatedAt: new Date(a.updated),
-  };
+export function apiOfferToDomain(a: ApiOffer[]): Offer[] {
+  return a.map((item) => ({
+    id: item.id,
+    number: item.number,
+    residenceAddress: item.residenceAddress ?? null,
+    hasUnreadMessages: item.hasUnreadMessages ?? false,
+    unreadMessagesCount: item.unreadMessagesCount ?? 0,
+    createdAt: new Date(item.created),
+    updatedAt: new Date(item.updated),
+  }));
 }
 
 export function domainOfferToDb(o: Offer): NewOfferRow {

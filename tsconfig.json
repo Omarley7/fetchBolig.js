@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "module": "es2022",
+    "module": "nodenext",
     "target": "es2024",
-    "moduleResolution": "node",
-    "outDir": "./dist"
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "skipLibCheck": true
   }
 }
