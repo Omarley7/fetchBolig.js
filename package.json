@@ -20,6 +20,6 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "npx tsx src/app.ts",
-    "start": "node dist/app.js"
+    "start": "node dist/src/app.js"
   }
 }

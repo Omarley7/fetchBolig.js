@@ -48,7 +48,7 @@ export const offer = pgTable(
 export const message_thread = pgTable(
   "message_thread",
   {
-    id: integer("id").primaryKey(),
+    id: varchar("id").primaryKey(),
     related_entity: varchar("related_entity", { length: 191 }), // FK to offer.id
     related_entity_type: varchar("related_entity_type", { length: 191 }),
     related_entity_state: varchar("related_entity_state", { length: 191 }),
@@ -72,7 +72,9 @@ export const message_thread = pgTable(
 // Messages table - API message ids are strings
 export const message = pgTable("message", {
   id: varchar("id", { length: 191 }).primaryKey(),
-  thread_id: integer("thread_id").notNull(), // FK to message_thread.id
+  thread_id: varchar("thread_id")
+    .notNull()
+    .references(() => message_thread.id, { onDelete: "cascade" }),
   sender_id: varchar("sender_id", { length: 191 }),
   sender_name: varchar("sender_name", { length: 512 }),
   receiver_id: varchar("receiver_id", { length: 191 }),

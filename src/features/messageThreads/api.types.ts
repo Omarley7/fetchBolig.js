@@ -13,7 +13,7 @@ export const ApiMessage = z.object({
 export type ApiMessage = z.infer<typeof ApiMessage>;
 
 export const ApiMessageThreadItem = z.object({
-  id: z.number(),
+  id: z.string(),
   relatedEntity: z.string().nullable(),
   relatedEntityType: z.string().nullable(),
   relatedEntityState: z.string().nullable(),
