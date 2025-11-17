@@ -88,3 +88,35 @@ export async function fetchThreads(): Promise<ApiMessageThreadsPage> {
 
   return (await res.json()) as ApiMessageThreadsPage;
 }
+
+export async function getPositionOnOffer(offerId: string) {
+  const res = await fetch(`${BASE_URL}/api/search/waiting-lists/applicants/position-on-offer/${offerId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch position on offer: ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
+
+export async function getUserData() {
+  const res = await fetch(`${BASE_URL}/api/users/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch user data: ${res.status}`);
+  }
+
+  return res.json();
+}

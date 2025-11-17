@@ -65,6 +65,19 @@ route("/api/threads", async (req, res) => {
   }
 });
 
+route("/api/offers/position", async (req, res) => {
+  try {
+    const offerId = req.url?.split('?offerId=')[1];
+    if (!offerId) {
+      return sendJSON(res, { error: "Offer ID is required" }, 400);
+    }
+    const apiData = await findboligClient.getPositionOnOffer(offerId);
+    sendJSON(res, apiData);
+  } catch (error: any) {
+    sendJSON(res, { error: error.message }, 500);
+  }
+});
+
 const serveStatic = makeServeStatic(path.join(__dirname, "../public"));
 const server = http.createServer(async (req, res) => {
   const url = req.url || "/";
