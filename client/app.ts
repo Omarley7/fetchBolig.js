@@ -149,6 +149,10 @@ function renderThreads(threads: ReturnType<typeof apiThreadToDomain>) {
 async function fetchAndStoreOffers() {
   try {
     const res = await fetch("/api/offers");
+    if (res.status === 401) {
+      (window as any).showLoginModal?.(true);
+      return;
+    }
     const data = (await res.json()) as ApiOffer[];
 
     await upsertOffers(data);
@@ -164,6 +168,10 @@ async function fetchAndStoreThreads() {
   console.log("Fetching threads...");
   try {
     const res = await fetch("/api/threads");
+    if (res.status === 401) {
+      (window as any).showLoginModal?.(true);
+      return;
+    }
     const data = (await res.json()) as ApiMessageThread[];
 
     await upsertThreads(data);
@@ -233,8 +241,13 @@ function showTab(tab: "offers" | "threads") {
 }
 
 // Make functions available globally
-(window as any).fetchAndStoreOffers = fetchAndStoreOffers;
-(window as any).fetchAndStoreThreads = fetchAndStoreThreads;
+(async function initUpdateAll(){
+  (window as any).updateAll = async () => {
+    showStatus("info", "Updating offers & threads...");
+    await Promise.all([fetchAndStoreOffers(), fetchAndStoreThreads()]);
+    showStatus("success", "Update complete");
+  };
+})();
 (window as any).loadFromStorage = loadFromStorage;
 (window as any).clearStorage = clearStorage;
 (window as any).showTab = showTab;

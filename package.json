@@ -21,9 +21,11 @@
     "dev": "concurrently \"npm:dev:*\"",
     "dev:server": "tsx watch server/index.ts",
     "dev:client": "esbuild client/app.ts --bundle --outfile=public/dist/app.js --watch",
+    "dev:login": "esbuild client/login/index.ts --bundle --outfile=public/dist/login.js --watch",
     "dev:css": "tailwindcss -i client/styles.css -o public/dist/styles.css --watch",
-    "build": "npm run build:client && npm run build:css",
+    "build": "npm run build:client && npm run build:login && npm run build:css",
     "build:client": "esbuild client/app.ts --bundle --outfile=public/dist/app.js --minify",
+    "build:login": "esbuild client/login/index.ts --bundle --outfile=public/dist/login.js --minify",
     "build:css": "tailwindcss -i client/styles.css -o public/dist/styles.css --minify",
     "start": "node --loader tsx server/index.ts"
   }

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-label="FetchBolig icon" role="img">
+  <!-- Simple, unique icon: solid background with a minimalist house outline -->
+  <rect width="64" height="64" rx="10" fill="#2563EB"/>
+  <!-- Roof -->
+  <path d="M16 30 L32 18 L48 30" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- House body -->
+  <path d="M22 30 H42 V46 H22 Z" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Door (slightly off-center for character) -->
+  <rect x="30" y="38" width="6" height="8" rx="1" fill="#FFFFFF"/>
+  <!-- Small window -->
+  <rect x="25" y="35" width="4" height="4" rx="0.5" fill="#FFFFFF" opacity="0.9"/>
+</svg>

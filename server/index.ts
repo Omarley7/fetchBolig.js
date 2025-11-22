@@ -52,7 +52,8 @@ route("/api/offers", async (req, res) => {
     const apiData = await findboligClient.fetchOffers();
     sendJSON(res, apiData.results);
   } catch (error: any) {
-    sendJSON(res, { error: error.message }, 500);
+    const status = typeof error?.status === "number" ? error.status : 500;
+    sendJSON(res, { error: error.message }, status);
   }
 });
 
@@ -61,7 +62,33 @@ route("/api/threads", async (req, res) => {
     const apiData = await findboligClient.fetchThreads();
     sendJSON(res, apiData.results);
   } catch (error: any) {
-    sendJSON(res, { error: error.message }, 500);
+    const status = typeof error?.status === "number" ? error.status : 500;
+    sendJSON(res, { error: error.message }, status);
+  }
+});
+
+// Combined update route: fetch both offers and threads
+route("/api/update", async (req, res) => {
+  try {
+    const [offersPage, threadsPage] = await Promise.all([
+      findboligClient.fetchOffers(),
+      findboligClient.fetchThreads(),
+    ]);
+    sendJSON(res, { offers: offersPage.results, threads: threadsPage.results });
+  } catch (error: any) {
+    const status = typeof error?.status === "number" ? error.status : 500;
+    sendJSON(res, { error: error.message }, status);
+  }
+});
+
+// Login modal fragment route
+route("/login", async (req, res) => {
+  const htmlPath = path.join(__dirname, "../client/login/index.html");
+  if (fs.existsSync(htmlPath)) {
+    const html = fs.readFileSync(htmlPath, "utf-8");
+    sendHTML(res, html);
+  } else {
+    sendHTML(res, "<div>Login form not found</div>");
   }
 });
 

@@ -13,6 +13,14 @@ const fetch = fetchCookie(undiciFetch, jar);
 
 const BASE_URL = "https://findbolig.nu";
 
+export class HttpError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
 /**
  * Performs initial GET and login to establish authenticated session
  */
@@ -59,7 +67,7 @@ export async function fetchOffers(): Promise<ApiOffersPage> {
   });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch offers: ${res.status}`);
+    throw new HttpError("Failed to fetch offers", res.status);
   }
 
   return (await res.json()) as ApiOffersPage;
@@ -83,7 +91,7 @@ export async function fetchThreads(): Promise<ApiMessageThreadsPage> {
   });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch threads: ${res.status}`);
+    throw new HttpError("Failed to fetch threads", res.status);
   }
 
   return (await res.json()) as ApiMessageThreadsPage;
