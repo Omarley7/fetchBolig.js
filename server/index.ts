@@ -1,30 +1,47 @@
 import "dotenv/config";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { serveStatic } from "@hono/node-server/serve-static";
+import { serve } from "@hono/node-server";
 import { logger } from "hono/logger";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { prettyJSON } from "hono/pretty-json";
 import * as findboligClient from "./findbolig-client.js";
-import { serve } from "@hono/node-server";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = new Hono();
 
+app.get("/*", serveStatic({ root: "./public" }));
+app.get("/", (c) => {
+  const htmlPath = path.join(__dirname, "../client/index.html");
+  const html = fs.readFileSync(htmlPath, "utf-8");
+  return c.html(html);
+});
 app.notFound((c) => c.json({ error: "Not found", ok: false }, 404));
-app.get("/*", serveStatic({ root: "../public" }));
 
-const auth = new Hono();
-const offers = new Hono();
-const threads = new Hono();
-const users = new Hono();
-const residences = new Hono();
+const api = new Hono();
 
-app.route("/api/auth", auth);
-app.route("/api/offers", offers);
-app.route("/api/threads", threads);
-app.route("/api/users", users);
-app.route("/api/models/residence", residences);
+const auth = new Hono().basePath("/auth");
+const offers = new Hono().basePath("/offers");
+const threads = new Hono().basePath("/threads");
+const users = new Hono().basePath("/users");
+const residences = new Hono().basePath("/residence");
+const appointments = new Hono().basePath("/appointments");
 
-app.use("/api/*", cors(), logger(), prettyJSON());
+api.use("/*", cors(), logger(), prettyJSON());
+
+appointments.get("/upcoming", async (c) => {
+  try {
+    const appointments = await findboligClient.getUpcomingAppointments();
+    return c.json(appointments);
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
 
 auth.post("/login", async (c) => {
   try {
@@ -38,6 +55,7 @@ auth.post("/login", async (c) => {
     const success = await findboligClient.login(email, password);
     return c.json({ success });
   } catch (error) {
+    console.error(error);
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -47,6 +65,7 @@ offers.get("/", async (c) => {
     const offers = await findboligClient.fetchOffers();
     return c.json(offers.results);
   } catch (error) {
+    console.error(error);
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -60,6 +79,7 @@ offers.get("/:offerId/position", async (c) => {
     const position = await findboligClient.getPositionOnOffer(offerId);
     return c.json(position);
   } catch (error) {
+    console.error(error);
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -69,6 +89,7 @@ threads.get("/", async (c) => {
     const threads = await findboligClient.fetchThreads();
     return c.json(threads.results);
   } catch (error) {
+    console.error(error);
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -78,6 +99,7 @@ users.get("/me", async (c) => {
     const user = await findboligClient.getUserData();
     return c.json(user);
   } catch (error) {
+    console.error(error);
     return c.json({ error: "Internal server error" }, 500);
   }
 });
@@ -88,9 +110,19 @@ residences.get("/:residenceId", async (c) => {
     const residence = await findboligClient.getResidence(residenceId);
     return c.json(residence);
   } catch (error) {
+    console.error(error);
     return c.json({ error: "Internal server error" }, 500);
   }
 });
+
+api.route("/", auth);
+api.route("/", offers);
+api.route("/", threads);
+api.route("/", users);
+api.route("/", residences);
+api.route("/", appointments);
+
+app.route("/api", api);
 
 const server = serve(app);
 // graceful shutdown
