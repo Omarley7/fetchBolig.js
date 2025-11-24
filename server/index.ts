@@ -1,107 +1,109 @@
 import "dotenv/config";
-import fs from "fs";
-import http from "http";
-import path from "path";
-import { fileURLToPath } from "url";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { serveStatic } from "@hono/node-server/serve-static";
+import { logger } from "hono/logger";
+import { prettyJSON } from "hono/pretty-json";
 import * as findboligClient from "./findbolig-client.js";
-import {
-  makeServeStatic,
-  parseBody,
-  sendHTML,
-  sendJSON,
-} from "./http-utils.js";
+import { serve } from "@hono/node-server";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const app = new Hono();
 
-type Handler = (
-  req: http.IncomingMessage,
-  res: http.ServerResponse
-) => void | Promise<void>;
+app.notFound((c) => c.json({ error: "Not found", ok: false }, 404));
+app.get("/*", serveStatic({ root: "../public" }));
 
-const routes: Map<string, Handler> = new Map();
-const route = (urlPath: string, handler: Handler) =>
-  routes.set(urlPath, handler);
+const auth = new Hono();
+const offers = new Hono();
+const threads = new Hono();
+const users = new Hono();
+const residences = new Hono();
 
-route("/", async (req, res) => {
-  const htmlPath = path.join(__dirname, "../client/index.html");
-  const html = fs.readFileSync(htmlPath, "utf-8");
-  sendHTML(res, html);
-});
+app.route("/api/auth", auth);
+app.route("/api/offers", offers);
+app.route("/api/threads", threads);
+app.route("/api/users", users);
+app.route("/api/models/residence", residences);
 
-route("/api/auth/login", async (req, res) => {
-  const body = await parseBody(req);
-  const { email, password } = body;
+app.use("/api/*", cors(), logger(), prettyJSON());
 
-  if (!email || !password) {
-    return sendJSON(
-      res,
-      { success: false, message: "Email and password required" },
-      400
-    );
-  }
-
-  const success = await findboligClient.login(email, password);
-
-  if (success) sendJSON(res, { success: true, message: "Login successful" });
-  else sendJSON(res, { success: false, message: "Login failed" }, 401);
-});
-
-route("/api/offers", async (req, res) => {
+auth.post("/login", async (c) => {
   try {
-    const apiData = await findboligClient.fetchOffers();
-    sendJSON(res, apiData.results);
-  } catch (error: any) {
-    sendJSON(res, { error: error.message }, 500);
+    const body = await c.req.json();
+    const { email, password } = body;
+
+    if (!email || !password) {
+      return c.json({ error: "Email and password are required" }, 400);
+    }
+
+    const success = await findboligClient.login(email, password);
+    return c.json({ success });
+  } catch (error) {
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
-route("/api/threads", async (req, res) => {
+offers.get("/", async (c) => {
   try {
-    const apiData = await findboligClient.fetchThreads();
-    sendJSON(res, apiData.results);
-  } catch (error: any) {
-    sendJSON(res, { error: error.message }, 500);
+    const offers = await findboligClient.fetchOffers();
+    return c.json(offers.results);
+  } catch (error) {
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
-route("/api/offers/position", async (req, res) => {
+offers.get("/:offerId/position", async (c) => {
   try {
-    const offerId = req.url?.split('?offerId=')[1];
+    const offerId = c.req.param("offerId");
     if (!offerId) {
-      return sendJSON(res, { error: "Offer ID is required" }, 400);
+      return c.json({ error: "Offer ID is required" }, 400);
     }
-    const apiData = await findboligClient.getPositionOnOffer(offerId);
-    sendJSON(res, apiData);
-  } catch (error: any) {
-    sendJSON(res, { error: error.message }, 500);
+    const position = await findboligClient.getPositionOnOffer(offerId);
+    return c.json(position);
+  } catch (error) {
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
-const serveStatic = makeServeStatic(path.join(__dirname, "../public"));
-const server = http.createServer(async (req, res) => {
-  const url = req.url || "/";
-
-  const handler = routes.get(url);
-  if (handler) {
-    try {
-      await handler(req, res);
-    } catch (error: any) {
-      console.error("Handler error:", error);
-      sendJSON(res, { error: error.message }, 500);
-    }
-    return;
+threads.get("/", async (c) => {
+  try {
+    const threads = await findboligClient.fetchThreads();
+    return c.json(threads.results);
+  } catch (error) {
+    return c.json({ error: "Internal server error" }, 500);
   }
-
-  if (url.startsWith("/dist/") || url.startsWith("/htmx")) {
-    serveStatic(req, res);
-    return;
-  }
-
-  res.writeHead(404);
-  res.end("Not found");
 });
 
-server.listen(PORT, () => {
-  console.log(`🌼 Server running at http://localhost:${PORT}`);
+users.get("/me", async (c) => {
+  try {
+    const user = await findboligClient.getUserData();
+    return c.json(user);
+  } catch (error) {
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+residences.get("/:residenceId", async (c) => {
+  try {
+    const residenceId = c.req.param("residenceId");
+    const residence = await findboligClient.getResidence(residenceId);
+    return c.json(residence);
+  } catch (error) {
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+const server = serve(app);
+// graceful shutdown
+process.on("SIGINT", () => {
+  server.close();
+  process.exit(0);
+});
+process.on("SIGTERM", () => {
+  server.close((err) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    process.exit(0);
+  });
 });
