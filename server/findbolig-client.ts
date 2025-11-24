@@ -105,6 +105,21 @@ export async function getPositionOnOffer(offerId: string) {
   return res.json();
 }
 
+export async function getResidence(residenceId: string) {
+  const res = await fetch(`${BASE_URL}/api/models/residence/${residenceId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch residence: ${res.status}: ${res.statusText}`);
+  }
+
+  return res.json();
+}
 export async function getUserData() {
   const res = await fetch(`${BASE_URL}/api/users/me`, {
     method: "GET",
