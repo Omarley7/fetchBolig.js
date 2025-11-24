@@ -27,6 +27,18 @@ export const ApiOffer = z.object({
   onlyForStudents: z.boolean().optional(),
 });
 
+/**
+ * Offer states from Findbolig API
+ * { name: this.Dictionary.OfferStates.Draft, value: 'Draft' },
+          { name: this.Dictionary.OfferStates.Published, value: 'Published' },
+          { name: this.Dictionary.OfferStates.Changed, value: 'Changed' },
+          { name: this.Dictionary.OfferStates.Finished, value: 'Finished' },
+          { name: this.Dictionary.OfferStates.Awarded, value: 'Awarded' },
+          { name: this.Dictionary.OfferStates.AwardedExternally, value: 'AwardedExternally' },
+          { name: this.Dictionary.OfferStates.Released, value: 'Released' },
+          { name: this.Dictionary.OfferStates.RetiredFromAwarded, value: 'RetiredFromAwarded' }
+ */
+
 export type ApiOffer = z.infer<typeof ApiOffer>;
 
 export const ApiOffersPage = z.object({
