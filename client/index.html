@@ -1,148 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Findbolig Fetcher</title>
-    <link rel="stylesheet" href="/dist/styles.css" />
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js"></script>
+    <title>Kommende aftaler</title>
+    <!-- Alpine.js for basic interactivity -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"
+    ></script>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-pHpO6wBIoWrH1IiY/4ugif6WzdPrAmgCft8pvCs1fHe3eD3eRzi6aKGUxdrCf7ZfaPr09AkUXJnv3V9gXHZIBg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Compiled Tailwind CSS -->
+    <link rel="stylesheet" href="/public/dist/styles.css" />
   </head>
-  <body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-      <!-- Header -->
-      <header class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">FetchBolig.ts</h1>
-        <p class="text-gray-600">Demokratiser din data - gem en lokal kopi</p>
-      </header>
-
-      <!-- Auth Section -->
-      <div id="auth-section" class="mb-6 p-6 bg-white rounded-lg shadow">
-        <h2 class="text-xl font-semibold mb-4">Login</h2>
-        <form
-          hx-post="/api/auth/login"
-          hx-ext="json-enc"
-          hx-target="#auth-status"
-          hx-swap="innerHTML"
-          class="flex flex-col gap-3"
-        >
-          <div>
-            <label
-              for="email"
-              class="block text-sm font-medium text-gray-700 mb-1"
-              >Email</label
-            >
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="your@email.com"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label
-              for="password"
-              class="block text-sm font-medium text-gray-700 mb-1"
-              >Password</label
-            >
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="••••••••"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <button type="submit" class="btn-primary w-full">Login</button>
-        </form>
-        <div id="auth-status" class="mt-4"></div>
-      </div>
-
-      <!-- Actions -->
-      <div class="flex gap-3 mb-6">
-        <button onclick="fetchAndStoreOffers()" class="btn-primary">
-          🏠 Fetch Offers
-        </button>
-
-        <button
-          onclick="fetchAndStoreThreads()"
-          class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-        >
-          💬 Fetch Threads
-        </button>
-
-        <button
-          onclick="loadFromStorage()"
-          class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-        >
-          📂 Load from Storage
-        </button>
-
-        <button
-          onclick="clearStorage()"
-          class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-        >
-          🗑️ Clear Storage
+  <body class="bg-[#e6e6e6] font-sans flex justify-center py-8">
+    <div class="phone" x-data="app()">
+      <div class="flex justify-between items-center mb-2">
+        <h1 class="text-xl font-bold">Kommende aftaler</h1>
+        <button class="icon-button" @click="reload()" title="Genindlæs">
+          <i class="fa-solid fa-rotate"></i>
         </button>
       </div>
-
-      <!-- Stats -->
-      <div id="stats" class="mb-6 p-4 bg-blue-50 rounded-lg">
-        <div class="grid grid-cols-2 gap-4 text-center">
-          <div>
-            <div class="text-2xl font-bold text-blue-600" id="offers-count">
-              0
-            </div>
-            <div class="text-sm text-gray-600">Offers in Storage</div>
-          </div>
-          <div>
-            <div class="text-2xl font-bold text-purple-600" id="threads-count">
-              0
-            </div>
-            <div class="text-sm text-gray-600">Threads in Storage</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="mb-4 border-b border-gray-200">
-        <nav class="flex gap-4">
-          <button
-            onclick="showTab('offers')"
-            id="tab-offers"
-            class="tab-button active"
+      <div>
+        <span class="text-sm text-gray-700">Group by:</span>
+        <div class="group-by">
+          <template
+            x-for="option in ['pr. dag','pr. uge','pr. måned']"
+            :key="option"
           >
-            Offers
-          </button>
-          <button
-            onclick="showTab('threads')"
-            id="tab-threads"
-            class="tab-button"
-          >
-            Message Threads
-          </button>
-        </nav>
-      </div>
-
-      <!-- Content Sections -->
-      <div id="content-offers" class="tab-content">
-        <div id="offers-list" class="grid gap-4">
-          <!-- Populated by JS -->
+            <button
+              :class="{'group-button': true, 'active': groupBy === option}"
+              @click="groupBy = option"
+            >
+              <span x-text="option"></span>
+            </button>
+          </template>
         </div>
       </div>
-
-      <div id="content-threads" class="tab-content hidden">
-        <div id="threads-list" class="grid gap-4">
-          <!-- Populated by JS -->
+      <template x-for="(day, index) in groupedAppointments" :key="day.date">
+        <div class="my-4">
+          <div class="date-header" @click="day.open = !day.open">
+            <span x-text="day.date"></span>
+            <span
+              ><i
+                class="fa-solid"
+                :class="day.open ? 'fa-chevron-up' : 'fa-chevron-down'"
+              ></i
+            ></span>
+          </div>
+          <div class="mt-2" x-show="day.open" x-transition>
+            <template x-for="appt in day.items" :key="appt.id">
+              <a class="card" :href="'details.html?id=' + appt.id">
+                <div class="thumb">
+                  <i class="fa-solid fa-image"></i>
+                </div>
+                <div class="flex flex-col gap-1 flex-1">
+                  <div class="property-title" x-text="appt.title"></div>
+                  <div class="time-range" x-text="appt.time"></div>
+                  <div class="price-info">
+                    <div><span x-text="appt.price"></span></div>
+                    <div
+                      class="text-[0.7rem] text-gray-600"
+                      x-text="appt.deposit"
+                    ></div>
+                  </div>
+                </div>
+                <div class="ml-auto flex items-center text-gray-600">
+                  <i class="fa-regular fa-calendar"></i>
+                </div>
+              </a>
+            </template>
+          </div>
         </div>
-      </div>
+      </template>
     </div>
 
-    <script type="module" src="/dist/app.js"></script>
+    <script>
+      function app() {
+        return {
+          groupBy: "pr. dag",
+          appointments: [
+            {
+              id: 1,
+              date: "Mandag d. 12/12/2025",
+              title: "Flinterenden 6,3 tv., 2300 København S",
+              time: "09:30 - 10:00",
+              price: "10.100,-/måned",
+              deposit: "70.002,- ved indflyt",
+            },
+            {
+              id: 2,
+              date: "Mandag d. 12/12/2025",
+              title: "Flinterenden 6,3 tv., 2300 København S",
+              time: "09:30 - 10:00",
+              price: "10.100,-/måned",
+              deposit: "70.002,- ved indflyt",
+            },
+            {
+              id: 3,
+              date: "Mandag d. 19/12/2025",
+              title: "Flinterenden 6,3 tv., 2300 København S",
+              time: "09:30 - 10:00",
+              price: "10.100,-/måned",
+              deposit: "70.002,- ved indflyt",
+            },
+          ],
+          reload() {
+            // Placeholder for refresh action
+            alert("Dummy refresh triggered");
+          },
+          get groupedAppointments() {
+            // group appointments by date for now
+            const groups = {};
+            this.appointments.forEach((appt) => {
+              if (!groups[appt.date]) {
+                groups[appt.date] = { date: appt.date, open: true, items: [] };
+              }
+              groups[appt.date].items.push(appt);
+            });
+            return Object.values(groups);
+          },
+        };
+      }
+    </script>
   </body>
 </html>

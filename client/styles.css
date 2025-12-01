@@ -22,4 +22,74 @@
   .tab-button.active {
     @apply text-blue-600 border-blue-600 font-medium;
   }
+
+  /* Extracted component styles from inline HTML */
+  .phone {
+    @apply bg-white w-[360px] rounded-2xl shadow p-4;
+  }
+  .group-by {
+    @apply mt-2 mb-2 flex flex-wrap gap-2;
+  }
+  .group-button {
+    @apply px-2 py-1 rounded-full border border-gray-300 bg-gray-100 text-xs cursor-pointer transition-colors;
+  }
+  .group-button.active {
+    @apply bg-[#ef767a] text-white border-[#ef767a];
+  }
+  .icon-button {
+    @apply text-gray-700 hover:text-gray-900 transition-colors;
+  }
+  .date-header {
+    @apply flex items-center justify-between text-sm cursor-pointer font-medium text-gray-700;
+  }
+  .card {
+    @apply flex border border-gray-300 rounded-lg p-2 mb-2 items-start gap-2 no-underline text-inherit bg-white hover:shadow-sm transition-shadow;
+  }
+  .thumb {
+    @apply w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xl text-gray-500;
+  }
+  .property-title {
+    @apply font-semibold text-sm truncate max-w-[180px];
+  }
+  .time-range {
+    @apply text-xs text-gray-600;
+  }
+  .price-info {
+    @apply text-[0.75rem] bg-gray-100 px-1 py-0.5 rounded border border-gray-200 inline-block max-w-[120px];
+  }
+
+  /* Details page components */
+  .messages-btn {
+    @apply bg-gray-700 text-white rounded-md px-3 py-2 text-xs font-medium hover:bg-gray-800 transition-colors;
+  }
+  .open-house {
+    @apply mt-2 flex items-center gap-1 text-sm;
+  }
+  .image-container {
+    @apply mt-3 relative bg-gray-200 rounded-lg h-[180px] flex items-center justify-center;
+  }
+  .image-container .label {
+    @apply absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white border border-gray-300 rounded px-2 py-[2px] text-[0.7rem];
+  }
+  .details-section {
+    @apply mt-6 grid gap-2 grid-cols-[1fr_60px];
+  }
+  .economy-card {
+    @apply border border-gray-300 rounded-lg p-3 min-h-[140px] relative text-sm flex items-center justify-center text-center bg-white;
+  }
+  .queue-label {
+    @apply absolute -top-3 left-0 bg-white border border-gray-300 rounded px-2 py-[2px] text-[0.7rem];
+  }
+  .icon-list {
+    @apply flex flex-col gap-2 items-center;
+  }
+  .icon-btn {
+    @apply w-12 h-12 flex items-center justify-center border border-gray-300 rounded-lg bg-gray-100 cursor-pointer text-lg text-gray-700 hover:bg-gray-200 transition;
+  }
+  .findbolig-btn {
+    @apply mt-5 text-center;
+  }
+  .findbolig-btn button {
+    @apply border border-gray-300 rounded-full px-4 py-2 bg-gray-100 text-sm cursor-pointer hover:bg-gray-200 transition-colors;
+  }
 }

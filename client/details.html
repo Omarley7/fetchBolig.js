@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boligdetaljer</title>
+    <!-- Alpine.js for basic interactivity -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"
+    ></script>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-pHpO6wBIoWrH1IiY/4ugif6WzdPrAmgCft8pvCs1fHe3eD3eRzi6aKGUxdrCf7ZfaPr09AkUXJnv3V9gXHZIBg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Compiled Tailwind CSS -->
+    <link rel="stylesheet" href="/public/dist/styles.css" />
+  </head>
+  <body class="bg-[#e6e6e6] font-sans flex justify-center py-8">
+    <div class="phone" x-data="details()">
+      <div class="flex justify-between items-center flex-wrap gap-2">
+        <h1 class="text-xl font-bold flex-1" x-text="property.title"></h1>
+        <div class="flex items-center gap-2">
+          <button class="messages-btn flex items-center gap-1">
+            <i class="fa-regular fa-envelope"></i><span>Se beskeder</span>
+          </button>
+          <button
+            class="icon-button"
+            title="Tilbage"
+            aria-label="Tilbage"
+            @click="goBack()"
+          >
+            <i class="fa-solid fa-arrow-left">back</i>
+          </button>
+        </div>
+      </div>
+      <div class="open-house">
+        <span class="text-gray-700">Åbent hus:</span>
+        <span x-text="property.openHouse"></span>
+        <i class="fa-solid fa-pen text-gray-500"></i>
+      </div>
+      <div class="image-container">
+        <i class="fa-solid fa-image text-4xl text-gray-500"></i>
+        <div class="label">Plan / lejlighed (carousel)</div>
+      </div>
+      <div class="details-section">
+        <div class="economy-card">
+          <div class="queue-label">
+            Kø: <span x-text="property.queue"></span>
+          </div>
+          <div>Økonomiske<br />forhold</div>
+        </div>
+        <div class="icon-list">
+          <button class="icon-btn" title="Vis kort">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </button>
+          <button
+            class="icon-btn"
+            title="Tilbage til oversigt"
+            @click="goBack()"
+          >
+            <i class="fa-solid fa-house"></i>
+          </button>
+          <button class="icon-btn" title="Tilføj i kalender">
+            <i class="fa-regular fa-calendar"></i>
+          </button>
+        </div>
+      </div>
+      <div class="findbolig-btn">
+        <button @click="openFindBolig()">Se på findbolig</button>
+      </div>
+    </div>
+    <script>
+      function details() {
+        return {
+          property: {
+            title: "Slangerupgade nr 2",
+            openHouse: "17/12 9:30",
+            queue: 302,
+          },
+          goBack() {
+            window.history.back();
+          },
+          openFindBolig() {
+            // Dummy handler for external link
+            alert("Åbner findbolig i nyt vindue (dummy)");
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
