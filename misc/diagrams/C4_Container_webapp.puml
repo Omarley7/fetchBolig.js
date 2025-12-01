@@ -3,7 +3,7 @@
 
 Person(tenant, "Potential Tenant", "A person looking for housing options.")
 System_Boundary(c1, "FetchBolig.js") {
-    Container(web_app, "Web Application", "Alpine", "Delivers overview of housing options the user has subscribed to.")
+    Container(web_app, "Web Application", "Alpine, Vite", "Delivers overview of housing options the user has subscribed to.")
     Container(proxy_deas, "DEAS Proxy", "Node.js, Hono", "Provides users data from DEAS's FindBolig.nu platform.")
     ContainerDb(database, "Local Storage", "Browser Storage", "Stores user's applied housing options locally.")
 }
