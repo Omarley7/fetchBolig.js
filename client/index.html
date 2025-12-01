@@ -1,126 +1,60 @@
 <html lang="da">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FetchBolig.js - Kommende aftaler</title>
-  </head>
-  <body>
-    <div x-data="{ groupBy: 'day' }" class="w-full p-6 flex flex-col gap-2">
-      <h1>Kommende aftaler</h1>
 
-      <div>
-        Group by:
-        <div class="w-full flex flex-row items-center">
-          <button
-            type="button"
-            class="m-2 rounded-2xl"
-            :class="groupBy === 'day' && 'bg-white/10 border opacity-60 cursor-not-allowed'"
-            :disabled="groupBy === 'day'"
-            :aria-pressed="groupBy === 'day'"
-            @click="groupBy = 'day'"
-          >
-            pr. dag
-          </input>
-          <button
-            type="button"
-            class="m-2 rounded-2xl"
-            :class="groupBy === 'week' && 'bg-white/10 border opacity-60 cursor-not-allowed'"
-            :disabled="groupBy === 'week'"
-            :aria-pressed="groupBy === 'week'"
-            @click="groupBy = 'week'"
-          >
-            pr. uge
-          </button>
-          <button
-            type="button"
-            class="m-2 rounded-2xl"
-            :class="groupBy === 'month' && 'bg-white/10 border opacity-60 cursor-not-allowed'"
-            :disabled="groupBy === 'month'"
-            :aria-pressed="groupBy === 'month'"
-            @click="groupBy = 'month'"
-          >
-            pr. måned
-          </button>
-        </button>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FetchBolig.js - Kommende aftaler</title>
+</head>
 
-      <ul class="w-full">
+<body>
+  <div x-data="{ groupBy: $persist('day') }" class="w-full p-6 flex flex-col gap-2">
+    <h1>Kommende aftaler</h1>
+
+    <div>
+      <div x-html="await ( await fetch('/src/components/groupBy/index.html')).text()"></div>
+
+      <ul class="w-full" x-data="appointmentsGrouped($store.deas.appointments)">
         <!-- Outer loop: current grouping -->
-        <template
-          x-for="[groupKey, groupAppointments] in (
-        groupBy === 'day'
-          ? $store.deas.appointmentsByDay
-          : groupBy === 'week'
-            ? $store.deas.appointmentsByWeek
-            : $store.deas.appointmentsByMonth
-      )"
-          :key="groupKey"
-        >
+        <template x-for="[groupKey, groupAppointments] in getGroupedAppointments(groupBy)" :key="groupKey">
           <li class="w-full mb-4">
             <!-- Group header -->
             <div class="flex items-center gap-2 mb-2">
-              <img
-                src="https://unpkg.com/lucide-static@latest/icons/calendar.svg"
-                alt="calendar"
-                class="size-6 invert opacity-70"
-              />
-              <h2
-                class="text-lg font-semibold"
-                x-text="$store.deas.formatGroupKey(groupBy, groupKey)"
-              ></h2>
+              <h2 class="text-lg font-semibold" x-text="formatGroupKey(groupBy, groupKey)"></h2>
             </div>
 
             <!-- Inner loop: appointments in this group -->
             <ul>
-              <template
-                x-for="appointment in groupAppointments"
-                :key="appointment.id"
-              >
+              <template x-for="appointment in groupAppointments" :key="appointment.id">
                 <li class="p-4 border-2 m-2 rounded-lg w-full">
                   <div class="flex gap-4 items-center">
-                    <img
-                      src="https://unpkg.com/lucide-static@latest/icons/map.svg"
-                      alt="Map"
-                      class="size-7 invert opacity-70"
-                    />
-                    <h3
-                      class="text-xl font-semibold"
-                      x-text="appointment.title"
-                    ></h3>
+                    <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
+                      class="size-7 invert opacity-70" />
+                    <h3 class="text-xl font-semibold" x-text="appointment.title"></h3>
                   </div>
 
                   <div class="w-full flex flex-row pt-2">
-                    <img
-                      class="size-26 bg-gray-200 rounded-md mr-4 min-w-1/4"
-                      alt="Property Thumbnail"
-                      :src="appointment.imageUrl"
-                    />
+                    <img class="size-26 bg-gray-200 rounded-md mr-4 min-w-1/4" alt="Property Thumbnail"
+                      :src="appointment.imageUrl" />
                     <div class="w-full flex flex-col justify-between">
                       <div class="w-full flex flex-row justify-between">
-                        <p
-                          class="text-lg"
-                          x-text="`${appointment.start.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })} - ${appointment.end.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })}`"
-                        ></p>
-                        <img
-                          src="https://unpkg.com/lucide-static@latest/icons/calendar.svg"
-                          alt="calendar"
-                          class="size-7 invert opacity-70"
-                        />
+                        <p class="text-lg"
+                          x-text="`${appointment.start.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })} - ${appointment.end.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })}`">
+                        </p>
+                        <img src="https://unpkg.com/lucide-static@latest/icons/calendar.svg" alt="calendar"
+                          class="size-7 invert opacity-70" />
                       </div>
 
                       <div class="border p-2">
                         <p>
                           Leje:
                           <span
-                            x-text="appointment.rent.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"
-                          ></span>
+                            x-text="appointment.rent.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"></span>
                           pr. måned
                         </p>
                         <p>
                           Indflytningspris:
                           <span
-                            x-text="appointment.downPayment.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"
-                          ></span>
+                            x-text="appointment.downPayment.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"></span>
                         </p>
                       </div>
                     </div>
@@ -132,6 +66,7 @@
         </template>
       </ul>
     </div>
-  </body>
-  <script type="module" src="/src/main.ts"></script>
+</body>
+<script type="module" src="/src/main.ts"></script>
+
 </html>
