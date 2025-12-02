@@ -8,7 +8,20 @@
 
 <body>
   <div x-data="{ groupBy: $persist('day') }" class="w-full p-6 flex flex-col gap-2">
-    <h1>Kommende aftaler</h1>
+    <div class="flex flex-row justify-between p-2 align-bottom">
+      <h1>Kommende aftaler</h1>
+
+      <div class="flex flex-col">
+        <button class="flex justify-center" type="button" @click="$store.deas.refresh()" aria-label="Opdater aftaler">
+          <!-- TODO: Display this while loading. And add animation
+           <img src="https://unpkg.com/lucide-static@latest/icons/refresh-ccw.svg" alt="Opdater"
+            class="size-4 invert opacity-70 hover:opacity-100 transition" />
+          -->
+          <span class="font-light text-sm text-gray-400 italic whitespace-pre-line"
+            x-text="formatUpdatedAt($store.deas?.updatedAt)"></span>
+        </button>
+      </div>
+    </div>
 
     <div>
       <div x-html="await ( await fetch('/src/components/groupBy/index.html')).text()"></div>
@@ -16,16 +29,19 @@
       <ul class="w-full" x-data="appointmentsGrouped($store.deas.appointments)">
         <!-- Outer loop: current grouping -->
         <template x-for="[groupKey, groupAppointments] in getGroupedAppointments(groupBy)" :key="groupKey">
-          <li class="w-full mb-4">
+          <li class="w-full mb-4" x-data="{ expanded: true }">
             <!-- Group header -->
-            <div class="flex items-center gap-2 mb-2">
+            <div class="flex items-center justify-between mb-2 cursor-pointer" @click="expanded = !expanded">
               <h2 class="text-lg font-semibold" x-text="formatGroupKey(groupBy, groupKey)"></h2>
+              <img src="https://unpkg.com/lucide-static@latest/icons/chevron-down.svg" alt="Expand/Collapse"
+                class="size-5 invert opacity-70 transition-transform duration-200"
+                :class="{ '-rotate-90': !expanded }" />
             </div>
 
             <!-- Inner loop: appointments in this group -->
-            <ul>
+            <ul x-show="expanded" x-collapse>
               <template x-for="appointment in groupAppointments" :key="appointment.id">
-                <li class="p-4 border-2 m-2 rounded-lg w-full">
+                <li class="p-4 border-2 mb-2 rounded-lg w-full">
                   <div class="flex gap-4 items-center">
                     <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
                       class="size-7 invert opacity-70" />
@@ -37,8 +53,7 @@
                       :src="appointment.imageUrl" />
                     <div class="w-full flex flex-col justify-between">
                       <div class="w-full flex flex-row justify-between">
-                        <p class="text-lg"
-                          x-text="`${appointment.start.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })} - ${appointment.end.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' })}`">
+                        <p class="text-lg" x-text="formatTimeSlot(appointment, groupBy !== 'day')">
                         </p>
                         <img src="https://unpkg.com/lucide-static@latest/icons/calendar.svg" alt="calendar"
                           class="size-7 invert opacity-70" />
@@ -68,5 +83,25 @@
     </div>
 </body>
 <script type="module" src="/src/main.ts"></script>
+<script>
+  function formatTimeSlot(appointment, includeDate = false) {
+    const startTime = appointment.start.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' });
+    const endTime = appointment.end.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' });
+    if (!includeDate)
+      return `${startTime} - ${endTime}`;
+
+    const date = appointment.start.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+    return `d. ${date}, ${startTime} - ${endTime}`;
+  }
+
+  function formatUpdatedAt(updatedAt) {
+    if (!updatedAt)
+      return '---';
+
+    const date = new Date(updatedAt);
+    return `🗓️${date.toLocaleDateString('da-DK', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+            ⌚${date.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit', second: "2-digit" })}`;
+  }
+</script>
 
 </html>

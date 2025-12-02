@@ -1,4 +1,4 @@
-import type { ApiOffer, Offer } from "../types/offers.js";
+import type { ApiOffer, Offer } from "~/types/offers.js";
 
 /**
  * Transform API offer data to domain model

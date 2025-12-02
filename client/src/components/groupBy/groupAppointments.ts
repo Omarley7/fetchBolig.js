@@ -1,27 +1,9 @@
-type Group = "day" | "week" | "month";
+import type { Appointment } from "~/types";
 
+type Group = "day" | "week" | "month";
 type GroupedAppointments = [string, Appointment[]][];
 
-type Appointment = {
-  id: number;
-  date: Date;
-  title: string;
-  start: Date;
-  end: Date;
-  rent: number;
-  downPayment: number;
-  imageUrl: string;
-};
-
 export default (initialAppointments: Appointment[]) => ({
-  init() {
-    console.log(
-      "groupBy initialized with",
-      initialAppointments.length,
-      "appointments"
-    );
-  },
-
   appointments: initialAppointments,
 
   // pr. dag
@@ -53,7 +35,6 @@ export default (initialAppointments: Appointment[]) => ({
   },
 
   getGroupedAppointments(groupBy: Group): GroupedAppointments {
-    console.log("Getting grouped appointments by", groupBy);
     if (groupBy === "day") return this.appointmentsByDay;
     if (groupBy === "week") return this.appointmentsByWeek;
     return this.appointmentsByMonth;
@@ -69,22 +50,16 @@ export default (initialAppointments: Appointment[]) => ({
   },
 
   formatWeek(key: string): string {
-    const start = new Date(key);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
+    const weekStart = new Date(key);
+    const weekEnd = new Date(weekStart.getDate() + 6);
+    const weekNumber = getISOWeek(weekStart);
 
-    // TS doesn't know about `week` yet, so we cast the options
-    const weekNumber = new Intl.DateTimeFormat("da-DK", {
-      // @ts-expect-error: `week` is not in TS lib yet
-      week: "numeric",
-    }).format(start);
-
-    const startStr = start.toLocaleDateString("da-DK", {
+    const startStr = weekStart.toLocaleDateString("da-DK", {
       day: "2-digit",
       month: "2-digit",
     });
 
-    const endStr = end.toLocaleDateString("da-DK", {
+    const endStr = weekEnd.toLocaleDateString("da-DK", {
       day: "2-digit",
       month: "2-digit",
     });
@@ -118,3 +93,12 @@ export default (initialAppointments: Appointment[]) => ({
     return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
   },
 });
+
+function getISOWeek(date: Date): number {
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
