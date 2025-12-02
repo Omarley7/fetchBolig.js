@@ -12,11 +12,10 @@
       <h1>Kommende aftaler</h1>
 
       <div class="flex flex-col">
-        <button class="flex justify-center" type="button" @click="$store.deas.refresh()" aria-label="Opdater aftaler">
-          <!-- TODO: Display this while loading. And add animation
-           <img src="https://unpkg.com/lucide-static@latest/icons/refresh-ccw.svg" alt="Opdater"
-            class="size-4 invert opacity-70 hover:opacity-100 transition" />
-          -->
+        <button class="flex justify-center items-center gap-2" type="button" @click="$store.deas.refresh()"
+          aria-label="Opdater aftaler" :disabled="$store.deas.isLoading">
+          <img x-show="$store.deas.isLoading" src="https://unpkg.com/lucide-static@latest/icons/refresh-ccw.svg"
+            alt="Opdater" class="size-4 invert opacity-70 animate-spin" />
           <span class="font-light text-sm text-gray-400 italic whitespace-pre-line"
             x-text="formatUpdatedAt($store.deas?.updatedAt)"></span>
         </button>
@@ -26,13 +25,13 @@
     <div>
       <div x-html="await ( await fetch('/src/components/groupBy/index.html')).text()"></div>
 
-      <ul class="w-full" x-data="appointmentsGrouped($store.deas.appointments)">
+      <ul class="w-full" x-data="appointmentsGrouped">
         <!-- Outer loop: current grouping -->
-        <template x-for="[groupKey, groupAppointments] in getGroupedAppointments(groupBy)" :key="groupKey">
+        <template x-for="[groupKey, group] in groupAppointments($store.deas.appointments, groupBy)" :key="groupKey">
           <li class="w-full mb-4" x-data="{ expanded: true }">
             <!-- Group header -->
             <div class="flex items-center justify-between mb-2 cursor-pointer" @click="expanded = !expanded">
-              <h2 class="text-lg font-semibold" x-text="formatGroupKey(groupBy, groupKey)"></h2>
+              <h2 class="text-lg font-semibold" x-text="formatLabel(groupKey)"></h2>
               <img src="https://unpkg.com/lucide-static@latest/icons/chevron-down.svg" alt="Expand/Collapse"
                 class="size-5 invert opacity-70 transition-transform duration-200"
                 :class="{ '-rotate-90': !expanded }" />
@@ -40,7 +39,7 @@
 
             <!-- Inner loop: appointments in this group -->
             <ul x-show="expanded" x-collapse>
-              <template x-for="appointment in groupAppointments" :key="appointment.id">
+              <template x-for="appointment in group" :key="appointment.id">
                 <li class="p-4 border-2 mb-2 rounded-lg w-full">
                   <div class="flex gap-4 items-center">
                     <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
@@ -80,6 +79,13 @@
           </li>
         </template>
       </ul>
+
+      <div class="w-full flex flex-col p-2 mt-4 text-2xl italic items-center" x-show="!$store.deas.appointments.length">
+        <p x-show="$store.deas.isLoading">Indlæser kommende aftaler...</p>
+        <p x-show="!$store.deas.isLoading">Ingen aftaler fundet, benyt venligst findbolig.nu til at søge efter
+          boliger...</p>
+      </div>
+
     </div>
 </body>
 <script type="module" src="/src/main.ts"></script>

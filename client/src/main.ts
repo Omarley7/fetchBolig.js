@@ -14,24 +14,30 @@ window.Alpine = Alpine;
 const deasStore = {
   appointments: [] as Appointment[],
   updatedAt: null as Date | null,
+  isLoading: false,
 
-  init() {
-    const payload = getAppointments(false);
+  async init() {
+    this.isLoading = true;
+    const payload = await getAppointments(false);
+    this.isLoading = false;
     this.appointments = payload.appointments;
     this.updatedAt = payload.updatedAt;
   },
 
-  refresh() {
-    const payload = getAppointments(true);
-    this.appointments = payload.appointments;
-    this.updatedAt = payload.updatedAt;
+  async refresh() {
+    this.isLoading = true;
+    try {
+      const payload = await getAppointments(true);
+      this.appointments = payload.appointments;
+      this.updatedAt = payload.updatedAt;
+    } finally {
+      this.isLoading = false;
+    }
   },
 };
 
 Alpine.store("deas", deasStore);
-Alpine.data("appointmentsGrouped", () =>
-  groupAppointments(deasStore.appointments)
-);
+Alpine.data("appointmentsGrouped", groupAppointments);
 
 // Initialize data before starting Alpine
 deasStore.init();
