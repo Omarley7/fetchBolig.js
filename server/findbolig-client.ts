@@ -2,8 +2,8 @@ import "dotenv/config";
 import fetchCookie from "fetch-cookie";
 import { CookieJar } from "tough-cookie";
 import { fetch as undiciFetch } from "undici";
-import type { ApiOffersPage } from "../types/offers.js";
-import type { ApiMessageThreadsPage } from "../types/threads.js";
+import type { ApiOffersPage } from "../shared/types/offers.js";
+import type { ApiMessageThreadsPage } from "../shared/types/threads.js";
 
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";

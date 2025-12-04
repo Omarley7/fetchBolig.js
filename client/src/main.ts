@@ -1,10 +1,10 @@
+import type { Appointment } from "@/types";
 import collapse from "@alpinejs/collapse";
 import persist from "@alpinejs/persist";
 import Alpine from "alpinejs";
 import groupAppointments from "~/components/groupBy/groupAppointments";
 import { getAppointments } from "~/data/appointments";
 import "~/style.css";
-import type { Appointment } from "~/types";
 
 Alpine.plugin(persist);
 Alpine.plugin(collapse);

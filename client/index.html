@@ -62,13 +62,13 @@
                         <p>
                           Leje:
                           <span
-                            x-text="appointment.rent.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"></span>
+                            x-text="appointment.financials.monthlyRentIncludingAconto.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"></span>
                           pr. måned
                         </p>
                         <p>
                           Indflytningspris:
                           <span
-                            x-text="appointment.downPayment.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"></span>
+                            x-text="appointment.financials.firstPayment.toLocaleString('da-DK', { style: 'currency', currency: 'DKK', minimumFractionDigits: 0 })"></span>
                         </p>
                       </div>
                     </div>
