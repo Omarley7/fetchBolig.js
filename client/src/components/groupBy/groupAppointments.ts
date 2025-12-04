@@ -1,10 +1,10 @@
+import type { Appointment } from "@/types";
 import {
   formatDay,
   formatMonth,
   formatWeek,
   getISOWeekStart,
 } from "~/lib/dateHelper";
-import type { Appointment } from "~/types";
 
 type Group = "day" | "week" | "month";
 type GroupedAppointments = [string, Appointment[]][];

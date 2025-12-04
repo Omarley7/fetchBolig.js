@@ -1,0 +1,15 @@
+@startuml DEAS structure
+
+Object offer
+offer : Udbudt lejemål for lejligheden
+
+object residence
+residence : Lejlighed i bygningen
+
+object property
+property : Hele bygningen
+
+property "1" *-- residence
+offer "1" *-- property
+
+@enduml

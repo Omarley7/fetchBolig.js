@@ -1,5 +1,4 @@
-import type { Appointment, AppointmentsPayload } from "~/types";
-// TODO: T-RPC could make a massive impact here (only for fetching, local storage would still need manual handling)
+import type { Appointment, AppointmentsPayload } from "@/types";
 
 /**
  * Converts date strings back to Date objects after JSON.parse
