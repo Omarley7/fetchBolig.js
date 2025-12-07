@@ -1,22 +1,59 @@
 import type { Appointment, AppointmentsPayload } from "@/types";
 
 export async function fetchAppointments(): Promise<AppointmentsPayload> {
-  // TODO: Implement real server fetch here
-  console.log("Pretending to fetch appointments from server...");
-  await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate network delay
-  console.log("Finished pretending to fetch appointments from server...");
+  try {
+    const result = await fetch(
+      "http://localhost:3000/api/appointments/upcoming",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!result.ok) {
+      throw new Error(`Failed to fetch appointments: ${result.status}`);
+    }
+    const data = await result.json();
+    return { updatedAt: new Date(), appointments: data as Appointment[] };
+  } catch (error) {
+    console.error("Failed to fetch appointments:", error);
+    throw error;
+  }
+}
 
-  return { updatedAt: new Date(), appointments: MOCK_SERVER_DATA };
+export async function login(email: string, password: string) {
+  try {
+    const result = await fetch("http://localhost:3000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+    if (!result.ok) {
+      throw new Error(`Failed to login: ${result.status}`);
+    }
+    const data = await result.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to login:", error);
+    throw error;
+  }
 }
 
 // Mock server data
 const MOCK_SERVER_DATA: Appointment[] = [
   {
     id: "DEAS-Flinterenden-6,3-tv.,-2300-København-S",
-    date: new Date(2025, 11, 12),
+    date: "2025-12-12",
     title: "Flinterenden 6,3 tv., 2300 København S",
-    start: new Date(2025, 11, 12, 9, 30),
-    end: new Date(2025, 11, 12, 10, 0),
+    start: "09:30",
+    end: "10:00",
+    cancelled: false,
     financials: {
       monthlyRentIncludingAconto: 10100.0,
       monthlyRentExcludingAconto: 9000.0,
@@ -33,10 +70,11 @@ const MOCK_SERVER_DATA: Appointment[] = [
   },
   {
     id: "DEAS-Flinterenden-6,2-th.,-2300-København-S",
-    date: new Date(2025, 11, 12),
+    date: "2025-12-12",
     title: "Flinterenden 6,2 th., 2300 København S",
-    start: new Date(2025, 11, 12, 10, 0),
-    end: new Date(2025, 11, 12, 10, 50),
+    start: "10:00",
+    end: "10:50",
+    cancelled: false,
     financials: {
       monthlyRentIncludingAconto: 8100.0,
       monthlyRentExcludingAconto: 7000.0,
@@ -53,10 +91,11 @@ const MOCK_SERVER_DATA: Appointment[] = [
   },
   {
     id: "DEAS-Bondehavevej-9,1-mf.,-2880-Gladsaxe",
-    date: new Date(2025, 11, 19),
+    date: "2025-12-19",
     title: "Bondehavevej 9,1 mf., 2880 Gladsaxe",
-    start: new Date(2025, 11, 19, 9, 30),
-    end: new Date(2025, 11, 19, 10, 0),
+    start: "09:30",
+    end: "10:00",
+    cancelled: false,
     financials: {
       monthlyRentIncludingAconto: 8200.0,
       monthlyRentExcludingAconto: 7000.0,

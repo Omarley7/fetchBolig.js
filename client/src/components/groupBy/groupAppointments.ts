@@ -33,26 +33,29 @@ export default () => ({
 function getAppointmentsByDay(
   appointments: Appointment[]
 ): GroupedAppointments {
-  return groupBy(appointments, (appt) => {
-    // YYYY-MM-DD
-    return appt.date.toISOString().slice(0, 10);
-  });
+  const validAppointments = appointments.filter(hasValidDate);
+  return groupBy(validAppointments, (appt) => appt.date!); // Already YYYY-MM-DD
 }
 
 function getAppointmentsByWeek(
   appointments: Appointment[]
 ): GroupedAppointments {
-  return groupBy(appointments, (appt) => getISOWeekStart(appt.date));
+  const validAppointments = appointments.filter(hasValidDate);
+  return groupBy(validAppointments, (appt) => getISOWeekStart(new Date(appt.date!)));
 }
 
 function getAppointmentsByMonth(
   appointments: Appointment[]
 ): GroupedAppointments {
-  return groupBy(appointments, (appt) => {
-    const year = appt.date.getFullYear();
-    const month = String(appt.date.getMonth() + 1).padStart(2, "0");
-    return `${year}-${month}`; // fx "2025-12"
+  const validAppointments = appointments.filter(hasValidDate);
+  return groupBy(validAppointments, (appt) => {
+    const date = new Date(appt.date!);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
   });
+}
+
+function hasValidDate(appt: Appointment): boolean {
+  return !!appt.date && appt.date.trim() !== "";
 }
 
 function groupBy(

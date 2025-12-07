@@ -1,9 +1,10 @@
 export type Appointment = {
   id: string; // DEAS-O-{address-with-dashes} -or- // DEAS-{offerId}
   title: string;
-  date: Date;
-  start: Date | null; // Appointment start time
-  end: Date | null; // Appointment end time
+  date: string | null;
+  start: string | null; // Appointment start time
+  end: string | null; // Appointment end time
+  cancelled: boolean;
   residence: Pick<Residence, "adressLine1" | "adressLine2">;
   financials: Financials;
   imageUrl: string;
