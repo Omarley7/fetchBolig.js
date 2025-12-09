@@ -6,37 +6,28 @@ import {
   getISOWeekStart,
 } from "~/lib/dateHelper";
 
-type Group = "day" | "week" | "month";
-type GroupedAppointments = [string, Appointment[]][];
+export type Group = "day" | "week" | "month";
+export type GroupedAppointments = [string, Appointment[]][];
 
-export default () => ({
-  _groupBy: "" as Group,
+export function groupAppointments(
+  appointments: Appointment[],
+  groupBy: Group
+): GroupedAppointments {
+  if (groupBy === "day") return getAppointmentsByDay(appointments);
+  if (groupBy === "week") return getAppointmentsByWeek(appointments);
+  return getAppointmentsByMonth(appointments);
+}
 
-  groupAppointments(
-    appointments: Appointment[],
-    groupBy: Group
-  ): GroupedAppointments {
-    this._groupBy = groupBy;
-
-    if (groupBy === "day") return getAppointmentsByDay(appointments);
-    if (groupBy === "week") return getAppointmentsByWeek(appointments);
-    return getAppointmentsByMonth(appointments);
-  },
-
-  formatLabel(key: string): string {
-    if (this._groupBy === "day") return formatDay(key);
-    if (this._groupBy === "week") return formatWeek(key);
-    return formatMonth(key);
-  },
-});
+export function formatLabel(key: string, groupBy: Group): string {
+  if (groupBy === "day") return formatDay(key);
+  if (groupBy === "week") return formatWeek(key);
+  return formatMonth(key);
+}
 
 function getAppointmentsByDay(
   appointments: Appointment[]
 ): GroupedAppointments {
-  return groupBy(appointments, (appt) => {
-    // YYYY-MM-DD
-    return appt.date.toISOString().slice(0, 10);
-  });
+  return groupBy(appointments, (appt) => appt.date.toISOString().slice(0, 10));
 }
 
 function getAppointmentsByWeek(
@@ -51,7 +42,7 @@ function getAppointmentsByMonth(
   return groupBy(appointments, (appt) => {
     const year = appt.date.getFullYear();
     const month = String(appt.date.getMonth() + 1).padStart(2, "0");
-    return `${year}-${month}`; // fx "2025-12"
+    return `${year}-${month}`;
   });
 }
 
