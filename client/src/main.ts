@@ -5,6 +5,7 @@ import Alpine from "alpinejs";
 import groupAppointments from "~/components/groupBy/groupAppointments";
 import { getAppointments } from "~/data/appointments";
 import "~/style.css";
+import { login } from "./data/appointmentsSource";
 
 Alpine.plugin(persist);
 Alpine.plugin(collapse);
@@ -15,6 +16,8 @@ const deasStore = {
   appointments: [] as Appointment[],
   updatedAt: null as Date | null,
   isLoading: false,
+  email: "",
+  password: "",
 
   async init() {
     this.isLoading = true;
@@ -32,6 +35,19 @@ const deasStore = {
       this.updatedAt = payload.updatedAt;
     } finally {
       this.isLoading = false;
+    }
+  },
+
+  async login(email: string, password: string) {
+    this.isLoading = true;
+    try {
+      await login(email, password);
+      this.isLoading = false;
+      return true;
+    } catch (error) {
+      console.error("Failed to login:", error);
+      this.isLoading = false;
+      return false;
     }
   },
 };

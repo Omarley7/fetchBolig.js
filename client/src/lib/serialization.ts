@@ -1,14 +1,13 @@
 import type { Appointment, AppointmentsPayload } from "@/types";
 
 /**
- * Converts date strings back to Date objects after JSON.parse
+ * Deserializes appointments from JSON
  */
 export function deserializeAppointments(data: any[]): Appointment[] {
   return data.map((item) => ({
     ...item,
-    date: new Date(item.date),
-    start: new Date(item.start),
-    end: new Date(item.end),
+    // Keep date as string (YYYY-MM-DD format), don't convert to Date
+    // start and end are already strings (HH:mm format)
   }));
 }
 

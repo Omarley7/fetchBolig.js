@@ -13,6 +13,7 @@ export const ApiMessage = z.object({
 
 export type ApiMessage = z.infer<typeof ApiMessage>;
 
+// Thread list item (from /api/communications/threads)
 export const ApiMessageThread = z.object({
   id: z.string(),
   relatedEntity: z.string().nullable(),
@@ -25,6 +26,22 @@ export const ApiMessageThread = z.object({
 });
 
 export type ApiMessageThread = z.infer<typeof ApiMessageThread>;
+
+// Full thread with messages (from /api/communications/messages/thread/...)
+export const ApiMessageThreadFull = z.object({
+  id: z.string(),
+  title: z.string(),
+  messages: z.array(ApiMessage),
+  relatedEntity: z.object({
+    id: z.string(),
+    type: z.string(),
+    ownerId: z.string(),
+  }).nullable(),
+  archived: z.boolean(),
+  created: z.string(), // ISO date string
+});
+
+export type ApiMessageThreadFull = z.infer<typeof ApiMessageThreadFull>;
 
 export const ApiMessageThreadsPage = z.object({
   hasPublisherRole: z.boolean().optional(),

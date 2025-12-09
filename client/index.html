@@ -10,6 +10,11 @@
   <div x-data="{ groupBy: $persist('day') }" class="w-full p-6 flex flex-col gap-2">
     <div class="flex flex-row justify-between p-2 align-bottom">
       <h1>Kommende aftaler</h1>
+      <form @submit.prevent="$store.deas.login($store.deas.email, $store.deas.password)">
+        <input type="email" x-model="$store.deas.email" placeholder="Email" />
+        <input type="password" x-model="$store.deas.password" placeholder="Password" />
+        <button type="submit">Login</button>
+      </form>
 
       <div class="flex flex-col">
         <button class="flex justify-center items-center gap-2" type="button" @click="$store.deas.refresh()"
@@ -41,18 +46,24 @@
             <ul x-show="expanded" x-collapse>
               <template x-for="appointment in group" :key="appointment.id">
                 <li class="p-4 border-2 mb-2 rounded-lg w-full">
+                  <div class="flex flex-col gap-2">
+                    <h3 class="text-xl font-semibold" x-text="appointment.title"></h3>
                   <div class="flex gap-4 items-center">
                     <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
                       class="size-7 invert opacity-70" />
-                    <h3 class="text-xl font-semibold" x-text="appointment.title"></h3>
+                      <div class="flex flex-col">
+                        <p class="text-sm" x-text="appointment.residence.adressLine1"></p>
+                        <p class="text-sm" x-text="appointment.residence.adressLine2"></p>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="w-full flex flex-row pt-2">
-                    <img class="size-26 bg-gray-200 rounded-md mr-4 min-w-1/4" alt="Property Thumbnail"
-                      :src="appointment.imageUrl" />
+                    <img class="size-26 bg-gray-200 rounded-md mr-4 min-w-1/4 object-cover" alt="Property Thumbnail"
+                      x-bind:src="`https://findbolig.nu${appointment.imageUrl}`" />
                     <div class="w-full flex flex-col justify-between">
                       <div class="w-full flex flex-row justify-between">
-                        <p class="text-lg" x-text="formatTimeSlot(appointment, groupBy !== 'day')">
+                        <p class="text-lg" x-text="`Åbent hus: ${formatTimeSlot(appointment, groupBy !== 'day')}`">
                         </p>
                         <img src="https://unpkg.com/lucide-static@latest/icons/calendar.svg" alt="calendar"
                           class="size-7 invert opacity-70" />
@@ -91,12 +102,14 @@
 <script type="module" src="/src/main.ts"></script>
 <script>
   function formatTimeSlot(appointment, includeDate = false) {
-    const startTime = appointment.start.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' });
-    const endTime = appointment.end.toLocaleTimeString('da-DK', { hour: '2-digit', minute: '2-digit' });
+    const date = new Date(appointment.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+
+    const startTime = appointment.start;
+    const endTime = appointment.end;
+
     if (!includeDate)
       return `${startTime} - ${endTime}`;
 
-    const date = appointment.start.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
     return `d. ${date}, ${startTime} - ${endTime}`;
   }
 

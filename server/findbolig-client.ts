@@ -3,10 +3,12 @@ import fetchCookie from "fetch-cookie";
 import { CookieJar } from "tough-cookie";
 import { fetch as undiciFetch } from "undici";
 
-import type { ApiOffer, ApiOffersPage } from "./types/offers";
-import type { ApiMessageThreadsPage } from "./types/threads";
+import { mapAppointmentToDomain } from "./lib/appointments-domain";
+import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
 import { apiResidenceToDomain } from "./lib/residences-domain";
+import type { ApiOffersPage } from "./types/offers";
 import { ApiResidence } from "./types/residences";
+import type { ApiMessageThreadFull, ApiMessageThreadsPage } from "./types/threads";
 
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
@@ -137,8 +139,10 @@ export async function getResidence(residenceId: string) {
       `Failed to fetch residence: ${res.status}: ${res.statusText}`
     );
   }
+  const data = await res.json();
+  const residence = apiResidenceToDomain(data as ApiResidence);
 
-  return res.json();
+  return residence;
 }
 
 /**
@@ -146,7 +150,7 @@ export async function getResidence(residenceId: string) {
  * @param offerId
  * @returns
  */
-export async function getThreadForOffer(offerId: string) {
+export async function getThreadForOffer(offerId: string): Promise<ApiMessageThreadFull> {
   const res = await fetch(`${BASE_URL}/api/communications/messages/thread/related-to/${offerId}`, {
     method: "GET",
     headers: {
@@ -159,7 +163,7 @@ export async function getThreadForOffer(offerId: string) {
     throw new Error(`Failed to fetch thread for offer: ${res.status}: ${res.statusText}`);
   }
 
-  return res.json();
+  return (await res.json()) as ApiMessageThreadFull;
 }
 
 /**
@@ -169,22 +173,23 @@ export async function getThreadForOffer(offerId: string) {
 export async function getUpcomingAppointments() {
   try {
     const offers = await fetchOffers();
-    // filter offers with state "Finished"
-    const finishedOffers = offers.results.filter(
-      (offer: ApiOffer) => offer.state === "Finished"
+    // So far it seems that the default state once you get the offer is either 'Finished' or 'Published'
+    // there may be other state values used that represents same state
+    const activeOffers = offers.results.filter(
+      (offer) => offer.state === "Finished" || offer.state === "Published"
     );
 
-    const offersWithResidenceAndThread = await Promise.all(finishedOffers.map(async (offer) => {
+    const offersWithResidenceAndThread = await Promise.all(activeOffers.map(async (offer) => {
       if (!offer.residenceId || !offer.id) {
         return null;
       }
       const residence = await getResidence(offer.residenceId);
       const thread = await getThreadForOffer(offer.id);
-      return {
-        residence: apiResidenceToDomain(residence as ApiResidence),
-        thread,
-        ...offer,
-      };
+      const details = await extractAppointmentDetailsWithLLM(thread);
+      const domainAppointment = mapAppointmentToDomain({
+        offer, residence, details,
+      });
+      return domainAppointment;
     }));
 
     return offersWithResidenceAndThread;

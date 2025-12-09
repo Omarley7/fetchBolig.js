@@ -1,20 +1,20 @@
+import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import "dotenv/config";
-import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { serve } from "@hono/node-server";
 import { logger } from "hono/logger";
-import { serveStatic } from "@hono/node-server/serve-static";
 import { prettyJSON } from "hono/pretty-json";
+import { fileURLToPath } from "node:url";
+import path from "path";
 import * as findboligClient from "./findbolig-client.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = new Hono();
 
-app.get("/*", serveStatic({ root: "./public" }));
+app.get("/*", serveStatic({ root: "../public" }));
 app.get("/", (c) => {
   const htmlPath = path.join(__dirname, "../client/index.html");
   const html = fs.readFileSync(htmlPath, "utf-8");
@@ -45,9 +45,7 @@ appointments.get("/upcoming", async (c) => {
 
 auth.post("/login", async (c) => {
   try {
-    const body = await c.req.json();
-    const { email, password } = body;
-
+    const { email, password } = await c.req.json();
     if (!email || !password) {
       return c.json({ error: "Email and password are required" }, 400);
     }
@@ -124,7 +122,10 @@ api.route("/", appointments);
 
 app.route("/api", api);
 
-const server = serve(app);
+const server = serve(app, (info) => {
+  console.log(`Server is running on ${info.address}:${info.port}`);
+});
+
 // graceful shutdown
 process.on("SIGINT", () => {
   server.close();

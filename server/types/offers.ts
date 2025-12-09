@@ -13,7 +13,7 @@ export const ApiOffer = z.object({
   recipients: z.array(z.unknown()).optional(),
   recipientsCount: z.number().optional(),
   winnerId: z.string().nullable(),
-  state: z.string(), // 'Awarded', 'AwardedFromExternal', 'RetiredFromAwarded', 'Finished'
+  state: z.string(), // 'Awarded', 'AwardedFromExternal', 'RetiredFromAwarded', 'Finished', 'Published', 'Released', 'Changed'
   organizationId: z.string(),
   organization: z.string().optional(),
   companyId: z.string(),
