@@ -1,5 +1,5 @@
 import { deserializeAppointmentsPayload } from "~/lib/serialization";
-import type { AppointmentsPayload } from "~/types.js";
+import type { AppointmentsPayload } from "@/types";
 import { fetchAppointments } from "./appointmentsSource";
 
 const STORAGE_KEY = "appointments_cache";
