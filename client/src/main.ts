@@ -56,6 +56,6 @@ Alpine.store("deas", deasStore);
 Alpine.data("appointmentsGrouped", groupAppointments);
 
 // Initialize data before starting Alpine
-// deasStore.init();
+deasStore.init();
 
 Alpine.start();

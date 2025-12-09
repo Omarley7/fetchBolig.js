@@ -46,7 +46,9 @@ Vigtige regler:
 export async function extractAppointmentDetailsWithLLM(
   thread: ApiMessageThreadFull
 ) {
-  const messages = thread.messages.sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime());
+  const messages = thread.messages.sort(
+    (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime()
+  );
 
   // Remove all HTML tags from messages
   const cleanMessages = messages.map((message) => ({
@@ -72,16 +74,8 @@ export async function extractAppointmentDetailsWithLLM(
 
   const response = await openai.responses.parse({
     model: "gpt-5-nano",
-    input: [
-      {
-        role: "system",
-        content: EXTRACTION_PROMPT,
-      },
-      {
-        role: "user",
-        content: `Ekstraher dato og tidspunkt fra følgende besked(er) om åbent hus:\n\n${context}`,
-      },
-    ],
+    instructions: EXTRACTION_PROMPT,
+    input: `Ekstraher dato og tidspunkt fra følgende besked(er) om åbent hus:\n\n${context}`,
     text: {
       format: zodTextFormat(AppointmentDetailsSchema, "appointment_details"),
     },

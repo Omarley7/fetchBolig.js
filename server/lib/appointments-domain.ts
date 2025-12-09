@@ -1,4 +1,4 @@
-import { Appointment } from "../../shared/types";
+import { Appointment } from "@/shared/types";
 
 import { ApiOffer } from "../types/offers";
 import { Residence } from "../types/residences";
