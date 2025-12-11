@@ -1,9 +1,11 @@
 import type { Appointment, AppointmentsPayload } from "@/types";
 
 export async function fetchAppointments(): Promise<AppointmentsPayload> {
+  const domain = import.meta.env.VITE_DOMAIN ?? "http://localhost:3000";
+
   try {
     const result = await fetch(
-      "http://localhost:3000/api/appointments/upcoming",
+      `${domain}/api/appointments/upcoming`,
       {
         method: "GET",
         headers: {
@@ -23,8 +25,11 @@ export async function fetchAppointments(): Promise<AppointmentsPayload> {
 }
 
 export async function login(email: string, password: string) {
+  const domain = import.meta.env.VITE_DOMAIN ?? "http://localhost:3000";
+  console.log(domain);
+
   try {
-    const result = await fetch("http://localhost:3000/api/auth/login", {
+    const result = await fetch(`${domain}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
