@@ -1,4 +1,5 @@
 import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import "dotenv/config";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -7,6 +8,8 @@ import { prettyJSON } from "hono/pretty-json";
 import * as findboligClient from "~/findbolig-client.js";
 
 const app = new Hono();
+
+app.get("/*", serveStatic({ root: "../client/dist" }));
 
 app.notFound((c) => c.json({ error: "Not found", ok: false }, 404));
 
