@@ -46,6 +46,7 @@ export async function login(email: string, password: string) {
 }
 
 // Mock server data
+// @ts-ignore: TS6133
 const MOCK_SERVER_DATA: Appointment[] = [
   {
     id: "DEAS-Flinterenden-6,3-tv.,-2300-København-S",
