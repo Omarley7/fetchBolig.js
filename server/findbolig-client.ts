@@ -3,15 +3,15 @@ import fetchCookie from "fetch-cookie";
 import { CookieJar } from "tough-cookie";
 import { fetch as undiciFetch } from "undici";
 
-import { mapAppointmentToDomain } from "./lib/appointments-domain.js";
-import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor.js";
-import { apiResidenceToDomain } from "./lib/residences-domain.js";
-import type { ApiOffersPage } from "./types/offers.js";
-import type { ApiResidence } from "./types/residences.js";
+import { mapAppointmentToDomain } from "~/lib/appointments-domain.js";
+import { apiResidenceToDomain } from "~/lib/residences-domain.js";
+import type { ApiOffersPage } from "~/types/offers.js";
+import type { ApiResidence } from "~/types/residences.js";
 import type {
   ApiMessageThreadFull,
   ApiMessageThreadsPage,
-} from "./types/threads.js";
+} from "~/types/threads.js";
+import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor.js";
 
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
