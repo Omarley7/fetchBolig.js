@@ -28,8 +28,27 @@
     </div>
 
     <div>
-      <div x-html="await ( await fetch('/src/components/groupBy/index.html')).text()"></div>
-
+      <div>
+        Group by:
+        <div class="w-full flex flex-row items-center">
+          <button type="button" class="m-2 rounded-2xl"
+            :class="groupBy === 'day' && 'bg-white/10 border border-zinc-200! opacity-60 cursor-not-allowed'"
+            :disabled="groupBy === 'day'" :aria-pressed="groupBy === 'day'" @click="groupBy = 'day'">
+            pr. dag
+          </button>
+          <button type="button" class="m-2 rounded-2xl"
+            :class="groupBy === 'week' && 'bg-white/10 border border-zinc-200! opacity-60 cursor-not-allowed'"
+            :disabled="groupBy === 'week'" :aria-pressed="groupBy === 'week'" @click="groupBy = 'week'">
+            pr. uge
+          </button>
+          <button type="button" class="m-2 rounded-2xl"
+            :class="groupBy === 'month' && 'bg-white/10 border border-zinc-200! opacity-60 cursor-not-allowed'"
+            :disabled="groupBy === 'month'" :aria-pressed="groupBy === 'month'" @click="groupBy = 'month'">
+            pr. måned
+          </button>
+          </button>
+        </div>
+      </div>
       <ul class="w-full" x-data="appointmentsGrouped">
         <!-- Outer loop: current grouping -->
         <template x-for="[groupKey, group] in groupAppointments($store.deas.appointments, groupBy)" :key="groupKey">
@@ -48,9 +67,9 @@
                 <li class="p-4 border-2 mb-2 rounded-lg w-full">
                   <div class="flex flex-col gap-2">
                     <h3 class="text-xl font-semibold" x-text="appointment.title"></h3>
-                  <div class="flex gap-4 items-center">
-                    <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
-                      class="size-7 invert opacity-70" />
+                    <div class="flex gap-4 items-center">
+                      <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
+                        class="size-7 invert opacity-70" />
                       <div class="flex flex-col">
                         <p class="text-sm" x-text="appointment.residence.adressLine1"></p>
                         <p class="text-sm" x-text="appointment.residence.adressLine2"></p>
