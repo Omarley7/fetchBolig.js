@@ -1,25 +1,13 @@
 import { serve } from "@hono/node-server";
-import { serveStatic } from "@hono/node-server/serve-static";
 import "dotenv/config";
-import fs from "fs";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
-import { fileURLToPath } from "node:url";
-import path from "path";
 import * as findboligClient from "./findbolig-client.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = new Hono();
 
-app.get("/*", serveStatic({ root: "../public" }));
-app.get("/", (c) => {
-  const htmlPath = path.join(__dirname, "../client/index.html");
-  const html = fs.readFileSync(htmlPath, "utf-8");
-  return c.html(html);
-});
 app.notFound((c) => c.json({ error: "Not found", ok: false }, 404));
 
 const api = new Hono();
