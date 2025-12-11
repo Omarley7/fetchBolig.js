@@ -3,12 +3,15 @@ import fetchCookie from "fetch-cookie";
 import { CookieJar } from "tough-cookie";
 import { fetch as undiciFetch } from "undici";
 
-import { mapAppointmentToDomain } from "./lib/appointments-domain";
-import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
-import { apiResidenceToDomain } from "./lib/residences-domain";
-import type { ApiOffersPage } from "./types/offers";
-import { ApiResidence } from "./types/residences";
-import type { ApiMessageThreadFull, ApiMessageThreadsPage } from "./types/threads";
+import { mapAppointmentToDomain } from "~/lib/appointments-domain.js";
+import { apiResidenceToDomain } from "~/lib/residences-domain.js";
+import type { ApiOffersPage } from "~/types/offers.js";
+import type { ApiResidence } from "~/types/residences.js";
+import type {
+  ApiMessageThreadFull,
+  ApiMessageThreadsPage,
+} from "~/types/threads.js";
+import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor.js";
 
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
@@ -150,17 +153,24 @@ export async function getResidence(residenceId: string) {
  * @param offerId
  * @returns
  */
-export async function getThreadForOffer(offerId: string): Promise<ApiMessageThreadFull> {
-  const res = await fetch(`${BASE_URL}/api/communications/messages/thread/related-to/${offerId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  });
+export async function getThreadForOffer(
+  offerId: string
+): Promise<ApiMessageThreadFull> {
+  const res = await fetch(
+    `${BASE_URL}/api/communications/messages/thread/related-to/${offerId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    }
+  );
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch thread for offer: ${res.status}: ${res.statusText}`);
+    throw new Error(
+      `Failed to fetch thread for offer: ${res.status}: ${res.statusText}`
+    );
   }
 
   return (await res.json()) as ApiMessageThreadFull;
@@ -179,18 +189,22 @@ export async function getUpcomingAppointments() {
       (offer) => offer.state === "Finished" || offer.state === "Published"
     );
 
-    const offersWithResidenceAndThread = await Promise.all(activeOffers.map(async (offer) => {
-      if (!offer.residenceId || !offer.id) {
-        return null;
-      }
-      const residence = await getResidence(offer.residenceId);
-      const thread = await getThreadForOffer(offer.id);
-      const details = await extractAppointmentDetailsWithLLM(thread);
-      const domainAppointment = mapAppointmentToDomain({
-        offer, residence, details,
-      });
-      return domainAppointment;
-    }));
+    const offersWithResidenceAndThread = await Promise.all(
+      activeOffers.map(async (offer) => {
+        if (!offer.residenceId || !offer.id) {
+          return null;
+        }
+        const residence = await getResidence(offer.residenceId);
+        const thread = await getThreadForOffer(offer.id);
+        const details = await extractAppointmentDetailsWithLLM(thread);
+        const domainAppointment = mapAppointmentToDomain({
+          offer,
+          residence,
+          details,
+        });
+        return domainAppointment;
+      })
+    );
 
     return offersWithResidenceAndThread;
   } catch (error) {
