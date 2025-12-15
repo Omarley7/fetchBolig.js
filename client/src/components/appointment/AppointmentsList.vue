@@ -6,8 +6,8 @@ import {
   useGroupAppointments,
   type GroupBy,
 } from "~/composables/useGroupAppointments";
-import GroupBySelector from "./GroupBySelector.vue";
-import AppointmentGroup from "./AppointmentGroup.vue";
+import GroupBySelector from "~/components/appointment/GroupBySelector.vue";
+import AppointmentGroup from "~/components/appointment/AppointmentGroup.vue";
 
 const store = useAppointmentsStore();
 const { appointments, isLoading } = storeToRefs(store);

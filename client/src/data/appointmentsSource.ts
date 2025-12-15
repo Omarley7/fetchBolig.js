@@ -1,7 +1,13 @@
 import type { Appointment, AppointmentsPayload } from "@/types";
+import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
 
 export async function fetchAppointments(): Promise<AppointmentsPayload> {
   const domain = import.meta.env.VITE_DOMAIN ?? "http://localhost:3000";
+
+  if (import.meta.env.VITE_USE_MOCK_DATA === "true") {
+    console.log("Using mock server data"); await new Promise((resolve) => setTimeout(resolve, 800));
+    return { updatedAt: new Date(), appointments: MOCK_DEAS_APPOINTMENTS };
+  }
 
   try {
     const result = await fetch(
@@ -49,71 +55,3 @@ export async function login(email: string, password: string) {
     throw error;
   }
 }
-
-// Mock server data
-// @ts-ignore: TS6133
-const MOCK_SERVER_DATA: Appointment[] = [
-  {
-    id: "DEAS-Flinterenden-6,3-tv.,-2300-København-S",
-    date: "2025-12-12",
-    title: "Flinterenden 6,3 tv., 2300 København S",
-    start: "09:30",
-    end: "10:00",
-    cancelled: false,
-    financials: {
-      monthlyRentIncludingAconto: 10100.0,
-      monthlyRentExcludingAconto: 9000.0,
-      utilityCosts: 1100.0,
-      deposit: 27000.0,
-      prepaidRent: 9000.0,
-      firstPayment: 70002.0,
-    },
-    imageUrl: "https://placehold.co/600x400",
-    residence: {
-      adressLine1: "Flinterenden 6,3 tv.",
-      adressLine2: "2300 København S",
-    },
-  },
-  {
-    id: "DEAS-Flinterenden-6,2-th.,-2300-København-S",
-    date: "2025-12-12",
-    title: "Flinterenden 6,2 th., 2300 København S",
-    start: "10:00",
-    end: "10:50",
-    cancelled: false,
-    financials: {
-      monthlyRentIncludingAconto: 8100.0,
-      monthlyRentExcludingAconto: 7000.0,
-      utilityCosts: 1100.0,
-      deposit: 21600.0,
-      prepaidRent: 7000.0,
-      firstPayment: 70002.0,
-    },
-    imageUrl: "https://placehold.co/400x400",
-    residence: {
-      adressLine1: "Flinterenden 6,2 th.",
-      adressLine2: "2300 København S",
-    },
-  },
-  {
-    id: "DEAS-Bondehavevej-9,1-mf.,-2880-Gladsaxe",
-    date: "2025-12-19",
-    title: "Bondehavevej 9,1 mf., 2880 Gladsaxe",
-    start: "09:30",
-    end: "10:00",
-    cancelled: false,
-    financials: {
-      monthlyRentIncludingAconto: 8200.0,
-      monthlyRentExcludingAconto: 7000.0,
-      utilityCosts: 1200.0,
-      deposit: 24600.0,
-      prepaidRent: 7000.0,
-      firstPayment: 70002.0,
-    },
-    imageUrl: "https://placehold.co/400x600",
-    residence: {
-      adressLine1: "Bondehavevej 9,1 mf.",
-      adressLine2: "2880 Gladsaxe",
-    },
-  },
-];

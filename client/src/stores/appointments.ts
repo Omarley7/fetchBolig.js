@@ -2,7 +2,6 @@ import type { Appointment, AppointmentsPayload } from "@/types";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getAppointments } from "~/data/appointments";
-import { login as apiLogin } from "~/data/appointmentsSource";
 
 export const useAppointmentsStore = defineStore(
     "appointments",
@@ -10,8 +9,6 @@ export const useAppointmentsStore = defineStore(
         const appointments = ref<Appointment[]>([]);
         const updatedAt = ref<Date | null>(null);
         const isLoading = ref(false);
-        const email = ref("");
-        const password = ref("");
 
         async function init() {
             isLoading.value = true;
@@ -35,33 +32,12 @@ export const useAppointmentsStore = defineStore(
             }
         }
 
-        async function login(userEmail: string, userPassword: string) {
-            isLoading.value = true;
-            try {
-                await apiLogin(userEmail, userPassword);
-                return true;
-            } catch (error) {
-                console.error("Failed to login:", error);
-                return false;
-            } finally {
-                isLoading.value = false;
-            }
-        }
-
         return {
             appointments,
             updatedAt,
             isLoading,
-            email,
-            password,
             init,
             refresh,
-            login,
         };
-    },
-    {
-        persist: {
-            paths: ["email"], // Only persist email, not password
-        },
     }
 );

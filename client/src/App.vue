@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 import { useAppointmentsStore } from "~/stores/appointments";
 import AppHeader from "~/components/AppHeader.vue";
-import AppointmentsList from "~/components/AppointmentsList.vue";
+import AppointmentsList from "~/components/appointment/AppointmentsList.vue";
 
 const store = useAppointmentsStore();
 
