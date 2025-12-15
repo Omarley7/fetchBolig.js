@@ -1,5 +1,7 @@
-import { Alpine as AlpineType } from "alpinejs";
+/// <reference types="vite/client" />
 
-declare global {
-  var Alpine: AlpineType;
+declare module "*.vue" {
+  import type { DefineComponent } from "vue";
+  const component: DefineComponent<object, object, unknown>;
+  export default component;
 }
