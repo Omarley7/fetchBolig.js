@@ -5,22 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vue-tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",
-    "@types/alpinejs": "^3.13.11",
-    "@types/alpinejs__collapse": "^3.13.4",
-    "@types/alpinejs__persist": "^3.13.4",
+    "@types/node": "^25.0.2",
     "@types/tailwindcss": "^3.0.11",
+    "@vitejs/plugin-vue": "^6.0.0",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vue-tsc": "^2.2.0"
   },
   "dependencies": {
-    "@alpinejs/collapse": "^3.15.2",
-    "@alpinejs/persist": "^3.15.2",
-    "alpinejs": "^3.15.2"
+    "pinia": "^2.3.0",
+    "pinia-plugin-persistedstate": "^3.2.3",
+    "vue": "^3.5.13"
   }
 }
