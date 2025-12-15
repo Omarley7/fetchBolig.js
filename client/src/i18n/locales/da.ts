@@ -1,0 +1,41 @@
+export default {
+    common: {
+        loading: "Indlæser...",
+        login: "Login",
+        logout: "Log ud",
+        email: "Email",
+        password: "Adgangskode",
+        refresh: "Opdater",
+        close: "Luk",
+        groupBy: "Gruppér efter",
+        perDay: "pr. dag",
+        perWeek: "pr. uge",
+        perMonth: "pr. måned",
+    },
+    appointments: {
+        title: "Kommende aftaler",
+        loading: "Indlæser kommende aftaler...",
+        noAppointments:
+            "Ingen aftaler fundet, benyt venligst findbolig.nu til at søge efter boliger...",
+        openHouse: "Åbent hus",
+    },
+    financials: {
+        rent: "Leje",
+        perMonth: "pr. måned",
+        moveInCost: "Indflytningspris",
+        monthlyRentIncludingAconto: "Månedlig leje inkl. aconto",
+        monthlyRentExcludingAconto: "Månedlig leje ekskl. aconto",
+        utilityCosts: "Forbrug",
+        deposit: "Depositum",
+        prepaidRent: "Forudbetalt leje",
+        firstPayment: "Første betaling",
+    },
+    auth: {
+        loggingIn: "Logger ind...",
+        loginFailed: "Login fejlede",
+    },
+    errors: {
+        generic: "Der opstod en fejl",
+        networkError: "Netværksfejl - prøv igen senere",
+    },
+};

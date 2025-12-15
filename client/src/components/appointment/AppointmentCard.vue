@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import type { Appointment } from "@/types";
-import { formatTimeSlot, formatCurrency } from "~/lib/formatters";
+import { formatTimeSlot } from "~/lib/formatters";
 import BaseCard from "~/components/Base/BaseCard.vue";
-    const useMockData = import.meta.env.VITE_USE_MOCK_DATA === "true";
+import FinancialsDisplay from "./FinancialsDisplay.vue";
+import { useToastStore } from "~/stores/toast";
 
-defineProps<{
+const useMockData = import.meta.env.VITE_USE_MOCK_DATA === "true";
+const toast = useToastStore();
+
+const props = defineProps<{
   appointment: Appointment;
   includeDate?: boolean;
 }>();
+
+function handleMapClick() {
+  toast.error(`Kort ikke tilgængelig for: ${props.appointment.residence.adressLine1}`);
+}
 </script>
 
 <template>
@@ -19,7 +27,8 @@ defineProps<{
           <img
             src="https://unpkg.com/lucide-static@latest/icons/map.svg"
             alt="Map"
-            class="size-7 invert opacity-70"
+            class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity"
+            @click="handleMapClick"
           />
           <div class="flex flex-col">
             <p class="text-sm">{{ appointment.residence.adressLine1 }}</p>
@@ -46,21 +55,7 @@ defineProps<{
             />
           </div>
 
-          <div class="border p-2">
-            <p>
-              Leje:
-              <span>{{
-                formatCurrency(appointment.financials.monthlyRentIncludingAconto)
-              }}</span>
-              pr. måned
-            </p>
-            <p>
-              Indflytningspris:
-              <span>{{
-                formatCurrency(appointment.financials.firstPayment)
-              }}</span>
-            </p>
-          </div>
+          <FinancialsDisplay :financials="appointment.financials" compact />
         </div>
       </div>
     </BaseCard>
