@@ -1,31 +1,16 @@
 <script setup lang="ts">
 import { useAppointmentsStore } from "~/stores/appointments";
 import { formatUpdatedAt } from "~/lib/formatters";
+import LoginForm from "./LoginForm.vue";
 
 const store = useAppointmentsStore();
-
-async function handleLogin() {
-  await store.login(store.email, store.password);
-}
 </script>
 
 <template>
   <div class="flex flex-row justify-between p-2 align-bottom">
     <h1>Kommende aftaler</h1>
     
-    <form @submit.prevent="handleLogin">
-      <input 
-        v-model="store.email" 
-        type="email" 
-        placeholder="Email" 
-      />
-      <input 
-        v-model="store.password" 
-        type="password" 
-        placeholder="Password" 
-      />
-      <button type="submit">Login</button>
-    </form>
+    <LoginForm />
 
     <div class="flex flex-col">
       <button
