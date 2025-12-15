@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 import { useAppointmentsStore } from "~/stores/appointments";
 import AppHeader from "~/components/AppHeader.vue";
 import AppointmentsList from "~/components/appointment/AppointmentsList.vue";
+import ToastContainer from "~/components/Base/ToastContainer.vue";
 
 const store = useAppointmentsStore();
 
@@ -16,4 +17,5 @@ onMounted(() => {
     <AppHeader />
     <AppointmentsList />
   </div>
+  <ToastContainer />
 </template>

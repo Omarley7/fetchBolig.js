@@ -2,6 +2,7 @@
 import type { Appointment } from "@/types";
 import { ref } from "vue";
 import AppointmentCard from "./AppointmentCard.vue";
+import BaseCollapse from "~/components/Base/BaseCollapse.vue";
 
 const props = defineProps<{
   groupKey: string;
@@ -34,13 +35,15 @@ function toggleExpanded() {
     </div>
 
     <!-- Inner loop: appointments in this group -->
-    <ul v-show="expanded">
-      <AppointmentCard
-        v-for="appointment in appointments"
-        :key="appointment.id"
-        :appointment="appointment"
-        :include-date="includeDate"
-      />
-    </ul>
+    <BaseCollapse v-model:expanded="expanded">
+      <ul>
+        <AppointmentCard
+          v-for="appointment in appointments"
+          :key="appointment.id"
+          :appointment="appointment"
+          :include-date="includeDate"
+        />
+      </ul>
+    </BaseCollapse>
   </li>
 </template>
