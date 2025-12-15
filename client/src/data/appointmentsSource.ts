@@ -32,7 +32,6 @@ export async function fetchAppointments(): Promise<AppointmentsPayload> {
 
 export async function login(email: string, password: string) {
   const domain = import.meta.env.VITE_DOMAIN ?? "http://localhost:3000";
-  console.log(domain);
 
   try {
     const result = await fetch(`${domain}/api/auth/login`, {
@@ -49,7 +48,10 @@ export async function login(email: string, password: string) {
       throw new Error(`Failed to login: ${result.status}`);
     }
     const data = await result.json();
-    return data;
+    if (data?.success) {
+     return true;
+    } else
+    return false
   } catch (error) {
     console.error("Failed to login:", error);
     throw error;

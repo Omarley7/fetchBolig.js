@@ -23,7 +23,6 @@ const contentHeight = ref<string>(props.expanded ? "auto" : "0px");
 watch(
   () => props.expanded,
   (newVal) => {
-    console.log("Prop expanded changed to", newVal);
     isExpanded.value = newVal;
   }
 );
@@ -33,9 +32,8 @@ watch(isExpanded, async (newVal) => {
   if (!contentRef.value) return;
 
   if (newVal) {
-    console.log("Opening collapse");
     contentHeight.value = `${contentRef.value.scrollHeight}px`;
-} 
+  }
 });
 
 function toggle() {
