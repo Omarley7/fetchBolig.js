@@ -32,6 +32,7 @@ export default {
     },
     auth: {
         loggingIn: "Logger ind...",
+        loggingOut: "Logger ud...",
         loginFailed: "Login fejlede",
     },
     errors: {
