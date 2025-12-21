@@ -3,7 +3,7 @@ import type { Appointment } from "@/types";
 export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
   {
     id: "DEAS-Flinterenden-6,3-tv.,-2300-København-S",
-    date: "2025-12-12",
+    date: null, // "2025-12-12",
     title: "Flinterenden 6,3 tv., 2300 København S",
     start: "09:30",
     end: "10:00",

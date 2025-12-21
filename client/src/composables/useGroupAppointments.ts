@@ -5,34 +5,46 @@ import { formatDay, formatMonth, formatWeek, getISOWeekStart } from "~/lib/dateH
 export type GroupBy = "day" | "week" | "month";
 export type GroupedAppointments = [string, Appointment[]][];
 
+const NO_DATE_KEY = "__no_date__";
+
 function hasValidDate(appt: Appointment): boolean {
   return appt.date !== null && appt.date.trim() !== "";
 }
 
-function groupBy<T>(items: T[], keyFn: (item: T) => string): [string, T[]][] {
+function groupBy<T>(items: T[], keyFn: (item: T) => string | null): [string, T[]][] {
   const map = new Map<string, T[]>();
+  const noKeyItems: T[] = [];
+
   for (const item of items) {
     const key = keyFn(item);
-    const group = map.get(key) ?? [];
-    group.push(item);
-    map.set(key, group);
+    if (key === null) {
+      noKeyItems.push(item);
+    } else {
+      const group = map.get(key) ?? [];
+      group.push(item);
+      map.set(key, group);
+    }
   }
-  return Array.from(map.entries());
+
+  const entries = Array.from(map.entries());
+  if (noKeyItems.length > 0) {
+    entries.push([NO_DATE_KEY, noKeyItems]);
+  }
+  return entries;
 }
 
 function getAppointmentsByDay(appointments: Appointment[]): GroupedAppointments {
-  const validAppointments = appointments.filter(hasValidDate);
-  return groupBy(validAppointments, (appt) => appt.date!);
+  return groupBy(appointments, (appt) => appt.date);
 }
 
 function getAppointmentsByWeek(appointments: Appointment[]): GroupedAppointments {
-  const validAppointments = appointments.filter(hasValidDate);
-  return groupBy(validAppointments, (appt) => getISOWeekStart(new Date(appt.date!)));
+  return groupBy(appointments, (appt) =>
+    hasValidDate(appt) ? getISOWeekStart(new Date(appt.date!)) : null
+  );
 }
 
 function getAppointmentsByMonth(appointments: Appointment[]): GroupedAppointments {
-  const validAppointments = appointments.filter(hasValidDate);
-  return groupBy(validAppointments, (appt) => appt.date!.slice(0, 7));
+  return groupBy(appointments, (appt) => (hasValidDate(appt) ? appt.date!.slice(0, 7) : null));
 }
 
 export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: Ref<GroupBy>) {
@@ -49,6 +61,9 @@ export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: 
   });
 
   function formatLabel(key: string): string {
+    if (key === NO_DATE_KEY) {
+      return "No date";
+    }
     switch (groupBy.value) {
       case "day":
         return formatDay(key);
