@@ -38,5 +38,6 @@ export default {
     errors: {
         generic: "An error occurred",
         networkError: "Network error - please try again later",
+        mapNotAvailable: "Map not available for: {address}",
     },
 };
