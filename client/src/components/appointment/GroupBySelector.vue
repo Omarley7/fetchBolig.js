@@ -2,7 +2,6 @@
 import type { GroupBy } from "~/composables/useGroupAppointments";
 
 const groupBy = defineModel<GroupBy>({ required: true });
-
 const options: { value: GroupBy; label: string }[] = [
   { value: "day", label: "pr. dag" },
   { value: "week", label: "pr. uge" },

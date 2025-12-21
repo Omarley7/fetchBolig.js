@@ -38,10 +38,10 @@ function toggleExpanded() {
     <BaseCollapse v-model:expanded="expanded">
       <ul>
         <AppointmentCard
-          v-for="appointment in appointments"
+          v-for="appointment in props.appointments"
           :key="appointment.id"
           :appointment="appointment"
-          :include-date="includeDate"
+          :include-date="props.includeDate"
         />
       </ul>
     </BaseCollapse>

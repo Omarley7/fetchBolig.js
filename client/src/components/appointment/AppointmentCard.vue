@@ -4,9 +4,10 @@ import { formatTimeSlot } from "~/lib/formatters";
 import BaseCard from "~/components/Base/BaseCard.vue";
 import FinancialsDisplay from "./FinancialsDisplay.vue";
 import { useToastStore } from "~/stores/toast";
+import { useAppointmentsStore } from "~/stores/appointments";
 
-const useMockData = import.meta.env.VITE_USE_MOCK_DATA === "true";
 const toast = useToastStore();
+const { imageBaseUrl } = useAppointmentsStore();
 
 const props = defineProps<{
   appointment: Appointment;
@@ -22,7 +23,7 @@ function handleMapClick() {
   <li class="mb-2">
     <BaseCard>
       <div class="flex flex-col gap-2">
-        <h3 class="text-xl font-semibold">{{ appointment.title }}</h3>
+        <h3 class="text-xl font-semibold">{{ props.appointment.title }}</h3>
         <div class="flex gap-4 items-center">
           <img
             src="https://unpkg.com/lucide-static@latest/icons/map.svg"
@@ -31,8 +32,8 @@ function handleMapClick() {
             @click="handleMapClick"
           />
           <div class="flex flex-col">
-            <p class="text-sm">{{ appointment.residence.adressLine1 }}</p>
-            <p class="text-sm">{{ appointment.residence.adressLine2 }}</p>
+            <p class="text-sm">{{ props.appointment.residence.adressLine1 }}</p>
+            <p class="text-sm">{{ props.appointment.residence.adressLine2 }}</p>
           </div>
         </div>
       </div>
@@ -41,12 +42,12 @@ function handleMapClick() {
         <img
           class="size-26 bg-gray-200 rounded-md mr-4 min-w-1/4 object-cover"
           alt="Property Thumbnail"
-          :src="useMockData ? appointment.imageUrl : `https://findbolig.nu${appointment.imageUrl}`"
+          :src="`${imageBaseUrl}${props.appointment.imageUrl}`"
         />
         <div class="w-full flex flex-col justify-between">
           <div class="w-full flex flex-row justify-between">
             <p class="text-lg">
-              Åbent hus: {{ formatTimeSlot(appointment, includeDate) }}
+              Åbent hus: {{ formatTimeSlot(props.appointment, props.includeDate) }}
             </p>
             <img
               src="https://unpkg.com/lucide-static@latest/icons/calendar.svg"
