@@ -38,5 +38,6 @@ export default {
     errors: {
         generic: "Der opstod en fejl",
         networkError: "Netværksfejl - prøv igen senere",
+        mapNotAvailable: "Kort ikke tilgængelig for: {address}",
     },
 };

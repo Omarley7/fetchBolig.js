@@ -5,9 +5,11 @@ import BaseCard from "~/components/Base/BaseCard.vue";
 import FinancialsDisplay from "./FinancialsDisplay.vue";
 import { useToastStore } from "~/stores/toast";
 import { useAppointmentsStore } from "~/stores/appointments";
+import { useI18n } from "vue-i18n";
 
 const toast = useToastStore();
 const { imageBaseUrl } = useAppointmentsStore();
+const { t } = useI18n();
 
 const props = defineProps<{
   appointment: Appointment;
@@ -15,7 +17,7 @@ const props = defineProps<{
 }>();
 
 function handleMapClick() {
-  toast.error(`Kort ikke tilgængelig for: ${props.appointment.residence.adressLine1}`);
+  toast.error(t("errors.mapNotAvailable", { address: props.appointment.residence.adressLine1 }));
 }
 </script>
 
