@@ -49,7 +49,7 @@ function handleMapClick() {
         <div class="w-full flex flex-col justify-between">
           <div class="w-full flex flex-row justify-between">
             <p class="text-lg">
-              Åbent hus: {{ formatTimeSlot(props.appointment, props.includeDate) }}
+              {{ t("appointments.openHouse") }}: {{ formatTimeSlot(props.appointment, props.includeDate) }}
             </p>
             <img
               src="https://unpkg.com/lucide-static@latest/icons/calendar.svg"
