@@ -40,10 +40,9 @@ const includeDate = computed(() => groupBy.value !== "day");
       v-show="!appointments.length"
       class="w-full flex flex-col p-2 mt-4 text-2xl italic items-center"
     >
-      <p v-show="isLoading">Indlæser kommende aftaler...</p>
+      <p v-show="isLoading">{{ $t('appointments.loading') }}</p>
       <p v-show="!isLoading">
-        Ingen aftaler fundet, benyt venligst findbolig.nu til at søge efter
-        boliger...
+        {{ $t('appointments.noAppointments') }}
       </p>
     </div>
   </div>
