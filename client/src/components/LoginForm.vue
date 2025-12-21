@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useAuth } from "~/composables/useAuth";
+import { useI18n } from "vue-i18n";
 
 const auth = useAuth();
+const { t } = useI18n();
 
 async function handleLogin() {
   await auth.login(auth.email, auth.password);
@@ -27,7 +29,7 @@ async function handleLogin() {
       />
     </div>
     <button type="submit" :disabled="auth.isLoading" class="disabled:opacity-50">
-      {{ auth.isLoading ? "Logger ind..." : "Login" }}
+      {{ auth.isLoading ? t('auth.loggingIn') : t('common.login') }}
     </button>
 
     <span v-if="auth.error" class="text-red-500 text-sm">
@@ -36,7 +38,7 @@ async function handleLogin() {
   </form>
   <div v-else class="flex items-center justify-between gap-2">
     <button @click="auth.logout" :disabled="auth.isLoading" class="disabled:opacity-50">
-      {{ auth.isLoading ? "Logger ud..." : "Logout" }}
+      {{ auth.isLoading ? t('auth.loggingOut') : t('common.logout') }}
     </button>
   </div>
 </template>
