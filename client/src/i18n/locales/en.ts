@@ -32,6 +32,7 @@ export default {
     },
     auth: {
         loggingIn: "Logging in...",
+        loggingOut: "Logging out...",
         loginFailed: "Login failed",
     },
     errors: {
