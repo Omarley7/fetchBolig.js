@@ -1,5 +1,6 @@
 import type { Appointment } from "@/types";
 import { computed, type Ref } from "vue";
+import { useI18n } from "~/i18n";
 import { formatDay, formatMonth, formatWeek, getISOWeekStart } from "~/lib/dateHelper";
 
 export type GroupBy = "day" | "week" | "month";
@@ -60,9 +61,11 @@ export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: 
     }
   });
 
+  const { t } = useI18n();
+
   function formatLabel(key: string): string {
     if (key === NO_DATE_KEY) {
-      return "No date";
+      return t("appointments.noDate");
     }
     switch (groupBy.value) {
       case "day":
