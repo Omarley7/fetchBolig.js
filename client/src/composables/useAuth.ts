@@ -27,7 +27,10 @@ export const useAuth = defineStore(
             return true;
           } else {
             // Login succeeded but no cookies received - this shouldn't happen
-            console.error("Login successful but no cookies received from server");
+            console.error(
+              "Login successful but no authentication cookies received from server. " +
+              "Please try logging in again or contact support if the issue persists."
+            );
             isAuthenticated.value = false;
             cookies.value = "";
             return false;
