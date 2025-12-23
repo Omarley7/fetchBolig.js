@@ -11,7 +11,8 @@ const STORAGE_KEY = "appointments_cache";
  * 3. Fallback to fetch fresh data and cache it
  */
 export async function getAppointments(
-  forceRefresh: boolean = false
+  forceRefresh: boolean = false,
+  cookies?: string
 ): Promise<AppointmentsPayload> {
   // Check cache first (unless force refresh)
   if (!forceRefresh) {
@@ -27,7 +28,7 @@ export async function getAppointments(
     }
   }
 
-  const payload = await fetchAppointments();
+  const payload = await fetchAppointments(cookies);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   return payload;
 }

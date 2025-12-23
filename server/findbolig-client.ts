@@ -1,7 +1,4 @@
 import "dotenv/config";
-import fetchCookie from "fetch-cookie";
-import { CookieJar } from "tough-cookie";
-import { fetch as undiciFetch } from "undici";
 
 import { mapAppointmentToDomain } from "~/lib/appointments-domain.js";
 import { apiResidenceToDomain } from "~/lib/residences-domain.js";
@@ -16,45 +13,57 @@ import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor.js"
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
-const jar = new CookieJar();
-const fetch = fetchCookie(undiciFetch, jar);
-
 const BASE_URL = "https://findbolig.nu";
 
 /**
  * Performs initial GET and login to establish authenticated session
+ * Returns the Set-Cookie headers if successful
  */
-export async function login(email: string, password: string): Promise<boolean> {
+export async function login(
+  email: string,
+  password: string
+): Promise<{ success: boolean; cookies?: string[] }> {
   try {
     // Initial GET to receive __Secure-SID cookie
-    await fetch(BASE_URL, { redirect: "follow" });
+    const initialRes = await fetch(BASE_URL, { redirect: "follow" });
+    const initialCookies = initialRes.headers.getSetCookie();
 
-    // Perform login
+    // Perform login with initial cookies
+    const cookieHeader = initialCookies.join("; ");
     const res = await fetch(`${BASE_URL}/api/authentication/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        ...(cookieHeader && { Cookie: cookieHeader }),
       },
       body: JSON.stringify({ email, password }),
     });
 
-    return res.ok;
+    if (res.ok) {
+      // Combine cookies from both requests
+      const loginCookies = res.headers.getSetCookie();
+      const allCookies = [...initialCookies, ...loginCookies];
+      return { success: true, cookies: allCookies };
+    }
+
+    return { success: false };
   } catch (error) {
     console.error("Login failed:", error);
-    return false;
+    return { success: false };
   }
 }
 
 /**
  * Fetches offers from the API (requires prior authentication)
  */
-export async function fetchOffers(): Promise<ApiOffersPage> {
+export async function fetchOffers(cookies: string): Promise<ApiOffersPage> {
   const res = await fetch(`${BASE_URL}/api/search/offers`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      Cookie: cookies,
     },
     body: JSON.stringify({
       search: null,
@@ -76,12 +85,15 @@ export async function fetchOffers(): Promise<ApiOffersPage> {
 /**
  * Fetches message threads from the API (requires prior authentication)
  */
-export async function fetchThreads(): Promise<ApiMessageThreadsPage> {
+export async function fetchThreads(
+  cookies: string
+): Promise<ApiMessageThreadsPage> {
   const res = await fetch(`${BASE_URL}/api/communications/threads`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      Cookie: cookies,
     },
     body: JSON.stringify({
       page: 0,
@@ -102,7 +114,7 @@ export async function fetchThreads(): Promise<ApiMessageThreadsPage> {
  * @param offerId
  * @returns
  */
-export async function getPositionOnOffer(offerId: string) {
+export async function getPositionOnOffer(offerId: string, cookies: string) {
   const res = await fetch(
     `${BASE_URL}/api/search/waiting-lists/applicants/position-on-offer/${offerId}`,
     {
@@ -110,6 +122,7 @@ export async function getPositionOnOffer(offerId: string) {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Cookie: cookies,
       },
     }
   );
@@ -128,12 +141,13 @@ export async function getPositionOnOffer(offerId: string) {
  * @param residenceId
  * @returns
  */
-export async function getResidence(residenceId: string) {
+export async function getResidence(residenceId: string, cookies: string) {
   const res = await fetch(`${BASE_URL}/api/models/residence/${residenceId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      Cookie: cookies,
     },
   });
 
@@ -154,7 +168,8 @@ export async function getResidence(residenceId: string) {
  * @returns
  */
 export async function getThreadForOffer(
-  offerId: string
+  offerId: string,
+  cookies: string
 ): Promise<ApiMessageThreadFull> {
   const res = await fetch(
     `${BASE_URL}/api/communications/messages/thread/related-to/${offerId}`,
@@ -163,6 +178,7 @@ export async function getThreadForOffer(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        Cookie: cookies,
       },
     }
   );
@@ -180,9 +196,9 @@ export async function getThreadForOffer(
  * Fetches upcoming appointments
  * @returns
  */
-export async function getUpcomingAppointments() {
+export async function getUpcomingAppointments(cookies: string) {
   try {
-    const offers = await fetchOffers();
+    const offers = await fetchOffers(cookies);
     // So far it seems that the default state once you get the offer is either 'Finished' or 'Published'
     // there may be other state values used that represents same state
     const activeOffers = offers.results.filter(
@@ -194,8 +210,8 @@ export async function getUpcomingAppointments() {
         if (!offer.residenceId || !offer.id) {
           return null;
         }
-        const residence = await getResidence(offer.residenceId);
-        const thread = await getThreadForOffer(offer.id);
+        const residence = await getResidence(offer.residenceId, cookies);
+        const thread = await getThreadForOffer(offer.id, cookies);
         const details = await extractAppointmentDetailsWithLLM(thread);
         const domainAppointment = mapAppointmentToDomain({
           offer,
@@ -217,12 +233,13 @@ export async function getUpcomingAppointments() {
  * Fetches the user data
  * @returns
  */
-export async function getUserData() {
+export async function getUserData(cookies: string) {
   const res = await fetch(`${BASE_URL}/api/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
+      Cookie: cookies,
     },
   });
 
