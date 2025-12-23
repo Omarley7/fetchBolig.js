@@ -12,7 +12,7 @@ const STORAGE_KEY = "appointments_cache";
  */
 export async function getAppointments(
   forceRefresh: boolean = false,
-  cookies?: string
+  cookies: string
 ): Promise<AppointmentsPayload> {
   // Check cache first (unless force refresh)
   if (!forceRefresh) {
