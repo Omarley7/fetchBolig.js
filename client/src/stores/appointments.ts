@@ -14,10 +14,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     isLoading.value = true;
     try {
       const auth = useAuth();
-      const payload: AppointmentsPayload = await getAppointments(
-        false,
-        auth.cookies
-      );
+      const payload: AppointmentsPayload = await getAppointments(false, auth.cookies);
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
     } finally {
@@ -29,10 +26,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     isLoading.value = true;
     try {
       const auth = useAuth();
-      const payload: AppointmentsPayload = await getAppointments(
-        true,
-        auth.cookies
-      );
+      const payload: AppointmentsPayload = await getAppointments(true, auth.cookies);
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
     } finally {
