@@ -2,7 +2,7 @@ import type { Appointment, AppointmentsPayload } from "@/types";
 import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
 const domain = import.meta.env.VITE_BACKEND_DOMAIN ?? "http://localhost:3000";
 
-export async function fetchAppointments(cookies?: string): Promise<AppointmentsPayload> {
+export async function fetchAppointments(cookies: string): Promise<AppointmentsPayload> {
   if (import.meta.env.VITE_USE_MOCK_DATA === "true") {
     console.log("Using mock server data");
     await new Promise((resolve) => setTimeout(resolve, 800));
@@ -12,11 +12,8 @@ export async function fetchAppointments(cookies?: string): Promise<AppointmentsP
   try {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
+      "x-findbolig-cookies": cookies,
     };
-
-    if (cookies) {
-      headers["x-findbolig-cookies"] = cookies;
-    }
 
     const result = await fetch(`${domain}/api/appointments/upcoming`, {
       method: "GET",
