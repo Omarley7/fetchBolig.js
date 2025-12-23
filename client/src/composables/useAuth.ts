@@ -55,11 +55,16 @@ export const useAuth = defineStore(
      * Parse Set-Cookie headers into a cookie string suitable for Cookie header
      */
     function parseCookies(setCookieHeaders: string[]): string {
+      if (!setCookieHeaders || setCookieHeaders.length === 0) {
+        return "";
+      }
+      
       return setCookieHeaders
+        .filter((header) => typeof header === "string" && header.length > 0)
         .map((header) => {
           // Extract the cookie name=value pair (before the first semicolon)
           const match = header.match(/^([^;]+)/);
-          return match ? match[1] : "";
+          return match ? match[1].trim() : "";
         })
         .filter(Boolean)
         .join("; ");
