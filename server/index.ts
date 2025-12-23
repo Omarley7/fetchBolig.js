@@ -6,6 +6,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import * as findboligClient from "~/findbolig-client.js";
+import { requireAuth } from "~/lib/auth-helpers.js";
 
 const app = new Hono();
 
@@ -26,10 +27,9 @@ api.use("/*", cors(), logger(), prettyJSON());
 
 appointments.get("/upcoming", async (c) => {
   try {
-    const cookies = c.req.header("x-findbolig-cookies");
-    if (!cookies) {
-      return c.json({ error: "Authentication required" }, 401);
-    }
+    const cookies = requireAuth(c);
+    if (cookies instanceof Response) return cookies;
+    
     const appointments = await findboligClient.getUpcomingAppointments(cookies);
     return c.json(appointments);
   } catch (error) {
@@ -55,10 +55,9 @@ auth.post("/login", async (c) => {
 
 offers.get("/", async (c) => {
   try {
-    const cookies = c.req.header("x-findbolig-cookies");
-    if (!cookies) {
-      return c.json({ error: "Authentication required" }, 401);
-    }
+    const cookies = requireAuth(c);
+    if (cookies instanceof Response) return cookies;
+    
     const offers = await findboligClient.fetchOffers(cookies);
     return c.json(offers.results);
   } catch (error) {
@@ -69,10 +68,9 @@ offers.get("/", async (c) => {
 
 offers.get("/:offerId/position", async (c) => {
   try {
-    const cookies = c.req.header("x-findbolig-cookies");
-    if (!cookies) {
-      return c.json({ error: "Authentication required" }, 401);
-    }
+    const cookies = requireAuth(c);
+    if (cookies instanceof Response) return cookies;
+    
     const offerId = c.req.param("offerId");
     if (!offerId) {
       return c.json({ error: "Offer ID is required" }, 400);
@@ -87,10 +85,9 @@ offers.get("/:offerId/position", async (c) => {
 
 threads.get("/", async (c) => {
   try {
-    const cookies = c.req.header("x-findbolig-cookies");
-    if (!cookies) {
-      return c.json({ error: "Authentication required" }, 401);
-    }
+    const cookies = requireAuth(c);
+    if (cookies instanceof Response) return cookies;
+    
     const threads = await findboligClient.fetchThreads(cookies);
     return c.json(threads.results);
   } catch (error) {
@@ -101,10 +98,9 @@ threads.get("/", async (c) => {
 
 users.get("/me", async (c) => {
   try {
-    const cookies = c.req.header("x-findbolig-cookies");
-    if (!cookies) {
-      return c.json({ error: "Authentication required" }, 401);
-    }
+    const cookies = requireAuth(c);
+    if (cookies instanceof Response) return cookies;
+    
     const user = await findboligClient.getUserData(cookies);
     return c.json(user);
   } catch (error) {
@@ -115,10 +111,9 @@ users.get("/me", async (c) => {
 
 residences.get("/:residenceId", async (c) => {
   try {
-    const cookies = c.req.header("x-findbolig-cookies");
-    if (!cookies) {
-      return c.json({ error: "Authentication required" }, 401);
-    }
+    const cookies = requireAuth(c);
+    if (cookies instanceof Response) return cookies;
+    
     const residenceId = c.req.param("residenceId");
     const residence = await findboligClient.getResidence(residenceId, cookies);
     return c.json(residence);

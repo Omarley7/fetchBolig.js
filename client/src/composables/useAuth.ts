@@ -18,12 +18,20 @@ export const useAuth = defineStore(
 
       try {
         const result = await apiLogin(userEmail, userPassword);
-        if (result.success && result.cookies) {
-          isAuthenticated.value = true;
-          // Convert array of Set-Cookie headers to a single cookie string
-          cookies.value = parseCookies(result.cookies);
-          password.value = ""; // Clear password after successful login
-          return true;
+        if (result.success) {
+          if (result.cookies) {
+            isAuthenticated.value = true;
+            // Convert array of Set-Cookie headers to a single cookie string
+            cookies.value = parseCookies(result.cookies);
+            password.value = ""; // Clear password after successful login
+            return true;
+          } else {
+            // Login succeeded but no cookies received - this shouldn't happen
+            console.error("Login successful but no cookies received from server");
+            isAuthenticated.value = false;
+            cookies.value = "";
+            return false;
+          }
         } else {
           isAuthenticated.value = false;
           cookies.value = "";
