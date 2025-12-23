@@ -2,6 +2,7 @@ import type { Appointment, AppointmentsPayload } from "@/types";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getAppointments } from "~/data/appointments";
+import { useAuth } from "~/composables/useAuth";
 
 export const useAppointmentsStore = defineStore("appointments", () => {
   const appointments = ref<Appointment[]>([]);
@@ -12,7 +13,11 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   async function init() {
     isLoading.value = true;
     try {
-      const payload: AppointmentsPayload = await getAppointments(false);
+      const auth = useAuth();
+      const payload: AppointmentsPayload = await getAppointments(
+        false,
+        auth.cookies
+      );
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
     } finally {
@@ -23,7 +28,11 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   async function refresh() {
     isLoading.value = true;
     try {
-      const payload: AppointmentsPayload = await getAppointments(true);
+      const auth = useAuth();
+      const payload: AppointmentsPayload = await getAppointments(
+        true,
+        auth.cookies
+      );
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
     } finally {

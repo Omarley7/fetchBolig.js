@@ -26,7 +26,11 @@ api.use("/*", cors(), logger(), prettyJSON());
 
 appointments.get("/upcoming", async (c) => {
   try {
-    const appointments = await findboligClient.getUpcomingAppointments();
+    const cookies = c.req.header("x-findbolig-cookies");
+    if (!cookies) {
+      return c.json({ error: "Authentication required" }, 401);
+    }
+    const appointments = await findboligClient.getUpcomingAppointments(cookies);
     return c.json(appointments);
   } catch (error) {
     console.error(error);
@@ -41,8 +45,8 @@ auth.post("/login", async (c) => {
       return c.json({ error: "Email and password are required" }, 400);
     }
 
-    const success = await findboligClient.login(email, password);
-    return c.json({ success });
+    const result = await findboligClient.login(email, password);
+    return c.json(result);
   } catch (error) {
     console.error(error);
     return c.json({ error: "Internal server error" }, 500);
@@ -51,7 +55,11 @@ auth.post("/login", async (c) => {
 
 offers.get("/", async (c) => {
   try {
-    const offers = await findboligClient.fetchOffers();
+    const cookies = c.req.header("x-findbolig-cookies");
+    if (!cookies) {
+      return c.json({ error: "Authentication required" }, 401);
+    }
+    const offers = await findboligClient.fetchOffers(cookies);
     return c.json(offers.results);
   } catch (error) {
     console.error(error);
@@ -61,11 +69,15 @@ offers.get("/", async (c) => {
 
 offers.get("/:offerId/position", async (c) => {
   try {
+    const cookies = c.req.header("x-findbolig-cookies");
+    if (!cookies) {
+      return c.json({ error: "Authentication required" }, 401);
+    }
     const offerId = c.req.param("offerId");
     if (!offerId) {
       return c.json({ error: "Offer ID is required" }, 400);
     }
-    const position = await findboligClient.getPositionOnOffer(offerId);
+    const position = await findboligClient.getPositionOnOffer(offerId, cookies);
     return c.json(position);
   } catch (error) {
     console.error(error);
@@ -75,7 +87,11 @@ offers.get("/:offerId/position", async (c) => {
 
 threads.get("/", async (c) => {
   try {
-    const threads = await findboligClient.fetchThreads();
+    const cookies = c.req.header("x-findbolig-cookies");
+    if (!cookies) {
+      return c.json({ error: "Authentication required" }, 401);
+    }
+    const threads = await findboligClient.fetchThreads(cookies);
     return c.json(threads.results);
   } catch (error) {
     console.error(error);
@@ -85,7 +101,11 @@ threads.get("/", async (c) => {
 
 users.get("/me", async (c) => {
   try {
-    const user = await findboligClient.getUserData();
+    const cookies = c.req.header("x-findbolig-cookies");
+    if (!cookies) {
+      return c.json({ error: "Authentication required" }, 401);
+    }
+    const user = await findboligClient.getUserData(cookies);
     return c.json(user);
   } catch (error) {
     console.error(error);
@@ -95,8 +115,12 @@ users.get("/me", async (c) => {
 
 residences.get("/:residenceId", async (c) => {
   try {
+    const cookies = c.req.header("x-findbolig-cookies");
+    if (!cookies) {
+      return c.json({ error: "Authentication required" }, 401);
+    }
     const residenceId = c.req.param("residenceId");
-    const residence = await findboligClient.getResidence(residenceId);
+    const residence = await findboligClient.getResidence(residenceId, cookies);
     return c.json(residence);
   } catch (error) {
     console.error(error);
