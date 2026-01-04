@@ -3,12 +3,13 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getAppointments } from "~/data/appointments";
 import { useAuth } from "~/composables/useAuth";
+import config from "~/config";
 
 export const useAppointmentsStore = defineStore("appointments", () => {
   const appointments = ref<Appointment[]>([]);
   const updatedAt = ref<Date | null>(null);
   const isLoading = ref(false);
-  const imageBaseUrl = import.meta.env.VITE_IMAGE_BASE_URL ?? "";
+  const imageBaseUrl = config.imageBaseUrl;
 
   async function init() {
     isLoading.value = true;
