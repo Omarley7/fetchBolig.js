@@ -17,6 +17,7 @@
     "dotenv": "^17.2.3",
     "hono": "^4.10.7",
     "openai": "^6.10.0",
+    "tsx": "^4.21.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
@@ -24,7 +25,6 @@
     "concurrently": "^9.2.1",
     "esbuild": "^0.27.1",
     "tailwindcss": "^4.1.17",
-    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
