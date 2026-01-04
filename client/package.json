@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf ./dist/ ./node_modules/"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",
-    "@types/node": "^25.0.2",
+    "@types/node": "^25.0.3",
     "@types/tailwindcss": "^3.0.11",
     "@vitejs/plugin-vue": "^6.0.0",
     "tailwindcss": "^4.1.18",
