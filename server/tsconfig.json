@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig to read more about this file */
-    "module": "nodenext",
+    "module": "esnext",
     "strict": true,
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "target": "esnext",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "./dist",
+    "noEmit": true,
     "paths": {
-      "~/*": ["./*"],
-      "@/shared/*": ["../shared/*"],
+      "~/*": ["./src/*"],
+      "@/*": ["../shared/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

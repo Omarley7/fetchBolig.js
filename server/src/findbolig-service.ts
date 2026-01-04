@@ -1,14 +1,14 @@
 import "dotenv/config";
 
-import { mapAppointmentToDomain } from "~/lib/appointments-domain.js";
-import { apiResidenceToDomain } from "~/lib/residences-domain.js";
-import type { ApiOffersPage } from "~/types/offers.js";
-import type { ApiResidence } from "~/types/residences.js";
+import { mapAppointmentToDomain } from "~/lib/appointments-domain";
+import { apiResidenceToDomain } from "~/lib/residences-domain";
+import type { ApiOffersPage } from "~/types/offers";
+import type { ApiResidence } from "~/types/residences";
 import type {
   ApiMessageThreadFull,
   ApiMessageThreadsPage,
-} from "~/types/threads.js";
-import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor.js";
+} from "~/types/threads";
+import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
 
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
