@@ -4,12 +4,18 @@ import path from "node:path";
 import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig(({ mode }) => {
-  console.log(path.resolve(__dirname, "../."));
-  console.log("/home/omar/fetchBolig.js");
+  const fs = require("fs");
+
+  const parentDir = path.resolve(__dirname, "../.");
+  const files = fs.readdirSync(parentDir);
+  console.log(`Files in ${parentDir}:`, files);
+
+  const currentDirFiles = fs.readdirSync(__dirname);
+  console.log(`Files in ${__dirname}:`, currentDirFiles);
 
   return {
     plugins: [vue(), tailwindcss()],
-    envDir: path.resolve(__dirname, "../."), // <- repo root
+    envDir: "..", // <- repo root
     resolve: {
       alias: {
         "~": path.resolve(__dirname, "src"),
