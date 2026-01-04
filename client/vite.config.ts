@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => {
   const currentDirFiles = fs.readdirSync(__dirname);
   console.log(`Files in ${__dirname}:`, currentDirFiles);
 
+  console.log(process.env);
+
   return {
     plugins: [vue(), tailwindcss()],
     envDir: "..", // <- repo root
