@@ -9,7 +9,8 @@ export default defineConfig({
     rollupOptions: {
       input: "src/index.ts",
       output: {
-        entryFileNames: "index",
+        format: "esm",
+        entryFileNames: "index.js",
       },
     },
   },
