@@ -2,10 +2,9 @@ import tailwindcss from "@tailwindcss/vite";
 import vue from "@vitejs/plugin-vue";
 import path from "node:path";
 import { defineConfig, loadEnv } from "vite";
+import fs from "fs";
 
 export default defineConfig(({ mode }) => {
-  const fs = require("fs");
-
   const parentDir = path.resolve(__dirname, "../.");
   const files = fs.readdirSync(parentDir);
   console.log(`Files in ${parentDir}:`, files);
