@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
-  envDir: path.resolve(__dirname, ".."),
+  envDir: path.resolve(__dirname, "../server"),
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),
