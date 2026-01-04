@@ -1,4 +1,4 @@
-import type { ApiResidence, Residence } from "~/types/residences.js";
+import type { ApiResidence, Residence } from "~/types/residences";
 
 export function apiResidenceToDomain(apiResidence: ApiResidence): Residence {
   return {

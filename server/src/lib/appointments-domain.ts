@@ -1,8 +1,8 @@
-import type { Appointment } from "@/shared/types.js";
+import type { Appointment } from "@/types";
 
-import type { AppointmentDetails } from "~/lib/llm/openai-extractor.js";
-import type { ApiOffer } from "~/types/offers.js";
-import type { Residence } from "~/types/residences.js";
+import type { AppointmentDetails } from "~/lib/llm/openai-extractor";
+import type { ApiOffer } from "~/types/offers";
+import type { Residence } from "~/types/residences";
 
 export function mapAppointmentToDomain({
   offer,
