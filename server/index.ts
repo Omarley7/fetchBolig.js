@@ -5,7 +5,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
-import * as findboligClient from "~/findbolig-client.js";
+import * as findboligService from "~/findbolig-service.js";
 import { requireAuth } from "~/lib/auth-helpers.js";
 
 const app = new Hono();
@@ -29,8 +29,10 @@ appointments.get("/upcoming", async (c) => {
   try {
     const cookies = requireAuth(c);
     if (cookies instanceof Response) return cookies;
-    
-    const appointments = await findboligClient.getUpcomingAppointments(cookies);
+
+    const appointments = await findboligService.getUpcomingAppointments(
+      cookies
+    );
     return c.json(appointments);
   } catch (error) {
     console.error(error);
@@ -45,7 +47,7 @@ auth.post("/login", async (c) => {
       return c.json({ error: "Email and password are required" }, 400);
     }
 
-    const result = await findboligClient.login(email, password);
+    const result = await findboligService.login(email, password);
     return c.json(result);
   } catch (error) {
     console.error(error);
@@ -57,8 +59,8 @@ offers.get("/", async (c) => {
   try {
     const cookies = requireAuth(c);
     if (cookies instanceof Response) return cookies;
-    
-    const offers = await findboligClient.fetchOffers(cookies);
+
+    const offers = await findboligService.fetchOffers(cookies);
     return c.json(offers.results);
   } catch (error) {
     console.error(error);
@@ -70,12 +72,15 @@ offers.get("/:offerId/position", async (c) => {
   try {
     const cookies = requireAuth(c);
     if (cookies instanceof Response) return cookies;
-    
+
     const offerId = c.req.param("offerId");
     if (!offerId) {
       return c.json({ error: "Offer ID is required" }, 400);
     }
-    const position = await findboligClient.getPositionOnOffer(offerId, cookies);
+    const position = await findboligService.getPositionOnOffer(
+      offerId,
+      cookies
+    );
     return c.json(position);
   } catch (error) {
     console.error(error);
@@ -87,8 +92,8 @@ threads.get("/", async (c) => {
   try {
     const cookies = requireAuth(c);
     if (cookies instanceof Response) return cookies;
-    
-    const threads = await findboligClient.fetchThreads(cookies);
+
+    const threads = await findboligService.fetchThreads(cookies);
     return c.json(threads.results);
   } catch (error) {
     console.error(error);
@@ -100,8 +105,8 @@ users.get("/me", async (c) => {
   try {
     const cookies = requireAuth(c);
     if (cookies instanceof Response) return cookies;
-    
-    const user = await findboligClient.getUserData(cookies);
+
+    const user = await findboligService.getUserData(cookies);
     return c.json(user);
   } catch (error) {
     console.error(error);
@@ -113,9 +118,9 @@ residences.get("/:residenceId", async (c) => {
   try {
     const cookies = requireAuth(c);
     if (cookies instanceof Response) return cookies;
-    
+
     const residenceId = c.req.param("residenceId");
-    const residence = await findboligClient.getResidence(residenceId, cookies);
+    const residence = await findboligService.getResidence(residenceId, cookies);
     return c.json(residence);
   } catch (error) {
     console.error(error);
