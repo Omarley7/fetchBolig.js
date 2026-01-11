@@ -27,12 +27,13 @@ const includeDate = computed(() => groupBy.value !== "day");
 
     <ul class="w-full">
       <AppointmentGroup
-        v-for="[groupKey, group] in groupedAppointments"
+        v-for="([groupKey, group], index) in groupedAppointments"
         :key="groupKey"
         :group-key="groupKey"
         :label="formatLabel(groupKey)"
         :appointments="group"
         :include-date="includeDate"
+        :is-first="index === 0"
       />
     </ul>
 

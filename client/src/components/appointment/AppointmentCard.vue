@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Appointment } from "@/types";
 import { formatTimeSlot } from "~/lib/formatters";
+import { exportToCalendar } from "~/lib/calendarHelper";
 import BaseCard from "~/components/Base/BaseCard.vue";
 import FinancialsDisplay from "./FinancialsDisplay.vue";
 import { useToastStore } from "~/stores/toast";
@@ -17,7 +18,16 @@ const props = defineProps<{
 }>();
 
 function handleMapClick() {
-  toast.error(t("errors.mapNotAvailable", { address: props.appointment.residence.adressLine1 }));
+  const address = `${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  window.open(mapsUrl, '_blank');
+}
+
+function handleCalendarClick() {
+  const success = exportToCalendar(props.appointment);
+  if (!success) {
+    toast.error(t("errors.calendarNotAvailable"));
+  }
 }
 </script>
 
@@ -54,7 +64,8 @@ function handleMapClick() {
             <img
               src="https://unpkg.com/lucide-static@latest/icons/calendar.svg"
               alt="calendar"
-              class="size-7 invert opacity-70"
+              class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity"
+              @click="handleCalendarClick"
             />
           </div>
 
