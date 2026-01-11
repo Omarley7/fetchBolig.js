@@ -9,9 +9,10 @@ const props = defineProps<{
   label: string;
   appointments: Appointment[];
   includeDate?: boolean;
+  isFirst?: boolean;
 }>();
 
-const expanded = ref(true);
+const expanded = ref(props.isFirst ?? false);
 
 function toggleExpanded() {
   expanded.value = !expanded.value;
