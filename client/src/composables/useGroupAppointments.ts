@@ -51,14 +51,40 @@ function getAppointmentsByMonth(appointments: Appointment[]): GroupedAppointment
 export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: Ref<GroupBy>) {
   const groupedAppointments = computed<GroupedAppointments>(() => {
     const appts = appointments.value;
+    let groups: GroupedAppointments;
     switch (groupBy.value) {
       case "day":
-        return getAppointmentsByDay(appts);
+        groups = getAppointmentsByDay(appts);
+        break;
       case "week":
-        return getAppointmentsByWeek(appts);
+        groups = getAppointmentsByWeek(appts);
+        break;
       case "month":
-        return getAppointmentsByMonth(appts);
+        groups = getAppointmentsByMonth(appts);
+        break;
     }
+
+    // Sort groups by date, with non-parseable dates last
+    return groups.sort(([keyA], [keyB]) => {
+      // Check if keys are the special NO_DATE_KEY
+      if (keyA === NO_DATE_KEY) return 1;
+      if (keyB === NO_DATE_KEY) return -1;
+
+      // Try to parse as dates
+      const dateA = new Date(keyA);
+      const dateB = new Date(keyB);
+
+      const isValidA = !isNaN(dateA.getTime());
+      const isValidB = !isNaN(dateB.getTime());
+
+      // Put invalid dates at the end
+      if (!isValidA && isValidB) return 1;
+      if (isValidA && !isValidB) return -1;
+      if (!isValidA && !isValidB) return 0;
+
+      // Both valid, sort chronologically (newest first)
+      return dateB.getTime() - dateA.getTime();
+    });
   });
 
   const { t } = useI18n();
