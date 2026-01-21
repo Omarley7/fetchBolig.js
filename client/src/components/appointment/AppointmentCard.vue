@@ -42,7 +42,7 @@ function handleMapClick() {
         <img class="size-26 bg-gray-200 rounded-md mr-4 min-w-1/4 object-cover" alt="Property Thumbnail"
           :src="`${imageBaseUrl}${props.appointment.imageUrl}`" />
         <div class="w-full flex flex-col justify-between">
-          <div class="w-full flex flex-row justify-between">
+          <div class="w-full flex flex-wrap justify-between gap-2">
             <p class="text-lg">
               {{ t("appointments.openHouse") }}:
               {{ formatTimeSlot(props.appointment, props.includeDate) }}
