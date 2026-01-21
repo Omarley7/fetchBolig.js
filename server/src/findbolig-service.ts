@@ -206,7 +206,7 @@ export async function getUpcomingAppointments(cookies: string) {
     );
 
     const offersWithResidenceAndThread = await Promise.all(
-      activeOffers.map(async (offer) => {
+      offers.results.map(async (offer) => {
         if (!offer.residenceId || !offer.id) {
           return null;
         }
