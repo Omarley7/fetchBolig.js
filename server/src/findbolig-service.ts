@@ -21,7 +21,7 @@ const BASE_URL = "https://findbolig.nu";
  */
 export async function login(
   email: string,
-  password: string
+  password: string,
 ): Promise<{ success: boolean; cookies?: string[] }> {
   try {
     // Initial GET to receive __Secure-SID cookie
@@ -86,7 +86,7 @@ export async function fetchOffers(cookies: string): Promise<ApiOffersPage> {
  * Fetches message threads from the API (requires prior authentication)
  */
 export async function fetchThreads(
-  cookies: string
+  cookies: string,
 ): Promise<ApiMessageThreadsPage> {
   const res = await fetch(`${BASE_URL}/api/communications/threads`, {
     method: "POST",
@@ -124,12 +124,12 @@ export async function getPositionOnOffer(offerId: string, cookies: string) {
         Accept: "application/json",
         Cookie: cookies,
       },
-    }
+    },
   );
 
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch position on offer: ${res.status}: ${res.statusText}`
+      `Failed to fetch position on offer: ${res.status}: ${res.statusText}`,
     );
   }
 
@@ -153,7 +153,7 @@ export async function getResidence(residenceId: string, cookies: string) {
 
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch residence: ${res.status}: ${res.statusText}`
+      `Failed to fetch residence: ${res.status}: ${res.statusText}`,
     );
   }
   const data = await res.json();
@@ -169,7 +169,7 @@ export async function getResidence(residenceId: string, cookies: string) {
  */
 export async function getThreadForOffer(
   offerId: string,
-  cookies: string
+  cookies: string,
 ): Promise<ApiMessageThreadFull> {
   const res = await fetch(
     `${BASE_URL}/api/communications/messages/thread/related-to/${offerId}`,
@@ -180,12 +180,12 @@ export async function getThreadForOffer(
         Accept: "application/json",
         Cookie: cookies,
       },
-    }
+    },
   );
 
   if (!res.ok) {
     throw new Error(
-      `Failed to fetch thread for offer: ${res.status}: ${res.statusText}`
+      `Failed to fetch thread for offer: ${res.status}: ${res.statusText}`,
     );
   }
 
@@ -226,7 +226,7 @@ export async function getUpcomingAppointments(
           details,
         });
         return domainAppointment;
-      })
+      }),
     );
 
     return offersWithResidenceAndThread;

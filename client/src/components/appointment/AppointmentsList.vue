@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { useAppointmentsStore } from "~/stores/appointments";
 import {
   useGroupAppointments,
   type GroupBy,
 } from "~/composables/useGroupAppointments";
 import GroupBySelector from "~/components/appointment/GroupBySelector.vue";
 import AppointmentGroup from "~/components/appointment/AppointmentGroup.vue";
+import FetchOption from './FetchOption.vue'
+import { useAppointmentsStore } from "~/stores/appointments";
 
 const store = useAppointmentsStore();
 const { appointments, isLoading } = storeToRefs(store);
@@ -23,18 +24,9 @@ const includeDate = computed(() => groupBy.value !== "day");
 
 <template>
   <div>
-    <div class="flex flex-wrap gap-2 justify-between items-center mb-4">
+    <div class="flex flex-col gap-2 justify-between items-center mb-4">
       <GroupBySelector v-model="groupBy" />
-      <div class="grow self-end mb-2">
-        <button @click="store.toggleShowAllOffers()" :disabled="store.isLoading"
-          class="px-4 py-2 rounded-md text-sm font-medium transition-colors" :class="{
-            'bg-blue-600 text-white hover:bg-blue-700': store.showAllOffers,
-            'bg-gray-200 text-gray-700 hover:bg-gray-300': !store.showAllOffers,
-            'opacity-50 cursor-not-allowed': store.isLoading
-          }">
-          {{ store.showAllOffers ? 'Alle' : 'Aktive' }}
-        </button>
-      </div>
+      <FetchOption />
     </div>
 
     <ul class="w-full">

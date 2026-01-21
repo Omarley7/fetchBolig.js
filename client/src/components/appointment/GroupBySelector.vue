@@ -12,7 +12,7 @@ const options: { value: GroupBy; label: string }[] = [
 </script>
 
 <template>
-  <div class="border border-zinc-500 rounded-md bg-white/2">
+  <div class="border border-zinc-500 rounded-md bg-white/2 p-2">
     {{ $t('common.groupBy') }}
     <div class="w-full flex flex-row items-center">
       <button v-for="option in options" :key="option.value" type="button" class="m-2 rounded-2xl" :class="{
