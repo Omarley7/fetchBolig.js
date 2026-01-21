@@ -50,7 +50,7 @@ function handleMapClick() {
             <add-to-calendar-button :name="props.appointment.title" options="'Apple','Google'"
               :location="`${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`"
               :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
-              :endTime="props.appointment.end" timeZone="Europe/Copenhagen"></add-to-calendar-button>
+              :endTime="props.appointment.end" timeZone="Europe/Copenhagen" listStyle="modal"></add-to-calendar-button>
           </div>
 
           <FinancialsDisplay :financials="appointment.financials" compact />

@@ -9,13 +9,18 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   const appointments = ref<Appointment[]>([]);
   const updatedAt = ref<Date | null>(null);
   const isLoading = ref(false);
+  const showAllOffers = ref(false);
   const imageBaseUrl = config.imageBaseUrl;
 
   async function init() {
     isLoading.value = true;
     try {
       const auth = useAuth();
-      const payload: AppointmentsPayload = await getAppointments(false, auth.cookies);
+      const payload: AppointmentsPayload = await getAppointments(
+        false,
+        auth.cookies,
+        showAllOffers.value,
+      );
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
     } finally {
@@ -27,7 +32,11 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     isLoading.value = true;
     try {
       const auth = useAuth();
-      const payload: AppointmentsPayload = await getAppointments(true, auth.cookies);
+      const payload: AppointmentsPayload = await getAppointments(
+        true,
+        auth.cookies,
+        showAllOffers.value,
+      );
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
     } finally {
@@ -35,12 +44,18 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     }
   }
 
+  function toggleShowAllOffers() {
+    showAllOffers.value = !showAllOffers.value;
+  }
+
   return {
     appointments,
     updatedAt,
     isLoading,
+    showAllOffers,
     init,
     refresh,
+    toggleShowAllOffers,
     imageBaseUrl,
   };
 });

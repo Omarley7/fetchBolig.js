@@ -12,7 +12,8 @@ const STORAGE_KEY = "appointments_cache";
  */
 export async function getAppointments(
   forceRefresh: boolean = false,
-  cookies: string
+  cookies: string,
+  includeAll: boolean = false,
 ): Promise<AppointmentsPayload> {
   // Check cache first (unless force refresh)
   if (!forceRefresh) {
@@ -28,7 +29,7 @@ export async function getAppointments(
     }
   }
 
-  const payload = await fetchAppointments(cookies);
+  const payload = await fetchAppointments(cookies, includeAll);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   return payload;
 }

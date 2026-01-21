@@ -2,7 +2,7 @@ import type { Appointment, AppointmentsPayload } from "@/types";
 import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
 import config from "~/config";
 
-export async function fetchAppointments(cookies: string): Promise<AppointmentsPayload> {
+export async function fetchAppointments(cookies: string, includeAll: boolean = false): Promise<AppointmentsPayload> {
   if (config.useMockData) {
     console.log("Using mock server data");
     await new Promise((resolve) => setTimeout(resolve, 800));
@@ -15,7 +15,8 @@ export async function fetchAppointments(cookies: string): Promise<AppointmentsPa
       "x-findbolig-cookies": cookies,
     };
 
-    const result = await fetch(`${config.backendDomain}/api/appointments/upcoming`, {
+    const queryParam = includeAll ? "?includeAll=true" : "";
+    const result = await fetch(`${config.backendDomain}/api/appointments/upcoming${queryParam}`, {
       method: "GET",
       headers,
     });

@@ -12,22 +12,13 @@ const options: { value: GroupBy; label: string }[] = [
 </script>
 
 <template>
-  <div>
+  <div class="border border-zinc-500 rounded-md bg-white/2">
     {{ $t('common.groupBy') }}
     <div class="w-full flex flex-row items-center">
-      <button
-        v-for="option in options"
-        :key="option.value"
-        type="button"
-        class="m-2 rounded-2xl"
-        :class="{
-          'bg-white/10 border border-zinc-200! opacity-60 cursor-not-allowed':
-            groupBy === option.value,
-        }"
-        :disabled="groupBy === option.value"
-        :aria-pressed="groupBy === option.value"
-        @click="groupBy = option.value"
-      >
+      <button v-for="option in options" :key="option.value" type="button" class="m-2 rounded-2xl" :class="{
+        'bg-white/10 border border-zinc-200! opacity-60 cursor-not-allowed':
+          groupBy === option.value,
+      }" :disabled="groupBy === option.value" :aria-pressed="groupBy === option.value" @click="groupBy = option.value">
         {{ option.label }}
       </button>
     </div>

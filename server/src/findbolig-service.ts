@@ -194,19 +194,26 @@ export async function getThreadForOffer(
 
 /**
  * Fetches upcoming appointments
+ * @param includeAll - If true, fetches all offers; if false, only fetches active offers (Finished/Published)
  * @returns
  */
-export async function getUpcomingAppointments(cookies: string) {
+export async function getUpcomingAppointments(
+  cookies: string,
+  includeAll: boolean = false,
+) {
   try {
-    const offers = await fetchOffers(cookies);
+    let offers = (await fetchOffers(cookies)).results;
     // So far it seems that the default state once you get the offer is either 'Finished' or 'Published'
     // there may be other state values used that represents same state
-    const activeOffers = offers.results.filter(
-      (offer) => offer.state === "Finished" || offer.state === "Published"
-    );
+
+    if (!includeAll) {
+      offers = offers.filter(
+        (offer) => offer.state === "Finished" || offer.state === "Published",
+      );
+    }
 
     const offersWithResidenceAndThread = await Promise.all(
-      offers.results.map(async (offer) => {
+      offers.map(async (offer) => {
         if (!offer.residenceId || !offer.id) {
           return null;
         }

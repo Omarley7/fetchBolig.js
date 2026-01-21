@@ -30,8 +30,10 @@ appointments.get("/upcoming", async (c) => {
     const cookies = requireAuth(c);
     if (cookies instanceof Response) return cookies;
 
+    const includeAll = c.req.query("includeAll") === "true";
     const appointments = await findboligService.getUpcomingAppointments(
-      cookies
+      cookies,
+      includeAll
     );
     return c.json(appointments);
   } catch (error) {
