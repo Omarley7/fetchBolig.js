@@ -1,5 +1,6 @@
 export default {
   common: {
+    appTitle: "Open House",
     loading: "Loading...",
     login: "Login",
     logout: "Logout",

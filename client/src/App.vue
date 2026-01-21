@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-2">
+  <div class="w-full flex flex-col gap-2 p-4 pt-2">
     <AppHeader />
     <AppointmentsList />
   </div>

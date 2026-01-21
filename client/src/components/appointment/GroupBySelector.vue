@@ -1,14 +1,15 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { GroupBy } from "~/composables/useGroupAppointments";
 
 const { t } = useI18n();
 const groupBy = defineModel<GroupBy>({ required: true });
-const options: { value: GroupBy; label: string }[] = [
-  { value: "day", label: t("common.perDay") },
-  { value: "week", label: t("common.perWeek") },
-  { value: "month", label: t("common.perMonth") },
-];
+const options = computed(() => [
+  { value: "day" as GroupBy, label: t("common.perDay") },
+  { value: "week" as GroupBy, label: t("common.perWeek") },
+  { value: "month" as GroupBy, label: t("common.perMonth") },
+]);
 </script>
 
 <template>

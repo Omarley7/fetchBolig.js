@@ -1,5 +1,6 @@
 export default {
   common: {
+    appTitle: "Åbent hus",
     loading: "Indlæser...",
     login: "Login",
     logout: "Log ud",
