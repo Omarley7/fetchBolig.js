@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getAppointments } from "~/data/appointments";
 import { useAuth } from "~/composables/useAuth";
+import { useToastStore } from "~/stores/toast";
 import config from "~/config";
 
 export const useAppointmentsStore = defineStore("appointments", () => {
@@ -23,6 +24,9 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       );
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
+    } catch (error) {
+      const toast = useToastStore();
+      toast.error(error instanceof Error ? error.message : "Failed to load appointments");
     } finally {
       isLoading.value = false;
     }
@@ -39,6 +43,9 @@ export const useAppointmentsStore = defineStore("appointments", () => {
       );
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
+    } catch (error) {
+      const toast = useToastStore();
+      toast.error(error instanceof Error ? error.message : "Failed to refresh appointments");
     } finally {
       isLoading.value = false;
     }

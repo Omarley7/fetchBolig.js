@@ -1,5 +1,6 @@
 import type { AppointmentsPayload } from "@/types";
 import { deserializeAppointmentsPayload } from "~/lib/serialization";
+import { useToastStore } from "~/stores/toast";
 import { fetchAppointments } from "./appointmentsSource";
 
 const STORAGE_KEY = "appointments_cache";
@@ -23,7 +24,8 @@ export async function getAppointments(
         const parsed = JSON.parse(cached);
         return deserializeAppointmentsPayload(parsed);
       } catch (error) {
-        console.error("Failed to parse cached appointments:", error);
+        const toast = useToastStore();
+        toast.warning("Failed to load cached data, fetching fresh data...");
         // Continue to fallback
       }
     }

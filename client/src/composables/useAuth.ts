@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { login as apiLogin } from "~/data/appointmentsSource";
+import { useToastStore } from "~/stores/toast";
 
 export const useAuth = defineStore(
   "auth",
@@ -27,10 +28,8 @@ export const useAuth = defineStore(
             return true;
           } else {
             // Login succeeded but no cookies received - this shouldn't happen
-            console.error(
-              "Login successful but no authentication cookies received from server. " +
-              "Please try logging in again or contact support if the issue persists."
-            );
+            const toast = useToastStore();
+            toast.error("Login successful but no authentication cookies received. Please try again.");
             isAuthenticated.value = false;
             cookies.value = "";
             return false;
@@ -41,8 +40,10 @@ export const useAuth = defineStore(
           return false;
         }
       } catch (err) {
-        console.error("Failed to login:", err);
-        error.value = err instanceof Error ? err.message : "Login failed";
+        const toast = useToastStore();
+        const errorMessage = err instanceof Error ? err.message : "Login failed";
+        toast.error(errorMessage);
+        error.value = errorMessage;
         isAuthenticated.value = false;
         cookies.value = "";
         return false;
@@ -69,7 +70,7 @@ export const useAuth = defineStore(
       if (!setCookieHeaders || setCookieHeaders.length === 0) {
         return "";
       }
-      
+
       return setCookieHeaders
         .filter((header) => typeof header === "string" && header.length > 0)
         .map((header) => {
@@ -97,5 +98,5 @@ export const useAuth = defineStore(
     persist: {
       paths: ["email", "isAuthenticated", "cookies"],
     },
-  }
+  },
 );
