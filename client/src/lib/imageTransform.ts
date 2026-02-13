@@ -4,7 +4,7 @@ interface ImageParams {
     w: number;
     h: number;
     fit: string;
-    q: number;
+    q?: number;
     output: string;
 }
 
@@ -29,14 +29,17 @@ const wsrvAdapter: ImageAdapter = {
     name: "wsrv",
     supports: () => true, // universal fallback
     transform(url, params) {
-        const qs = new URLSearchParams({
+        const qsObj: Record<string, string> = {
             url,
             w: String(params.w),
             h: String(params.h),
             fit: params.fit,
-            q: String(params.q),
             output: params.output,
-        });
+        };
+        if (params.q) {
+            qsObj.q = String(params.q);
+        }
+        const qs = new URLSearchParams(qsObj);
         return `https://wsrv.nl/?${qs.toString()}`;
     },
 };
@@ -62,10 +65,9 @@ function resolve(url: string, params: ImageParams): string {
 // ---------------------------------------------------------------------------
 
 const THUMBNAIL_PARAMS: ImageParams = {
-    w: 200,
-    h: 140,
+    w: 250,
+    h: 180,
     fit: "cover",
-    q: 60,
     output: "webp",
 };
 
@@ -77,4 +79,21 @@ const THUMBNAIL_PARAMS: ImageParams = {
  */
 export function thumbnail(url: string): string {
     return resolve(url, THUMBNAIL_PARAMS);
+}
+
+const GALLERY_PARAMS: ImageParams = {
+    w: 800,
+    h: 600,
+    fit: "cover",
+    q: 75,
+    output: "webp",
+};
+
+/**
+ * Return a gallery-sized, optimised version of the given image URL.
+ *
+ * Suitable for modal / lightbox views (800×600, cover-fit, q75, webp).
+ */
+export function galleryImage(url: string): string {
+    return resolve(url, GALLERY_PARAMS);
 }

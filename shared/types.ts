@@ -5,9 +5,11 @@ export type Appointment = {
   start: string | null; // Appointment start time
   end: string | null; // Appointment end time
   cancelled: boolean;
-  residence: Pick<Residence, "adressLine1" | "adressLine2">;
+  residence: Pick<Residence, "addressLine1" | "addressLine2">;
   financials: Financials;
   imageUrl: string;
+  images: string[];
+  blueprints: string[];
 };
 
 export type Financials = {
@@ -21,8 +23,8 @@ export type Financials = {
 
 export type Residence = {
   id: string; // DEAS-R-{address-with-dashes} -or- // DEAS-{residenceId}
-  adressLine1: string | null;
-  adressLine2: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
   location: string | null; // Latitude/Longitude
   blueprintUrl: string | null;
 };

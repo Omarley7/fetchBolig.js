@@ -41,4 +41,8 @@ export default {
     networkError: "Netværksfejl - prøv igen senere",
     mapNotAvailable: "Kort ikke tilgængelig for: {address}",
   },
+  gallery: {
+    photos: "Fotos",
+    blueprints: "Plantegninger",
+  },
 };

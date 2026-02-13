@@ -21,8 +21,8 @@ export function mapAppointmentToDomain({
     end: details.endTime,
     cancelled: details.cancelled,
     residence: {
-      adressLine1: residence.addressLine1,
-      adressLine2: residence.addressLine2,
+      addressLine1: residence.addressLine1,
+      addressLine2: residence.addressLine2,
     },
     financials: {
       monthlyRentIncludingAconto: residence.monthlyRentIncludingAconto,
@@ -33,5 +33,7 @@ export function mapAppointmentToDomain({
       firstPayment: residence.firstPayment,
     },
     imageUrl: residence.images[0] || "",
+    images: residence.images,
+    blueprints: residence.blueprints,
   };
 }

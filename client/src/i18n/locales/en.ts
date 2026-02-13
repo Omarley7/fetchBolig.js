@@ -41,4 +41,8 @@ export default {
     networkError: "Network error - please try again later",
     mapNotAvailable: "Map not available for: {address}",
   },
+  gallery: {
+    photos: "Photos",
+    blueprints: "Blueprints",
+  },
 };
