@@ -4,10 +4,16 @@ import path from "node:path";
 import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig({
-  compilerOptions: {
-    isCustomElement: (tag) => tag.includes("add-"),
-  },
-  plugins: [vue(), tailwindcss()],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.includes("add-"),
+        },
+      },
+    }),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),

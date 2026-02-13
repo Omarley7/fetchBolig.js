@@ -26,7 +26,7 @@ function openGallery() {
 }
 
 function handleMapClick() {
-  const address = `${props.appointment.residence.addressLine1}, ${props.appointment.residence.addressLine2}`;
+  const address = `${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`;
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
   window.open(mapsUrl, "_blank");
 }
@@ -42,8 +42,8 @@ function handleMapClick() {
             class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity"
             @click="handleMapClick" />
           <div class="flex flex-col">
-            <p class="text-sm">{{ props.appointment.residence.addressLine1 }}</p>
-            <p class="text-sm">{{ props.appointment.residence.addressLine2 }}</p>
+            <p class="text-sm">{{ props.appointment.residence.adressLine1 }}</p>
+            <p class="text-sm">{{ props.appointment.residence.adressLine2 }}</p>
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@ function handleMapClick() {
               {{ formatTimeSlot(props.appointment, props.includeDate) }}
             </p>
             <add-to-calendar-button :name="props.appointment.title" options="'Apple','Google'"
-              :location="`${props.appointment.residence.addressLine1}, ${props.appointment.residence.addressLine2}`"
+              :location="`${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`"
               :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
               :endTime="props.appointment.end" timeZone="Europe/Copenhagen" listStyle="modal"></add-to-calendar-button>
           </div>

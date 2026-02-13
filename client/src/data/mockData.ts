@@ -20,8 +20,8 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
     images: ["/600x400"],
     blueprints: [],
     residence: {
-      addressLine1: "Flinterenden 6,3 tv.",
-      addressLine2: "2300 København S",
+      adressLine1: "Flinterenden 6,3 tv.",
+      adressLine2: "2300 København S",
     },
   },
   {
@@ -43,8 +43,8 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
     images: ["/400x400"],
     blueprints: [],
     residence: {
-      addressLine1: "Flinterenden 6,2 th.",
-      addressLine2: "2300 København S",
+      adressLine1: "Flinterenden 6,2 th.",
+      adressLine2: "2300 København S",
     },
   },
   {
@@ -66,8 +66,8 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
     images: ["/400x600"],
     blueprints: [],
     residence: {
-      addressLine1: "Bondehavevej 9,1 mf.",
-      addressLine2: "2880 Gladsaxe",
+      adressLine1: "Bondehavevej 9,1 mf.",
+      adressLine2: "2880 Gladsaxe",
     },
   },
 ];

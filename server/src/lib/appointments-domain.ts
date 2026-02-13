@@ -21,8 +21,8 @@ export function mapAppointmentToDomain({
     end: details.endTime,
     cancelled: details.cancelled,
     residence: {
-      addressLine1: residence.addressLine1,
-      addressLine2: residence.addressLine2,
+      adressLine1: residence.addressLine1,
+      adressLine2: residence.addressLine2,
     },
     financials: {
       monthlyRentIncludingAconto: residence.monthlyRentIncludingAconto,

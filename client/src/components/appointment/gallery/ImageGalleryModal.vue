@@ -60,8 +60,14 @@ watch(
     }
 );
 
-onMounted(() => window.addEventListener("keydown", onKeydown));
-onUnmounted(() => window.removeEventListener("keydown", onKeydown));
+onMounted(() => {
+    window.addEventListener("keydown", onKeydown);
+    document.body.style.overflow = "hidden";
+});
+onUnmounted(() => {
+    window.removeEventListener("keydown", onKeydown);
+    document.body.style.overflow = "";
+});
 </script>
 
 <template>
@@ -91,12 +97,20 @@ onUnmounted(() => window.removeEventListener("keydown", onKeydown));
 
                 <!-- Image -->
                 <div class="relative flex items-center">
-                    <GalleryNav direction="prev" :disabled="currentIndex === 0" @click="prev" />
+                    <GalleryNav class="hidden sm:block" direction="prev" :disabled="currentIndex === 0" @click="prev" />
 
-                    <img v-if="currentUrl" :src="currentUrl" alt="Gallery image"
-                        class="max-h-[75vh] max-w-[80vw] rounded-lg object-contain" />
+                    <div v-if="currentUrl" class="relative select-none">
+                        <img :src="currentUrl" alt="Gallery image"
+                            class="max-h-[75vh] max-w-[80vw] sm:max-w-[70vw] rounded-lg object-contain" />
+                        <!-- Click zones: left 40% = prev, right 60% = next -->
+                        <div class="absolute inset-0 flex">
+                            <div class="w-[40%] cursor-pointer" @click="prev" />
+                            <div class="w-[60%] cursor-pointer" @click="next" />
+                        </div>
+                    </div>
 
-                    <GalleryNav direction="next" :disabled="currentIndex >= activeList.length - 1" @click="next" />
+                    <GalleryNav class="hidden sm:block" direction="next"
+                        :disabled="currentIndex >= activeList.length - 1" @click="next" />
                 </div>
 
                 <!-- Counter -->
