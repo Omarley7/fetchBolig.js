@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Appointment } from "@/types";
 import { formatTimeSlot } from "~/lib/formatters";
+import { thumbnail } from "~/lib/imageTransform";
 import BaseCard from "~/components/Base/BaseCard.vue";
 import FinancialsDisplay from "./FinancialsDisplay.vue";
 import { useAppointmentsStore } from "~/stores/appointments";
@@ -13,6 +14,7 @@ const { t } = useI18n();
 const props = defineProps<{
   appointment: Appointment;
   includeDate?: boolean;
+  loadImage?: boolean;
 }>();
 
 function handleMapClick() {
@@ -39,8 +41,9 @@ function handleMapClick() {
       </div>
 
       <div class="w-full flex flex-row pt-2">
-        <img class="size-26 bg-gray-200 rounded-md mr-4 min-w-1/4 object-cover" alt="Property Thumbnail"
-          :src="`${imageBaseUrl}${props.appointment.imageUrl}`" />
+        <img class="bg-gray-200 rounded-md mr-4 max-sm:max-w-26 object-cover sm:min-w-42" alt="Property Thumbnail"
+          loading="lazy"
+          :src="props.loadImage !== false ? thumbnail(`${imageBaseUrl}${props.appointment.imageUrl}`) : undefined" />
         <div class="w-full flex flex-col justify-between">
           <div class="w-full flex flex-wrap justify-between gap-2">
             <p class="text-lg">
