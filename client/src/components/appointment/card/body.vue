@@ -20,37 +20,31 @@ function handleMapClick() {
 
 </script>
 <template>
-  <div class="flex flex-row py-4 min-h-56 justify-between">
-    <div class="flex flex-col justify-end">
-      <GlassPill class="flex p-2 gap-2 items-end">
-        <add-to-calendar-button :name="props.appointment.title" options="'Apple','Google'"
-          :location="`${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`"
-          :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
-          :endTime="props.appointment.end" timeZone="Europe/Copenhagen" listStyle="dropup-static" hideBackground
-          pastDateHandling="" hideTextLabelList hideTextLabelButton lightMode="system" size="6|3|3"
-          buttonStyle="round"></add-to-calendar-button>
-        <div>
-          <p class="text-lg drop-shadow-(--shady)">
-            {{ t("appointments.openHouse") }}
-          </p>
-          <p class="text-sm drop-shadow-(--shady)">
-            {{ formatTimeSlot(props.appointment, props.includeDate) }}
-          </p>
-        </div>
-      </GlassPill>
-    </div>
+  <div class="flex flex-col py-4 min-h-56 justify-between">
+    <GlassPill class="flex gap-4 p-2 mb-4 items-center self-end-safe">
+      <div class="flex flex-col">
+        <p class="text-sm drop-shadow-(--shady)">{{ props.appointment.residence.adressLine1 }}</p>
+        <p class="text-sm drop-shadow-(--shady)">{{ props.appointment.residence.adressLine2 }}</p>
+      </div>
+      <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
+        class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity" @click="handleMapClick" />
+    </GlassPill>
 
-
-    <div class="flex flex-col">
-      <GlassPill class="flex gap-4 p-2 mb-4 items-center">
-        <div class="flex flex-col">
-          <p class="text-sm drop-shadow-(--shady)">{{ props.appointment.residence.adressLine1 }}</p>
-          <p class="text-sm drop-shadow-(--shady)">{{ props.appointment.residence.adressLine2 }}</p>
-        </div>
-        <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
-          class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity"
-          @click="handleMapClick" />
-      </GlassPill>
-    </div>
+    <GlassPill class="flex p-2 gap-2 items-end self-start">
+      <add-to-calendar-button :name="props.appointment.title" options="'Apple','Google'"
+        :location="`${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`"
+        :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
+        :endTime="props.appointment.end" timeZone="Europe/Copenhagen" listStyle="dropup-static" hideBackground
+        pastDateHandling="" hideTextLabelList hideTextLabelButton lightMode="system" size="6|3|3"
+        buttonStyle="round"></add-to-calendar-button>
+      <div>
+        <p class="text-lg drop-shadow-(--shady)">
+          {{ t("appointments.openHouse") }}
+        </p>
+        <p class="text-sm drop-shadow-(--shady)">
+          {{ formatTimeSlot(props.appointment, props.includeDate) }}
+        </p>
+      </div>
+    </GlassPill>
   </div>
 </template>

@@ -14,9 +14,8 @@ const { t } = useI18n();
 
 <template>
     <GlassPill class="flex flex-row justify-between py-2 px-4">
-        <p class="drop-shadow-(--shady)">{{ formatCurrency(props.appointment.financials.monthlyRentIncludingAconto) }} /
-            {{
-                t("financials.shortMonth") }}
+        <p class="drop-shadow-(--shady)">{{ formatCurrency(props.appointment.financials.monthlyRentIncludingAconto) }}
+            / {{ t("financials.shortMonth") }}
         </p>
         <p class="drop-shadow-(--shady)"> {{ t("financials.firstPayment") }}: {{
             formatCurrency(props.appointment.financials.firstPayment) }}</p>
