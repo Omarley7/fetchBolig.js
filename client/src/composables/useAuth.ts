@@ -11,6 +11,7 @@ export const useAuth = defineStore(
     const isLoading = ref(false);
     const isAuthenticated = ref(false);
     const cookies = ref<string>("");
+    const name = ref("");
     const toast = useToastStore();
 
     async function login(userEmail: string, userPassword: string) {
@@ -26,7 +27,7 @@ export const useAuth = defineStore(
           return setAuthenticated(false);
         }
 
-        return setAuthenticated(true, parseCookies(userData.cookies));
+        return setAuthenticated(true, parseCookies(userData.cookies), userData.fullName);
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Login failed unexpectedly...");
         return setAuthenticated(false);
@@ -35,11 +36,13 @@ export const useAuth = defineStore(
       }
     }
 
-    function setAuthenticated(value: boolean, newCookies?: string) {
+    function setAuthenticated(value: boolean, newCookies?: string, newName?: string) {
       isAuthenticated.value = value;
       password.value = "";
       if (newCookies)
         cookies.value = newCookies;
+      if (newName)
+        name.value = newName;
       return value;
     }
 
@@ -47,7 +50,7 @@ export const useAuth = defineStore(
       setAuthenticated(false, "");
     }
 
-    return { email, password, isLoading, isAuthenticated, cookies, login, logout };
+    return { email, password, isLoading, isAuthenticated, cookies, name, login, logout };
   },
   {
     persist: {

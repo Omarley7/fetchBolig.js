@@ -1,6 +1,6 @@
 export default {
   common: {
-    appTitle: "Open House",
+    appTitle: "FetchBolig.js",
     loading: "Loading...",
     login: "Login",
     logout: "Logout",
@@ -46,5 +46,11 @@ export default {
   gallery: {
     photos: "Photos",
     blueprints: "Blueprints",
+  },
+  home: {
+    welcomeUser: "Hi {0}!",
+    welcome: "Your data, your control",
+    pleaseLogin: "We fetch your upcoming appointments directly from findbolig.nu (DEAS) and display them in a convenient chronological list. Besides the data that is sent to an AI model to deduce the date you are invited to open house, data is only stored locally on your device. Log in to get started.",
+    viewAppointments: "View your {0} appointments",
   },
 };
