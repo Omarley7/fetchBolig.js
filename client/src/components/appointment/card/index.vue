@@ -25,8 +25,7 @@ function openGallery() {
 
 <template>
     <li class="mb-2">
-        <BaseCard :background-image="getImageUrl(props.appointment.imageUrl)" :load-image="props.loadImage"
-            :min-w="'300px'">
+        <BaseCard :background-image="getImageUrl(props.appointment.imageUrl)" :load-image="props.loadImage">
             <CardHeader :appointment="props.appointment" :gallery-open="galleryOpen" @open-gallery="openGallery" />
             <CardBody :appointment="props.appointment" :include-date="props.includeDate" />
             <CardFooter :appointment="props.appointment" />

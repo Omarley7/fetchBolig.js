@@ -28,10 +28,12 @@ function closeModal() {
     <!-- Login/Logout Button -->
     <div class="disabled:opacity-50 cursor-pointer p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
       <div v-if="!auth.isAuthenticated" @click="openModal" :aria-label="t('common.login')">
-        <img src="https://unpkg.com/lucide-static@latest/icons/log-in.svg" :alt="t('common.login')" class="w-6 h-6" />
+        <img src="https://unpkg.com/lucide-static@latest/icons/user-round-key.svg" :alt="t('common.login')"
+          class="size-6 " />
       </div>
       <div v-else @click="auth.logout" :disabled="auth.isLoading" :aria-label="t('common.logout')">
-        <img src="https://unpkg.com/lucide-static@latest/icons/log-out.svg" :alt="t('common.logout')" class="w-6 h-6" />
+        <img src="https://unpkg.com/lucide-static@latest/icons/log-out.svg" :alt="t('common.logout')"
+          class="size-6 dark:invert" />
       </div>
     </div>
 
@@ -42,7 +44,7 @@ function closeModal() {
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold">{{ t('common.login') }}</h2>
           <button @click="closeModal" class="text-gray-500 hover:text-gray-700" aria-label="Close modal">
-            <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close" class="w-6 h-6" />
+            <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close" class="size-6" />
           </button>
         </div>
 

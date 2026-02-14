@@ -2,32 +2,31 @@
 import { useAuth } from "~/composables/useAuth";
 import { useAppointmentsStore } from "~/stores/appointments";
 import { formatUpdatedAt } from "~/lib/formatters";
+import BaseSwitch from "~/components/Base/BaseSwitch.vue";
 
 const auth = useAuth();
 const store = useAppointmentsStore();
 </script>
 
 <template>
-  <div class="flex flex-row gap-2 justify-between border border-zinc-500 rounded-md bg-white/2 p-2">
-    <div class="grow self-end mb-2">
-      <button @click="store.toggleShowAllOffers()" :disabled="store.isLoading"
-        class="px-4 py-2 rounded-md text-sm font-medium transition-colors" :class="{
-          'bg-blue-600 text-white hover:bg-blue-700': store.showAllOffers,
-          'bg-gray-200 text-gray-700 hover:bg-gray-300': !store.showAllOffers,
-          'opacity-50 cursor-not-allowed': store.isLoading
-        }">
-        {{ store.showAllOffers ? 'Alle' : 'Aktive' }}
-      </button>
+  <div class="flex w-full items-center justify-between border rounded-lg border-zinc-500 bg-white/2 p-2">
+    <!-- Aktive / Alle toggle -->
+    <div class="flex flex-col">
+      {{ formatUpdatedAt(store.updatedAt) }}
+      <BaseSwitch v-if="auth.isAuthenticated" v-model="store.showAllOffers" :disabled="store.isLoading"
+        label-false="Aktive" label-true="Alle" />
     </div>
-    <div v-if="auth.isAuthenticated" class="flex flex-col">
-      <button class="flex justify-center items-center gap-2" type="button" :disabled="store.isLoading"
-        aria-label="Opdater aftaler" @click="store.refresh()">
-        <img v-show="store.isLoading" src="https://unpkg.com/lucide-static@latest/icons/refresh-ccw.svg" alt="Opdater"
-          class="size-4 invert opacity-70 animate-spin" />
-        <span class="font-light text-sm text-gray-400 italic whitespace-pre-line">
-          {{ formatUpdatedAt(store.updatedAt) }}
-        </span>
-      </button>
+
+    <!-- Refresh -->
+    <div v-if="auth.isAuthenticated" :disabled="store.isLoading" class="flex items-center gap-2"
+      aria-label="Opdater aftaler" @click="store.refresh()">
+      <img v-show="store.isLoading" src="https://unpkg.com/lucide-static@latest/icons/refresh-ccw.svg" alt="Opdater"
+        class="size-8 dark:invert opacity-70 animate-spin cursor-progress" />
+      <span class="text-sm font-light cursor-pointer hover:bg-white/20 active:bg-white/30 rounded-4xl p-2"
+        v-show="!store.isLoading">
+        <img src="https://unpkg.com/lucide-static@latest/icons/cloud-download.svg" alt="Download"
+          class="size-8 dark:invert opacity-70" />
+      </span>
     </div>
   </div>
 </template>

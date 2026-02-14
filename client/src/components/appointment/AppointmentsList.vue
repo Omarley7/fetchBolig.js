@@ -24,9 +24,9 @@ const includeDate = computed(() => groupBy.value !== "day");
 
 <template>
   <div>
-    <div class="flex flex-col gap-2 justify-between items-center mb-4">
-      <GroupBySelector v-model="groupBy" />
+    <div class="flex flex-col gap-2 justify-between items-center mb-1">
       <FetchOption />
+      <GroupBySelector v-model="groupBy" />
     </div>
 
     <ul class="w-full">

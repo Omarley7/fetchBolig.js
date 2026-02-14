@@ -13,15 +13,14 @@ const options = computed(() => [
 </script>
 
 <template>
-  <div class="border border-zinc-500 rounded-md bg-white/2 p-2">
-    {{ $t('common.groupBy') }}
-    <div class="w-full flex flex-row items-center">
-      <button v-for="option in options" :key="option.value" type="button" class="m-2 rounded-2xl" :class="{
-        'bg-white/10 border border-zinc-200! opacity-60 cursor-not-allowed':
-          groupBy === option.value,
-      }" :disabled="groupBy === option.value" :aria-pressed="groupBy === option.value" @click="groupBy = option.value">
-        {{ option.label }}
-      </button>
+  <div class="w-full flex flex-row items-center gap-2 mt-2">
+    <div v-for="old_option in options" :key="old_option.value" class="rounded-4xl px-4 py-1.5 " :class="{
+      'cursor-not-allowed dark:bg-white dark:text-neutral-600 font-semibold bg-neutral-800 text-white not-dark:border-2 border-white/60 ':
+        groupBy === old_option.value,
+      'cursor-pointer bg-blue-900/20 border border-neutral-600 dark:text-neutral-200 hover:bg-white/20 active:bg-white/30': groupBy !== old_option.value,
+    }" :disabled="groupBy === old_option.value" :aria-pressed="groupBy === old_option.value"
+      @click="groupBy = old_option.value">
+      {{ old_option.label }}
     </div>
   </div>
 </template>

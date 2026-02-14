@@ -9,6 +9,7 @@ defineProps<{
     <div class="rounded-2xl backdrop-blur-xs border border-neutral-400/20
       bg-neutral-300/20 text-neutral-600
       dark:bg-neutral-800/20 dark:text-neutral-100/95
+      not-dark:text-neutral-100/95
       transition-colors duration-200" :class="[
         $props.class,
         {
