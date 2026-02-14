@@ -2,11 +2,13 @@
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { galleryImage } from "~/lib/imageTransform";
 import GalleryNav from "./GalleryNav.vue";
+import { useAppointmentsStore } from "~/stores/appointments";
+
+const { getImageUrl } = useAppointmentsStore();
 
 const props = defineProps<{
     images: string[];
     blueprints?: string[];
-    imageBaseUrl: string;
 }>();
 
 const emit = defineEmits<{
@@ -25,7 +27,7 @@ const activeList = computed(() =>
 const currentUrl = computed(() => {
     const path = activeList.value[currentIndex.value];
     if (!path) return undefined;
-    return galleryImage(`${props.imageBaseUrl}${path}`);
+    return galleryImage(getImageUrl(path));
 });
 
 const hasBlueprints = computed(

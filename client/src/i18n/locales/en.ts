@@ -23,13 +23,13 @@ export default {
   financials: {
     rent: "Rent",
     perMonth: "per month",
-    moveInCost: "Move-in cost",
     monthlyRentIncludingAconto: "Monthly rent incl. utilities",
     monthlyRentExcludingAconto: "Monthly rent excl. utilities",
     utilityCosts: "Utility costs",
     deposit: "Deposit",
     prepaidRent: "Prepaid rent",
-    firstPayment: "First payment",
+    firstPayment: "One-time",
+    shortMonth: "mo",
   },
   auth: {
     loggingIn: "Logging in...",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Appointment } from "@/types";
 import { ref, watch } from "vue";
-import AppointmentCard from "./AppointmentCard.vue";
+import AppointmentCard from "./card/index.vue";
 import BaseCollapse from "~/components/Base/BaseCollapse.vue";
 
 const props = defineProps<{

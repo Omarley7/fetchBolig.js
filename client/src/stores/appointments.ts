@@ -11,7 +11,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   const updatedAt = ref<Date | null>(null);
   const isLoading = ref(false);
   const showAllOffers = ref(false);
-  const imageBaseUrl = config.imageBaseUrl;
 
   async function init() {
     isLoading.value = true;
@@ -55,6 +54,10 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     showAllOffers.value = !showAllOffers.value;
   }
 
+  function getImageUrl(imagePath: string): string {
+    return `${config.imageBaseUrl}${imagePath}`;
+  }
+
   return {
     appointments,
     updatedAt,
@@ -63,6 +66,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     init,
     refresh,
     toggleShowAllOffers,
-    imageBaseUrl,
+    getImageUrl,
   };
 });

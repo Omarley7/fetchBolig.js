@@ -23,13 +23,13 @@ export default {
   financials: {
     rent: "Leje",
     perMonth: "pr. måned",
-    moveInCost: "Indflytningspris",
     monthlyRentIncludingAconto: "Månedlig leje inkl. aconto",
     monthlyRentExcludingAconto: "Månedlig leje ekskl. aconto",
     utilityCosts: "Forbrug",
     deposit: "Depositum",
     prepaidRent: "Forudbetalt leje",
-    firstPayment: "Første betaling",
+    firstPayment: "Indskud",
+    shortMonth: "md",
   },
   auth: {
     loggingIn: "Logger ind...",
