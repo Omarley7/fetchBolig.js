@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { thumbnail } from "~/lib/imageTransform";
 
 const props = defineProps<{
   padding?: "none" | "sm" | "md" | "lg";
@@ -13,7 +14,7 @@ const props = defineProps<{
 const cardStyle = computed(() => {
   const style: Record<string, string> = {};
   if (props.backgroundImage && props.loadImage !== false) {
-    style.backgroundImage = `url(${props.backgroundImage})`;
+    style.backgroundImage = `url(${thumbnail(props.backgroundImage)})`;
     style.backgroundSize = "cover";
     style.backgroundPosition = "center";
   }
@@ -34,7 +35,7 @@ const cardStyle = computed(() => {
     },
     // Style variants
     {
-      'border-2': variant === 'default' || !variant,
+      '': variant === 'default' || !variant,
       'border border-zinc-700': variant === 'outlined',
       'border-2 shadow-lg shadow-black/20': variant === 'elevated',
     },

@@ -30,7 +30,7 @@ function handleMapClick() {
         class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity" @click="handleMapClick" />
     </GlassPill>
 
-    <GlassPill class="flex p-2 gap-2 items-end self-start">
+    <GlassPill v-if="props.appointment.date" class="flex p-2 gap-2 items-end self-start">
       <add-to-calendar-button :name="props.appointment.title" options="'Apple','Google'"
         :location="`${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`"
         :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
