@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // API schema from findbolig.nu
-export const ApiOffer = z.object({
+const ApiOffer = z.object({
   id: z.string(),
   created: z.string(), // ISO date string
   updated: z.string(), // ISO date string
@@ -41,7 +41,7 @@ export const ApiOffer = z.object({
 
 export type ApiOffer = z.infer<typeof ApiOffer>;
 
-export const ApiOffersPage = z.object({
+const ApiOffersPage = z.object({
   facets: z.any(),
   totalResults: z.number(),
   page: z.number(),
@@ -51,13 +51,3 @@ export const ApiOffersPage = z.object({
 
 export type ApiOffersPage = z.infer<typeof ApiOffersPage>;
 
-// Domain model (used in client and server)
-export type Offer = {
-  id: string;
-  number?: number;
-  residenceAddress?: string | null;
-  hasUnreadMessages?: boolean;
-  unreadMessagesCount?: number;
-  createdAt: Date;
-  updatedAt: Date;
-};

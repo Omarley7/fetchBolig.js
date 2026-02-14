@@ -1,4 +1,3 @@
-import type { AppointmentsPayload } from "@/types";
 import { deserializeAppointmentsPayload } from "~/lib/serialization";
 import { useToastStore } from "~/stores/toast";
 import { fetchAppointments } from "./appointmentsSource";
@@ -15,7 +14,7 @@ export async function getAppointments(
   forceRefresh: boolean = false,
   cookies: string,
   includeAll: boolean = false,
-): Promise<AppointmentsPayload> {
+) {
   // Check cache first (unless force refresh)
   if (!forceRefresh) {
     const cached = localStorage.getItem(STORAGE_KEY);

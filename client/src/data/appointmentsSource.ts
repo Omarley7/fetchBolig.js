@@ -1,8 +1,11 @@
-import type { Appointment, AppointmentsPayload } from "@/types";
+import type { Appointment } from "@/types";
 import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
 import config from "~/config";
 
-export async function fetchAppointments(cookies: string, includeAll: boolean = false): Promise<AppointmentsPayload> {
+export async function fetchAppointments(cookies: string, includeAll: boolean = false): Promise<{
+  updatedAt: Date;
+  appointments: Appointment[];
+}> {
   if (config.useMockData) {
     console.log("Using mock server data");
     await new Promise((resolve) => setTimeout(resolve, 800));

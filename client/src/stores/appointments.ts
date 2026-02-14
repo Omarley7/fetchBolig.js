@@ -1,4 +1,4 @@
-import type { Appointment, AppointmentsPayload } from "@/types";
+import type { Appointment } from "@/types";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getAppointments } from "~/data/appointments";
@@ -16,7 +16,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     isLoading.value = true;
     try {
       const auth = useAuth();
-      const payload: AppointmentsPayload = await getAppointments(
+      const payload = await getAppointments(
         false,
         auth.cookies,
         showAllOffers.value,
@@ -35,7 +35,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     isLoading.value = true;
     try {
       const auth = useAuth();
-      const payload: AppointmentsPayload = await getAppointments(
+      const payload = await getAppointments(
         true,
         auth.cookies,
         showAllOffers.value,

@@ -1,4 +1,4 @@
-import type { Appointment, AppointmentsPayload } from "@/types";
+import type { Appointment } from "@/types";
 
 /**
  * Deserializes appointments from JSON
@@ -13,7 +13,7 @@ export function deserializeAppointments(data: any[]): Appointment[] {
 
 export function deserializeAppointmentsPayload(
   payload: any // TODO: T-RPC could help here
-): AppointmentsPayload {
+): { updatedAt: Date; appointments: Appointment[] } {
   return {
     updatedAt: new Date(payload.updatedAt),
     appointments: deserializeAppointments(payload.appointments ?? []),

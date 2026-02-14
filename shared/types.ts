@@ -29,8 +29,3 @@ export type Residence = {
   blueprintUrl: string | null;
 };
 
-// Might only be for frontend use, will move when verified
-export type AppointmentsPayload = {
-  updatedAt: Date;
-  appointments: Appointment[];
-};
