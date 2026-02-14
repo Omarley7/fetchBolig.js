@@ -4,6 +4,7 @@ import { formatTimeSlot } from "~/lib/formatters";
 import { useI18n } from "vue-i18n";
 import "add-to-calendar-button";
 import GlassPill from "~/components/Base/GlassPill.vue";
+import { ref } from "vue";
 
 const { t } = useI18n();
 
@@ -11,6 +12,14 @@ const props = defineProps<{
   appointment: Appointment;
   includeDate?: boolean;
 }>();
+
+const calendarBtn = ref<HTMLDivElement>();
+
+function handleCalendarClick() {
+  if (calendarBtn.value) {
+    calendarBtn.value.click();
+  }
+}
 
 function handleMapClick() {
   const address = `${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`;
@@ -21,7 +30,7 @@ function handleMapClick() {
 </script>
 <template>
   <div class="flex flex-col py-4 min-h-56 justify-between">
-    <GlassPill class="flex gap-4 p-2 mb-4 items-center self-end-safe">
+    <GlassPill interactive @click="handleMapClick" class="flex gap-4 p-2 mb-4 items-center self-end-safe">
       <div class="flex flex-col">
         <p class="text-sm drop-shadow-(--shady)">{{ props.appointment.residence.adressLine1 }}</p>
         <p class="text-sm drop-shadow-(--shady)">{{ props.appointment.residence.adressLine2 }}</p>
@@ -30,8 +39,9 @@ function handleMapClick() {
         class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity" @click="handleMapClick" />
     </GlassPill>
 
-    <GlassPill v-if="props.appointment.date" class="flex p-2 gap-2 items-end self-start">
-      <add-to-calendar-button :name="props.appointment.title" options="'Apple','Google'"
+    <GlassPill interactive @click="handleCalendarClick" v-if="props.appointment.date"
+      class="flex p-2 gap-2 items-end self-start">
+      <add-to-calendar-button ref="calendarBtn" :name="props.appointment.title" options="'Apple','Google'"
         :location="`${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`"
         :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
         :endTime="props.appointment.end" timeZone="Europe/Copenhagen" listStyle="dropup-static" hideBackground
