@@ -46,7 +46,7 @@ function handleMapClick() {
         :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
         :endTime="props.appointment.end" timeZone="Europe/Copenhagen" listStyle="dropup-static" hideBackground
         pastDateHandling="" hideTextLabelList hideTextLabelButton lightMode="system" size="6|4|4"
-        buttonStyle="round"></add-to-calendar-button>
+        buttonStyle="3d"></add-to-calendar-button>
       <div>
         <p class="text-lg drop-shadow-(--shady)">
           {{ t("appointments.openHouse") }}

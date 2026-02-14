@@ -12,6 +12,8 @@ export default {
     perDay: "pr. dag",
     perWeek: "pr. uge",
     perMonth: "pr. måned",
+    pageNotFound: "Siden blev ikke fundet",
+    backToHome: "Tilbage til forsiden",
   },
   appointments: {
     title: "Kommende aftaler",

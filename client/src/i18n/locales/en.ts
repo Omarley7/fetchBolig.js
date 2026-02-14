@@ -12,6 +12,8 @@ export default {
     perDay: "per day",
     perWeek: "per week",
     perMonth: "per month",
+    pageNotFound: "Page not found",
+    backToHome: "Back to home",
   },
   appointments: {
     title: "Upcoming Appointments",

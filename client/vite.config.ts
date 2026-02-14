@@ -19,15 +19,5 @@ export default defineConfig({
       "~": path.resolve(__dirname, "src"),
       "@": path.resolve(__dirname, "../shared"),
     },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          "vue-vendor": ["vue", "pinia", "pinia-plugin-persistedstate"],
-          "vue-i18n": ["vue-i18n"],
-        },
-      },
-    },
-  },
+  }
 });
