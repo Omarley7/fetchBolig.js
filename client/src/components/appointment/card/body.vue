@@ -35,7 +35,7 @@ function handleMapClick() {
         :location="`${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`"
         :startDate="props.appointment.date" :endDate="props.appointment.date" :startTime="props.appointment.start"
         :endTime="props.appointment.end" timeZone="Europe/Copenhagen" listStyle="dropup-static" hideBackground
-        pastDateHandling="" hideTextLabelList hideTextLabelButton lightMode="system" size="6|3|3"
+        pastDateHandling="" hideTextLabelList hideTextLabelButton lightMode="system" size="6|4|4"
         buttonStyle="round"></add-to-calendar-button>
       <div>
         <p class="text-lg drop-shadow-(--shady)">
