@@ -51,3 +51,30 @@ const ApiOffersPage = z.object({
 
 export type ApiOffersPage = z.infer<typeof ApiOffersPage>;
 
+const ApiUserData = z.object({
+  id: z.string(),
+  impersonator: z.string().nullable(),
+  email: z.string(),
+  roles: z.array(z.string()),
+  landingPage: z.string().nullable(),
+  pensionFunds: z.array(z.unknown()),
+  favorites: z.object({
+    properties: z.array(z.unknown()),
+    residences: z.array(z.unknown()),
+    projects: z.array(z.unknown()),
+  }),
+  notifications: z.object({
+    locale: z.string(),
+    newItemsInInbox: z.boolean(),
+    newItemsInSearchAgent: z.boolean(),
+    changesToFavorites: z.boolean(),
+    sendEmail: z.boolean(),
+    sendSms: z.boolean(),
+    phoneNoForSms: z.string(),
+    email: z.string(),
+    fullName: z.string(),
+    frequency: z.number(),
+  }),
+});
+
+export type ApiUserData = z.infer<typeof ApiUserData>;

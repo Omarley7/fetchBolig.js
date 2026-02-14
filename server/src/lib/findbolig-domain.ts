@@ -1,4 +1,41 @@
+import type { Appointment, UserData } from "@/types";
+import type { AppointmentDetails } from "~/lib/llm/openai-extractor";
+import type { ApiOffer, ApiUserData } from "~/types/offers";
 import type { ApiResidence, Residence } from "~/types/residences";
+
+export function mapAppointmentToDomain({
+  offer,
+  residence,
+  details,
+}: {
+  offer: ApiOffer;
+  residence: Residence;
+  details: AppointmentDetails;
+}): Appointment {
+  return {
+    id: `DEAS-O-${offer.id}`,
+    title: residence.title,
+    date: details.date,
+    start: details.startTime,
+    end: details.endTime,
+    cancelled: details.cancelled,
+    residence: {
+      adressLine1: residence.addressLine1,
+      adressLine2: residence.addressLine2,
+    },
+    financials: {
+      monthlyRentIncludingAconto: residence.monthlyRentIncludingAconto,
+      monthlyRentExcludingAconto: residence.monthlyRentExcludingAconto,
+      utilityCosts: residence.aconto,
+      deposit: residence.deposit,
+      prepaidRent: residence.prepaidRent,
+      firstPayment: residence.firstPayment,
+    },
+    imageUrl: residence.images[0] || "",
+    images: residence.images,
+    blueprints: residence.blueprints,
+  };
+}
 
 export function apiResidenceToDomain(apiResidence: ApiResidence): Residence {
   return {
@@ -26,5 +63,13 @@ export function apiResidenceToDomain(apiResidence: ApiResidence): Residence {
     petsAllowed: apiResidence.factsModel.petsAllowed,
     createdAt: new Date(apiResidence.factsModel.residence.created),
     updatedAt: new Date(apiResidence.factsModel.residence.updated),
+  };
+}
+
+export function apiUserDataToDomain(apiUserData: ApiUserData, cookies?: string[]): UserData {
+  return {
+    email: apiUserData.email,
+    fullName: apiUserData.notifications.fullName,
+    cookies: cookies || [],
   };
 }

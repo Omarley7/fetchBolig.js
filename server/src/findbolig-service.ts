@@ -1,14 +1,14 @@
 import "dotenv/config";
 
-import { mapAppointmentToDomain } from "~/lib/appointments-domain";
-import { apiResidenceToDomain } from "~/lib/residences-domain";
-import type { ApiOffersPage } from "~/types/offers";
+import { mapAppointmentToDomain, apiResidenceToDomain, apiUserDataToDomain } from "~/lib/findbolig-domain";
+import type { ApiOffersPage, ApiUserData } from "~/types/offers";
 import type { ApiResidence } from "~/types/residences";
 import type {
   ApiMessageThreadFull,
   ApiMessageThreadsPage,
 } from "~/types/threads";
 import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
+import { Appointment, UserData } from "@/types";
 
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
@@ -22,7 +22,7 @@ const BASE_URL = "https://findbolig.nu";
 export async function login(
   email: string,
   password: string,
-): Promise<{ success: boolean; cookies?: string[] }> {
+): Promise<UserData | null> {
   try {
     // Initial GET to receive __Secure-SID cookie
     const initialRes = await fetch(BASE_URL, { redirect: "follow" });
@@ -40,17 +40,15 @@ export async function login(
       body: JSON.stringify({ email, password }),
     });
 
-    if (res.ok) {
-      // Combine cookies from both requests
-      const loginCookies = res.headers.getSetCookie();
-      const allCookies = [...initialCookies, ...loginCookies];
-      return { success: true, cookies: allCookies };
+    if (!res.ok) {
+      return null;
     }
+    // Combine cookies from both requests
+    return apiUserDataToDomain(await res.json() as ApiUserData, [...initialCookies, ...res.headers.getSetCookie()]);
 
-    return { success: false };
   } catch (error) {
     console.error("Login failed:", error);
-    return { success: false };
+    return null;
   }
 }
 

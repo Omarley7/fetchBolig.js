@@ -1,4 +1,4 @@
-import type { Appointment } from "@/types";
+import type { Appointment, UserData } from "@/types";
 import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
 import config from "~/config";
 
@@ -37,7 +37,7 @@ export async function fetchAppointments(cookies: string, includeAll: boolean = f
 export async function login(
   email: string,
   password: string
-): Promise<{ success: boolean; cookies?: string[] }> {
+): Promise<UserData | null> {
   try {
     const result = await fetch(`${config.backendDomain}/api/auth/login`, {
       method: "POST",

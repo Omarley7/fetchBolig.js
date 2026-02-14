@@ -8,8 +8,7 @@ const { t } = useI18n();
 const isModalOpen = ref(false);
 
 async function handleLogin() {
-  await auth.login(auth.email, auth.password);
-  if (!auth.error) {
+  if (await auth.login(auth.email, auth.password)) {
     isModalOpen.value = false;
   }
 }
@@ -59,10 +58,6 @@ function closeModal() {
               :disabled="auth.isLoading"
               class="disabled:opacity-50 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
-
-          <span v-if="auth.error" class="text-red-500 text-sm">
-            {{ auth.error }}
-          </span>
 
           <button type="submit" :disabled="auth.isLoading"
             class="disabled:opacity-50 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">

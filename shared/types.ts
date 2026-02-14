@@ -29,3 +29,8 @@ export type Residence = {
   blueprintUrl: string | null;
 };
 
+export type UserData = {
+  email: string;
+  fullName: string;
+  cookies?: string[];
+};
