@@ -8,9 +8,8 @@ const { t } = useI18n();
 const isModalOpen = ref(false);
 
 async function handleLogin() {
-  if (await auth.login(auth.email, auth.password)) {
+  if (await auth.login(auth.email, auth.password))
     isModalOpen.value = false;
-  }
 }
 
 function openModal() {
