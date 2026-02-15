@@ -22,6 +22,7 @@ export function mapAppointmentToDomain({
     residence: {
       adressLine1: residence.addressLine1,
       adressLine2: residence.addressLine2,
+      location: residence.location,
     },
     financials: {
       monthlyRentIncludingAconto: residence.monthlyRentIncludingAconto,

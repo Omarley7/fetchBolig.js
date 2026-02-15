@@ -4,12 +4,16 @@ import { useAppointmentsStore } from "~/stores/appointments";
 import { formatUpdatedAt } from "~/lib/formatters";
 import BaseSwitch from "~/components/Base/BaseSwitch.vue";
 
+const props = defineProps<{
+  class?: string;
+}>();
+
 const auth = useAuth();
 const store = useAppointmentsStore();
 </script>
 
 <template>
-  <div class="flex w-full items-center justify-between border rounded-lg border-zinc-500 bg-white/2 p-2">
+  <div :class="props.class">
     <!-- Aktive / Alle toggle -->
     <div class="flex flex-col">
       {{ formatUpdatedAt(store.updatedAt) }}

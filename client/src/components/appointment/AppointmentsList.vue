@@ -25,12 +25,14 @@ const includeDate = computed(() => groupBy.value !== "day");
 <template>
   <div>
     <div class="flex flex-col gap-2 justify-between items-center mb-1">
-      <FetchOption />
+      <FetchOption
+        class="flex w-full items-center justify-between border rounded-lg border-zinc-50/25 bg-white/5 p-2" />
       <GroupBySelector v-model="groupBy" />
     </div>
 
     <ul class="w-full">
-      <AppointmentGroup v-for="([groupKey, group], index) in groupedAppointments" :key="groupKey" :group-key="groupKey"
+      <AppointmentGroup class="w-full mb-2 border border-zinc-50/25 bg-white/5 rounded-xl p-1"
+        v-for="([groupKey, group], index) in groupedAppointments" :key="groupKey" :group-key="groupKey"
         :label="formatLabel(groupKey)" :appointments="group" :include-date="includeDate" :is-first="index === 0" />
     </ul>
 

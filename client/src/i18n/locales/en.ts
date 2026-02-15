@@ -52,5 +52,6 @@ export default {
     welcome: "Your data, your control",
     pleaseLogin: "We fetch your upcoming appointments directly from findbolig.nu (DEAS) and display them in a convenient chronological list. Besides the data that is sent to an AI model to deduce the date you are invited to open house, data is only stored locally on your device. Log in to get started.",
     viewAppointments: "View your {0} appointments",
+    fetchLatest: "Go to the appointments page to fetch the latest data from findbolig.nu. If you still have no appointments, please use findbolig.nu to search for housing and wait for invitations.",
   },
 };

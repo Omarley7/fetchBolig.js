@@ -31,7 +31,7 @@ const hasAppointments = computed(() => store.appointments.length > 0);
         class="px-6 py-3 bg-blue-600 text-white! rounded-lg hover:bg-blue-700 transition-colors font-medium">
         {{ t("home.viewAppointments", [store.appointments.length]) }}
       </router-link>
-      <p v-if="!hasAppointments" class="text-sm text-gray-400">{{ t("home.loginToFetchLatest") }}</p>
+      <p v-if="!hasAppointments" class="text-sm text-gray-400">{{ t("home.fetchLatest") }}</p>
       <p v-else class="text-sm text-gray-400">Last checked {{ store.updatedAt }}</p>
     </template>
 

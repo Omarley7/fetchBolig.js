@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.17",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^25.0.3",
     "@types/tailwindcss": "^3.0.11",
     "@vitejs/plugin-vue": "^6.0.0",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "fs": "^0.0.1-security",
+    "leaflet": "^1.9.4",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^3.2.3",
     "vue": "^3.5.13",

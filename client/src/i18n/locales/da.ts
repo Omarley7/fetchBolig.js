@@ -1,5 +1,6 @@
 export default {
   common: {
+    appTitle: "FetchBolig.js",
     loading: "Indlæser...",
     login: "Login",
     logout: "Log ud",
@@ -50,6 +51,7 @@ export default {
     welcomeUser: "Hej {0}!",
     welcome: "Din data, din kontrol",
     pleaseLogin: "Vi henter dine kommende aftaler direkte fra findbolig.nu (DEAS) og viser dem i en praktisk kronologisk liste. Udover det vi data der bliver sendt til en AI model for at udlede den dato du er inviteret til åbent hus, bliver data kun gemt lokalt på din enhed. Log ind for at komme i gang.",
-    viewAppointments: "Se dine {0} aftaler"
+    viewAppointments: "Se dine {0} aftaler",
+    fetchLatest: "Gå til aftalesiden for at hente de seneste data fra findbolig.nu. Hvis du stadig ikke har nogen aftaler, så benyt venligst findbolig.nu til at søge efter boliger og vent på invitationer.",
   },
 };

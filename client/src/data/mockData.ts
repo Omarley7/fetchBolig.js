@@ -22,6 +22,7 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
     residence: {
       adressLine1: "Flinterenden 6,3 tv.",
       adressLine2: "2300 København S",
+      location: { latitude: 55.6536, longitude: 12.6186 },
     },
   },
   {
@@ -45,6 +46,7 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
     residence: {
       adressLine1: "Flinterenden 6,2 th.",
       adressLine2: "2300 København S",
+      location: { latitude: 55.6536, longitude: 12.6186 },
     },
   },
   {
@@ -68,6 +70,7 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
     residence: {
       adressLine1: "Bondehavevej 9,1 mf.",
       adressLine2: "2880 Gladsaxe",
+      location: { latitude: 55.7346, longitude: 12.4872 },
     },
   },
 ];
