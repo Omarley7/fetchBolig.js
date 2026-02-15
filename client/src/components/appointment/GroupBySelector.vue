@@ -3,6 +3,10 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { GroupBy } from "~/composables/useGroupAppointments";
 
+const props = defineProps<{
+  class?: string;
+}>();
+
 const { t } = useI18n();
 const groupBy = defineModel<GroupBy>({ required: true });
 const options = computed(() => [
@@ -13,7 +17,7 @@ const options = computed(() => [
 </script>
 
 <template>
-  <div class="w-full flex flex-row items-center gap-2 mt-2">
+  <div :class="props.class">
     <div v-for="old_option in options" :key="old_option.value" class="rounded-4xl px-4 py-1.5 " :class="{
       'cursor-not-allowed dark:bg-white dark:text-neutral-600 font-semibold bg-neutral-800 text-white not-dark:border-2 border-white/60 ':
         groupBy === old_option.value,

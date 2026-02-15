@@ -24,10 +24,10 @@ const includeDate = computed(() => groupBy.value !== "day");
 
 <template>
   <div>
-    <div class="flex flex-col gap-2 justify-between items-center mb-1">
+    <div class="flex flex-col gap-3 justify-between items-center mb-2">
       <FetchOption
         class="flex w-full items-center justify-between border rounded-lg border-zinc-50/25 bg-white/5 p-2" />
-      <GroupBySelector v-model="groupBy" />
+      <GroupBySelector class="w-full flex flex-row items-center gap-2" v-model="groupBy" />
     </div>
 
     <ul class="w-full">
