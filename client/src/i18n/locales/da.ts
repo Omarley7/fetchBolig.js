@@ -37,6 +37,8 @@ export default {
     loggingIn: "Logger ind...",
     loggingOut: "Logger ud...",
     loginFailed: "Login fejlede",
+    logoutConfirm: "Dine data er stadig gemt på din enhed, men du vil ikke kunne hente nye opdateringer, før du logger ind igen.",
+    cancel: "Annuller",
   },
   errors: {
     generic: "Der opstod en fejl",
