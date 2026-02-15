@@ -54,7 +54,7 @@ export const useAuth = defineStore(
   },
   {
     persist: {
-      paths: ["email", "isAuthenticated", "cookies"],
+      paths: ["email", "isAuthenticated", "cookies", "name"],
     },
   },
 );
