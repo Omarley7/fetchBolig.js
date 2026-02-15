@@ -139,6 +139,9 @@ api.route("/", appointments);
 
 app.route("/api", api);
 
+// SPA fallback: serve index.html for any unmatched routes so client-side routing works on refresh
+app.get("*", serveStatic({ root: "../client/dist", rewriteRequestPath: () => "/index.html" }));
+
 const server = serve(app, (info) => {
   console.log(`Server is running on ${info.address}:${info.port}`);
 });
