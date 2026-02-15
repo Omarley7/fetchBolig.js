@@ -92,7 +92,7 @@ onUnmounted(() => {
         <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-700/50">
           <h2 class="text-lg font-semibold text-neutral-100">Kort</h2>
           <button class="p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors" @click="emit('close')">
-            <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close" class="size-5 invert" />
+            <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close" class="size-5 dark:invert" />
           </button>
         </div>
 

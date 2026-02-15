@@ -21,6 +21,7 @@ export default {
     noAppointments: "Ingen aftaler fundet, benyt venligst findbolig.nu til at søge efter boliger...",
     openHouse: "Åbent hus",
     noDate: "Ingen dato",
+    mapOfLocations: "Kort over {count} lokationer",
   },
   financials: {
     rent: "Leje",

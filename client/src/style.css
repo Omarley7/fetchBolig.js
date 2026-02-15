@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -86,21 +87,16 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+:root:not(.dark) {
+  color: #213547;
+  background-color: #ffffff;
 }
-
-@media (prefers-color-scheme: light) {
-  body {
-    background: #f9f9f9
-  }
+:root:not(.dark) a:hover {
+  color: #747bff;
+}
+:root:not(.dark) button {
+  background-color: #f9f9f9;
+}
+:root:not(.dark) body {
+  background: #f9f9f9;
 }

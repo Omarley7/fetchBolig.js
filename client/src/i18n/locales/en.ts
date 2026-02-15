@@ -21,6 +21,7 @@ export default {
     noAppointments: "No appointments found, please use findbolig.nu to search for housing...",
     openHouse: "Open House",
     noDate: "No date",
+    mapOfLocations: "Map of {count} locations",
   },
   financials: {
     rent: "Rent",

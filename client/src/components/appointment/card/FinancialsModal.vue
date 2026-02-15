@@ -44,7 +44,8 @@ onUnmounted(() => {
                 <!-- Close button -->
                 <button class="absolute top-3 right-3 p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
                     @click="emit('close')">
-                    <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close" class="size-5 invert" />
+                    <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close"
+                        class="size-5 dark:invert" />
                 </button>
 
                 <h2 class="text-lg font-semibold mb-4">{{ t("financials.rent") }}</h2>

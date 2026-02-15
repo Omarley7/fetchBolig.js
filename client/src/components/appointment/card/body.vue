@@ -27,7 +27,8 @@ function handleMapClick() {
         <p class="text-sm drop-shadow-(--shady)">{{ props.appointment.residence.adressLine2 }}</p>
       </div>
       <img src="https://unpkg.com/lucide-static@latest/icons/map.svg" alt="Map"
-        class="size-7 invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity" @click="handleMapClick" />
+        class="size-7 dark:invert opacity-70 cursor-pointer hover:opacity-100 transition-opacity"
+        @click="handleMapClick" />
     </GlassPill>
 
     <GlassPill v-if="props.appointment.date" class="flex p-2 gap-2 items-end self-start">
