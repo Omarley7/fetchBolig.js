@@ -28,11 +28,8 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: start;
-  min-height: 100vh;
+  min-height: 100dvh;
   touch-action: manipulation;
-  padding: 0.5rem;
 }
 
 h1 {
@@ -41,10 +38,8 @@ h1 {
 }
 
 #app {
-  max-width: 1280px;
-  min-width: 350px;
-  margin: 0 auto;
-  text-align: center;
+  width: 100%;
+  min-width: 320px;
 }
 
 .logo {

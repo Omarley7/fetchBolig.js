@@ -18,7 +18,7 @@ const hasAppointments = computed(() => store.appointments.length > 0);
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center gap-6 py-16 px-4 text-center">
+  <div class="flex flex-col items-center justify-center gap-6 py-12 text-center">
 
     <!-- Not logged in -->
     <template v-if="!auth.isAuthenticated">
