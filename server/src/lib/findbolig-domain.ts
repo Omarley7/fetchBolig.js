@@ -14,6 +14,7 @@ export function mapAppointmentToDomain({
 }): Appointment {
   return {
     id: `DEAS-O-${offer.id}`,
+    offerId: offer.id,
     title: residence.title,
     date: details.date,
     start: details.startTime,

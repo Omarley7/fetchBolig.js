@@ -8,6 +8,8 @@ export function deserializeAppointments(data: any[]): Appointment[] {
     ...item,
     // Keep date as string (YYYY-MM-DD format), don't convert to Date
     // start and end are already strings (HH:mm format)
+    // Derive offerId from id if missing (e.g. stale cache from before offerId was added)
+    offerId: item.offerId ?? item.id?.replace(/^DEAS-O-/, "") ?? "",
   }));
 }
 

@@ -3,6 +3,7 @@ import type { Appointment } from "@/types";
 export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
   {
     id: "DEAS-Flinterenden-6,3-tv.,-2300-København-S",
+    offerId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     date: null, // "2025-12-12",
     title: "Flinterenden 6,3 tv., 2300 København S",
     start: "09:30",
@@ -27,6 +28,7 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
   },
   {
     id: "DEAS-Flinterenden-6,2-th.,-2300-København-S",
+    offerId: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     date: "2025-12-12",
     title: "Flinterenden 6,2 th., 2300 København S",
     start: "10:00",
@@ -51,6 +53,7 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] = [
   },
   {
     id: "DEAS-Bondehavevej-9,1-mf.,-2880-Gladsaxe",
+    offerId: "c3d4e5f6-a7b8-9012-cdef-123456789012",
     date: "2025-12-19",
     title: "Bondehavevej 9,1 mf., 2880 Gladsaxe",
     start: "09:30",

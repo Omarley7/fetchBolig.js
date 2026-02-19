@@ -22,6 +22,7 @@ export default {
     openHouse: "Open House",
     noDate: "No date",
     mapOfLocations: "Map of {count} locations",
+    openOnFindbolig: "Open on findbolig.nu",
   },
   financials: {
     rent: "Rent",

@@ -19,6 +19,7 @@ const emit = defineEmits<{
 const isExpanded = ref(props.expanded);
 const contentRef = ref<HTMLElement | null>(null);
 const contentHeight = ref<string>(props.expanded ? "auto" : "0px");
+const isAnimating = ref(false);
 
 watch(
   () => props.expanded,
@@ -27,12 +28,30 @@ watch(
   }
 );
 
-watch(isExpanded, async (newVal) => {
+watch(isExpanded, (newVal) => {
   emit("update:expanded", newVal);
-  if (!contentRef.value) return;
+  const el = contentRef.value;
+  if (!el) return;
 
   if (newVal) {
-    contentHeight.value = `${contentRef.value.scrollHeight}px`;
+    // Expanding: set concrete pixel height, then switch to auto after transition
+    contentHeight.value = `${el.scrollHeight}px`;
+    setTimeout(() => {
+      if (isExpanded.value) contentHeight.value = "auto";
+    }, props.duration);
+  } else {
+    // Collapsing: if currently "auto", pin to concrete pixel height first,
+    // wait for the browser to paint that value, then collapse to 0
+    if (contentHeight.value === "auto") {
+      isAnimating.value = true;
+      contentHeight.value = `${el.scrollHeight}px`;
+      requestAnimationFrame(() => {
+        contentHeight.value = "0px";
+        isAnimating.value = false;
+      });
+    } else {
+      contentHeight.value = "0px";
+    }
   }
 });
 
@@ -49,7 +68,7 @@ defineExpose({ toggle, isExpanded });
       ref="contentRef"
       class="transition-all ease-in-out"
       :style="{
-        height: isExpanded ? contentHeight : '0px',
+        height: isExpanded || isAnimating ? contentHeight : '0px',
         transitionDuration: `${duration}ms`,
       }"
     >

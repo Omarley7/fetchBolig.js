@@ -22,6 +22,7 @@ export default {
     openHouse: "Åbent hus",
     noDate: "Ingen dato",
     mapOfLocations: "Kort over {count} lokationer",
+    openOnFindbolig: "Åbn på findbolig.nu",
   },
   financials: {
     rent: "Leje",

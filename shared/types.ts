@@ -1,5 +1,6 @@
 export type Appointment = {
   id: string; // DEAS-O-{address-with-dashes} -or- // DEAS-{offerId}
+  offerId: string; // The offer UUID from findbolig.nu
   title: string;
   date: string | null;
   start: string | null; // Appointment start time
