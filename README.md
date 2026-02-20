@@ -1,65 +1,59 @@
-# FindBolig.js
+# FetchBolig.js
 
-Better dashboard for Findbolig.nu with local storage and offline access.
+Better dashboard for FindBolig.nu with local storage and offline access. Currently live on https://fetchBolig.dk.
 
 ## Architecture
 
-- **Server**: Node.js with native `http` module (TypeScript)
-- **Client**: HTMX + TypeScript + Tailwind CSS
-- **Storage**: IndexedDB via Dexie.js
-- **Build**: esbuild (client) + Tailwind CLI (styles)
+- **Server**: Node.js with native 'http' module + TypeScript
+- **Client**: Vue 3 + TypeScript + Vite + Tailwind CSS
+- **Storage**: IndexedDB (client-side) and server-side in-memory or persistence depending on deployment
 
-## Structure
+## Repository layout
 
 ```
 fetchBolig.js/
-├── server/              # Node.js server
-│   ├── index.ts         # Main server with routes
-│   └── findbolig-client.ts  # API client with cookie management
-├── client/              # Browser client
-│   ├── index.html       # Main page
-│   ├── app.ts           # Client logic + IndexedDB
-│   └── styles.css       # Tailwind input
-├── types/               # Shared types
-│   ├── offers.ts        # Offer types & schemas
-│   ├── threads.ts       # Thread types & schemas
-│   └── api.ts           # API request/response types
-├── lib/                 # Shared domain logic
-│   ├── offers-domain.ts # Offer transformations
-│   └── threads-domain.ts # Thread transformations
-└── public/dist/         # Built assets (generated)
+├── README.md
+├── package.json
+├── client/                     # Vue 3 client app (Vite + TypeScript + Tailwind)
+│   ├── index.html
+│   ├── package.json
+│   └── src/
+│       ├── main.ts
+│       ├── App.vue
+│       ├── config.ts           # client-side config (e.g. API base URL)  
+│       ├── style.css
+│       ├── components/
+│ 	   ├── composables/
+│	   ├── data/
+│	   ├── i18n/                # translation files
+│	   ├── lib/
+│	   ├── router/
+│	   ├── stores/
+│	   └── views/
+├── server/                     # TypeScript server code
+│   ├── package.json
+│   └── src/
+│       ├── index.ts
+│       ├── findbolig-service.ts
+│       ├── lib/
+│       └── types/
+├── shared/                     # Shared types/utilities used by both client and server
+└── misc/                       # any scripts, docs, diagrams, etc.
 ```
 
-## Setup
+Notes:
+- The client is a Vite + Vue 3 project located in `client/`.
+- The server is a TypeScript project in `server/` exposing services used by the client.
+- Shared types live in `shared/types.ts`.
 
-1. Install dependencies:
+## Setup (development)
+Install dependencies at the root level. This will install both client and server dependencies:
 
 ```bash
 npm install
 ```
 
-2. Run development server:
-
+Both server and client can be started in parrallel with:
 ```bash
 npm run dev
-```
-
-This starts:
-
-- Server on http://localhost:3000
-- Client TypeScript build
-- Tailwind CSS build
-
-## Usage
-
-1. Open http://localhost:3000
-2. Login with your findbolig.nu credentials
-3. Click "Fetch Offers" or "Fetch Threads" to retrieve data
-4. Data is automatically stored in IndexedDB
-5. Use "Load from Storage" to view cached data offline
-
-## Scripts
-
-- `npm run dev` - Start development with watch mode
-- `npm run build` - Build for production
-- `npm start` - Start production server
+``` 
