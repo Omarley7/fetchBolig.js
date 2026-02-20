@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { login as apiLogin } from "~/data/appointmentsSource";
 import { useToastStore } from "~/stores/toast";
+import config from "~/config";
 
 export const useAuth = defineStore(
   "auth",
@@ -12,6 +13,8 @@ export const useAuth = defineStore(
     const isAuthenticated = ref(false);
     const cookies = ref<string>("");
     const name = ref("");
+    const rememberPassword = ref(false);
+    let keepAliveTimer: number | null = null;
     const toast = useToastStore();
 
     async function login(userEmail: string, userPassword: string) {
@@ -27,7 +30,14 @@ export const useAuth = defineStore(
           return setAuthenticated(false);
         }
 
-        return setAuthenticated(true, parseCookies(userData.cookies), userData.fullName);
+        // store password locally only if user opted in
+        if (rememberPassword.value) {
+          password.value = userPassword;
+        }
+
+        const ok = setAuthenticated(true, parseCookies(userData.cookies), userData.fullName);
+        if (ok) startKeepAlive();
+        return ok;
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Login failed unexpectedly...");
         return setAuthenticated(false);
@@ -38,23 +48,70 @@ export const useAuth = defineStore(
 
     function setAuthenticated(value: boolean, newCookies?: string, newName?: string) {
       isAuthenticated.value = value;
-      password.value = "";
-      if (newCookies)
-        cookies.value = newCookies;
-      if (newName)
-        name.value = newName;
+      // Only clear password if the user didn't ask to remember it
+      if (!rememberPassword.value) password.value = "";
+      if (newCookies) cookies.value = newCookies;
+      if (newName) name.value = newName;
+      if (!value) stopKeepAlive();
       return value;
+    }
+
+    function startKeepAlive() {
+      stopKeepAlive();
+      // attempt refresh every 5 minutes
+      keepAliveTimer = window.setInterval(async () => {
+        try {
+          if (!cookies.value) return;
+          const res = await fetch(`${config.backendDomain}/api/auth/refresh`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-findbolig-cookies": cookies.value,
+            },
+          });
+
+          if (!res.ok) {
+            // if unauthorized, mark logged out
+            if (res.status === 401) {
+              setAuthenticated(false, "", "");
+            }
+            return;
+          }
+
+          const data = await res.json();
+          if (data && data.cookies) {
+            cookies.value = parseCookies(data.cookies);
+          }
+          if (data && data.fullName) {
+            name.value = data.fullName;
+          }
+        } catch (e) {
+          console.error("Keep-alive failed:", e);
+        }
+      }, 5 * 60 * 1000);
+    }
+
+    function stopKeepAlive() {
+      if (keepAliveTimer) {
+        clearInterval(keepAliveTimer);
+        keepAliveTimer = null;
+      }
     }
 
     function logout() {
       setAuthenticated(false, "");
+      // optionally clear stored password on logout unless remembering is enabled
+      if (!rememberPassword.value) password.value = "";
     }
 
-    return { email, password, isLoading, isAuthenticated, cookies, name, login, logout };
+    // resume keep-alive if already authenticated on startup
+    if (isAuthenticated.value) startKeepAlive();
+
+    return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, login, logout, startKeepAlive, stopKeepAlive };
   },
   {
     persist: {
-      paths: ["email", "isAuthenticated", "cookies", "name"],
+      paths: ["email", "isAuthenticated", "cookies", "name", "rememberPassword", "password"],
     },
   },
 );

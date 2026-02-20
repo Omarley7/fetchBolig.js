@@ -40,6 +40,7 @@ export default {
     loggingOut: "Logger ud...",
     loginFailed: "Login fejlede",
     logoutConfirm: "Dine data er stadig gemt på din enhed, men du vil ikke kunne hente nye opdateringer, før du logger ind igen.",
+    rememberPassword: "Husk adgangskode på denne enhed",
     cancel: "Annuller",
   },
   errors: {

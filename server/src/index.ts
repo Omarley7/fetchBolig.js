@@ -57,6 +57,22 @@ auth.post("/login", async (c) => {
   }
 });
 
+auth.get("/refresh", async (c) => {
+  try {
+    const cookies = requireAuth(c);
+    if (cookies instanceof Response) return cookies;
+
+    const result = await findboligService.refreshSession(cookies);
+    if (!result) {
+      return c.json({ error: "Failed to refresh session" }, 401);
+    }
+    return c.json(result);
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
 offers.get("/", async (c) => {
   try {
     const cookies = requireAuth(c);

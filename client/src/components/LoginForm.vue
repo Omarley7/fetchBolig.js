@@ -75,6 +75,11 @@ function confirmLogout() {
                 class="disabled:opacity-50 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
 
+            <div class="flex items-center gap-2">
+              <input id="remember" type="checkbox" v-model="auth.rememberPassword" :disabled="auth.isLoading" class="w-4 h-4" />
+              <label for="remember" class="text-sm text-gray-600 dark:text-gray-300">{{ t('auth.rememberPassword') }}</label>
+            </div>
+
             <button type="submit" :disabled="auth.isLoading"
               class="disabled:opacity-50 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
               {{ auth.isLoading ? t('auth.loggingIn') : t('common.login') }}

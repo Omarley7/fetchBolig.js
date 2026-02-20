@@ -40,6 +40,7 @@ export default {
     loggingOut: "Logging out...",
     loginFailed: "Login failed",
     logoutConfirm: "Your data is still stored on your device, but you will not be able to fetch new updates until you log in again.",
+    rememberPassword: "Remember password on this device",
     cancel: "Cancel",
   },
   errors: {

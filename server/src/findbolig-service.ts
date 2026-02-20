@@ -254,3 +254,26 @@ export async function getUserData(cookies: string) {
 
   return res.json();
 }
+
+/**
+ * Refreshes the session by calling an authenticated endpoint. If the upstream
+ * returns new Set-Cookie headers they will be returned alongside the user data
+ * so the client can update its stored cookie header.
+ */
+export async function refreshSession(cookies: string) {
+  const res = await fetch(`${BASE_URL}/api/users/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Cookie: cookies,
+    },
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  // Return the mapped user data together with any Set-Cookie headers
+  return apiUserDataToDomain(await res.json() as ApiUserData, res.headers.getSetCookie() ?? []);
+}
