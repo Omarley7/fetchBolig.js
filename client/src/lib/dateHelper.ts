@@ -16,12 +16,16 @@ export function getISOWeekStart(date: Date): string {
 }
 
 // ---- Formatting helpers ----
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export function formatDay(key: string): string {
-  return new Date(key).toLocaleDateString("da-DK", {
+  return capitalize(new Date(key).toLocaleDateString("da-DK", {
     weekday: "long",
     day: "2-digit",
     month: "2-digit",
-  });
+  }));
 }
 
 export function formatWeek(key: string): string {
@@ -45,8 +49,8 @@ export function formatWeek(key: string): string {
 
 export function formatMonth(key: string): string {
   const [year, month] = key.split("-");
-  return new Date(`${year}-${month}-01`).toLocaleDateString("da-DK", {
+  return capitalize(new Date(`${year}-${month}-01`).toLocaleDateString("da-DK", {
     month: "long",
     year: "numeric",
-  });
+  }));
 }

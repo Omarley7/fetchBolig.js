@@ -14,6 +14,9 @@ export default {
     perMonth: "per month",
     pageNotFound: "Page not found",
     backToHome: "Back to home",
+    day: "Day",
+    week: "Week",
+    month: "Month",
   },
   appointments: {
     title: "Upcoming Appointments",
@@ -39,9 +42,12 @@ export default {
     loggingIn: "Logging in...",
     loggingOut: "Logging out...",
     loginFailed: "Login failed",
-    logoutConfirm: "Your data is still stored on your device, but you will not be able to fetch new updates until you log in again.",
+    logoutConfirm:
+      "Your data is still stored on your device, but you will not be able to fetch new updates until you log in again.",
     rememberPassword: "Remember password on this device",
     cancel: "Cancel",
+    securityNote:
+      "Your credentials are sent directly to findbolig.nu — we never store them on our servers.",
   },
   errors: {
     generic: "An error occurred",
@@ -55,8 +61,39 @@ export default {
   home: {
     welcomeUser: "Hi {0}!",
     welcome: "Your data, your control",
-    pleaseLogin: "We fetch your upcoming appointments directly from findbolig.nu (DEAS) and display them in a convenient chronological list. Besides the data that is sent to an AI model to deduce the date you are invited to open house, data is only stored locally on your device. Log in to get started.",
+    pleaseLogin:
+      "We fetch your upcoming appointments directly from findbolig.nu (DEAS) and display them in a convenient chronological list. Besides the data that is sent to an AI model to deduce the date you are invited to open house, data is only stored locally on your device. Log in to get started.",
     viewAppointments: "View your {0} appointments",
-    fetchLatest: "Go to the appointments page to fetch the latest data from findbolig.nu. If you still have no appointments, please use findbolig.nu to search for housing and wait for invitations.",
+    fetchLatest:
+      "Go to the appointments page to fetch the latest data from findbolig.nu. If you still have no appointments, please use findbolig.nu to search for housing and wait for invitations.",
+    lastUpdated: "Last updated {0} ago",
+  },
+  landing: {
+    tagline: "A better dashboard for your FindBolig.nu appointments",
+    description:
+      "We fetch your upcoming apartment viewings directly from findbolig.nu and display them in a convenient chronological list — with offline access and local storage.",
+    featureAppointments: "Chronological appointment overview",
+    featureOffline: "Offline access with local storage",
+    featureAI: "AI-powered open house date extraction",
+    getStarted: "Log in with your findbolig.nu account to get started.",
+  },
+  stale: {
+    dataAge: "Your data is {0} old.",
+    refreshNow: "Refresh now",
+    dismiss: "Dismiss",
+    sessionExpired: "Your session has expired. Please log in again to fetch updates.",
+    loginAgain: "Log in",
+  },
+  sync: {
+    updatedAgo: "Updated {0}",
+    justNow: "just now",
+    minutesAgo: "{0} min ago",
+    hoursAgo: "{0}h ago",
+    daysAgo: "{0}d ago",
+    fetchData: "Fetch data",
+    syncing: "Syncing...",
+    clickToExpand: "Click to see exact timestamp",
+    date: "Date",
+    time: "Time",
   },
 };

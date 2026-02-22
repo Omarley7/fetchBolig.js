@@ -27,7 +27,7 @@ a:hover {
 }
 
 html {
-  scrollbar-gutter: stable;
+  overflow-y: scroll;
 }
 
 body {

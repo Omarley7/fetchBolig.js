@@ -104,10 +104,55 @@ export const useAuth = defineStore(
       if (!rememberPassword.value) password.value = "";
     }
 
+    async function validateSession(): Promise<boolean> {
+      if (!cookies.value) return false;
+      try {
+        const res = await fetch(`${config.backendDomain}/api/auth/refresh`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-findbolig-cookies": cookies.value,
+          },
+        });
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            setAuthenticated(false, "", "");
+          }
+          return false;
+        }
+
+        const data = await res.json();
+        if (data?.cookies) cookies.value = parseCookies(data.cookies);
+        if (data?.fullName) name.value = data.fullName;
+        return true;
+      } catch {
+        // Network error — don't clear auth (user might be offline with valid cache)
+        return false;
+      }
+    }
+
+    async function ensureSession(): Promise<boolean> {
+      // 1. Try existing session first
+      if (cookies.value) {
+        const valid = await validateSession();
+        if (valid) return true;
+      }
+
+      // 2. Session invalid — try auto-relogin if credentials are remembered
+      if (rememberPassword.value && email.value && password.value) {
+        const ok = await login(email.value, password.value);
+        return !!ok;
+      }
+
+      // 3. No stored credentials — user must log in manually
+      return false;
+    }
+
     // resume keep-alive if already authenticated on startup
     if (isAuthenticated.value) startKeepAlive();
 
-    return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, login, logout, startKeepAlive, stopKeepAlive };
+    return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, login, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
   },
   {
     persist: {

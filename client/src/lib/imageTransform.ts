@@ -65,8 +65,8 @@ function resolve(url: string, params: ImageParams): string {
 // ---------------------------------------------------------------------------
 
 const THUMBNAIL_PARAMS: ImageParams = {
-    w: 350,
-    h: 300,
+    w: 800,
+    h: 500,
     fit: "cover",
     output: "webp",
 };

@@ -35,7 +35,7 @@ function groupBy<T>(items: T[], keyFn: (item: T) => string | null): [string, T[]
 }
 
 function getAppointmentsByDay(appointments: Appointment[]): GroupedAppointments {
-  return groupBy(appointments, (appt) => appt.date);
+  return groupBy(appointments, (appt) => (hasValidDate(appt) ? appt.date! : null));
 }
 
 function getAppointmentsByWeek(appointments: Appointment[]): GroupedAppointments {

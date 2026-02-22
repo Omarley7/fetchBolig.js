@@ -34,10 +34,12 @@ function toggleExpanded() {
   <li :class="props.class">
     <!-- Group header -->
     <div class="flex items-center justify-between cursor-pointer" @click="toggleExpanded">
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-2">
         <h2 class="text-lg font-semibold pl-1">{{ label }}</h2>
-        <p v-if="props.appointments.length > 1 && !expanded" class="italic dark:text-white/50"> - {{
-          props.appointments.length }}</p>
+        <span v-if="!expanded"
+          class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-xs font-medium rounded-full dark:bg-white/15 bg-neutral-400/30 dark:text-neutral-300 text-neutral-600">
+          {{ props.appointments.length }}
+        </span>
       </div>
       <img src="https://unpkg.com/lucide-static@latest/icons/chevron-down.svg" alt="Expand/Collapse"
         class="size-5 dark:invert opacity-70 transition-transform duration-200" :class="{ '-rotate-90': !expanded }" />

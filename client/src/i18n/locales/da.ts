@@ -14,6 +14,9 @@ export default {
     perMonth: "pr. måned",
     pageNotFound: "Siden blev ikke fundet",
     backToHome: "Tilbage til forsiden",
+    day: "Dag",
+    week: "Uge",
+    month: "Måned",
   },
   appointments: {
     title: "Kommende aftaler",
@@ -39,9 +42,12 @@ export default {
     loggingIn: "Logger ind...",
     loggingOut: "Logger ud...",
     loginFailed: "Login fejlede",
-    logoutConfirm: "Dine data er stadig gemt på din enhed, men du vil ikke kunne hente nye opdateringer, før du logger ind igen.",
+    logoutConfirm:
+      "Dine data er stadig gemt på din enhed, men du vil ikke kunne hente nye opdateringer, før du logger ind igen.",
     rememberPassword: "Husk adgangskode på denne enhed",
     cancel: "Annuller",
+    securityNote:
+      "Dine loginoplysninger sendes direkte til findbolig.nu — vi gemmer dem aldrig på vores servere.",
   },
   errors: {
     generic: "Der opstod en fejl",
@@ -55,8 +61,39 @@ export default {
   home: {
     welcomeUser: "Hej {0}!",
     welcome: "Din data, din kontrol",
-    pleaseLogin: "Vi henter dine kommende aftaler direkte fra findbolig.nu (DEAS) og viser dem i en praktisk kronologisk liste. Udover det vi data der bliver sendt til en AI model for at udlede den dato du er inviteret til åbent hus, bliver data kun gemt lokalt på din enhed. Log ind for at komme i gang.",
+    pleaseLogin:
+      "Vi henter dine kommende aftaler direkte fra findbolig.nu (DEAS) og viser dem i en praktisk kronologisk liste. Udover det vi data der bliver sendt til en AI model for at udlede den dato du er inviteret til åbent hus, bliver data kun gemt lokalt på din enhed. Log ind for at komme i gang.",
     viewAppointments: "Se dine {0} aftaler",
-    fetchLatest: "Gå til aftalesiden for at hente de seneste data fra findbolig.nu. Hvis du stadig ikke har nogen aftaler, så benyt venligst findbolig.nu til at søge efter boliger og vent på invitationer.",
+    fetchLatest:
+      "Gå til aftalesiden for at hente de seneste data fra findbolig.nu. Hvis du stadig ikke har nogen aftaler, så benyt venligst findbolig.nu til at søge efter boliger og vent på invitationer.",
+    lastUpdated: "Sidst opdateret for {0} siden",
+  },
+  landing: {
+    tagline: "Et bedre dashboard til dine FindBolig.nu aftaler",
+    description:
+      "Vi henter dine kommende boligfremvisninger direkte fra findbolig.nu og viser dem i en praktisk kronologisk liste — med offline adgang og lokal lagring.",
+    featureAppointments: "Kronologisk aftaleoversigt",
+    featureOffline: "Offline adgang med lokal lagring",
+    featureAI: "AI-drevet udtrækning af åbent hus-datoer",
+    getStarted: "Log ind med din findbolig.nu-konto for at komme i gang.",
+  },
+  stale: {
+    dataAge: "Dine data er {0} gamle.",
+    refreshNow: "Opdater nu",
+    dismiss: "Afvis",
+    sessionExpired: "Din session er udløbet. Log venligst ind igen for at hente opdateringer.",
+    loginAgain: "Log ind",
+  },
+  sync: {
+    updatedAgo: "Opdateret {0}",
+    justNow: "lige nu",
+    minutesAgo: "for {0} min. siden",
+    hoursAgo: "for {0}t siden",
+    daysAgo: "for {0}d siden",
+    fetchData: "Hent data",
+    syncing: "Henter...",
+    clickToExpand: "Klik for at se præcist tidspunkt",
+    date: "Dato",
+    time: "Kl",
   },
 };
