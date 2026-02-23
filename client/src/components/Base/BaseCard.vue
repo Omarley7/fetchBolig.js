@@ -36,7 +36,7 @@ const cardStyle = computed(() => {
     // Style variants
     {
       '': variant === 'default' || !variant,
-      'border border-zinc-700': variant === 'outlined',
+      'border border-zinc-300 dark:border-zinc-700': variant === 'outlined',
       'border-2 shadow-lg shadow-black/20': variant === 'elevated',
     },
   ]" :style="cardStyle">

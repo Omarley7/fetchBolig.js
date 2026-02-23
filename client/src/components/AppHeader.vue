@@ -12,10 +12,10 @@ const { isDark, toggle: toggleDarkMode } = useDarkMode();
     <!-- Left: nav icon (equal width to right for centering) -->
     <div class="flex-1 flex justify-start">
       <router-link v-if="$route.path !== '/'" to="/" class="transition-colors">
-        <img src="https://unpkg.com/lucide-static@latest/icons/home.svg" alt="Home" class="size-8 dark:invert" />
+        <img src="/icons/home.svg" alt="Home" class="size-8 dark:invert" />
       </router-link>
       <router-link v-else to="/appointments">
-        <img src="https://unpkg.com/lucide-static@latest/icons/calendar-days.svg" alt="Appointments"
+        <img src="/icons/calendar-days.svg" alt="Appointments"
           class="size-8 dark:invert transition-transform hover:scale-125" />
       </router-link>
     </div>
@@ -35,13 +35,13 @@ const { isDark, toggle: toggleDarkMode } = useDarkMode();
       >
         <img
           v-if="isDark"
-          src="https://unpkg.com/lucide-static@latest/icons/sun.svg"
+          src="/icons/sun.svg"
           alt="Light mode"
           class="size-5 invert"
         />
         <img
           v-else
-          src="https://unpkg.com/lucide-static@latest/icons/moon.svg"
+          src="/icons/moon.svg"
           alt="Dark mode"
           class="size-5"
         />

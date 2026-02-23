@@ -36,11 +36,9 @@ function initMap() {
   }).addTo(map);
 
   const pinIcon = L.icon({
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    iconRetinaUrl:
-      "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-    shadowUrl:
-      "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    iconUrl: "/leaflet/marker-icon.png",
+    iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+    shadowUrl: "/leaflet/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -87,12 +85,12 @@ onUnmounted(() => {
   <Teleport to="body">
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80" @click.self="emit('close')">
       <div
-        class="relative w-[92vw] max-w-2xl h-[70vh] rounded-xl bg-neutral-900 shadow-xl flex flex-col overflow-hidden">
+        class="relative w-[92vw] max-w-2xl h-[70vh] rounded-xl bg-white dark:bg-neutral-900 shadow-xl flex flex-col overflow-hidden">
         <!-- Header -->
-        <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-700/50">
-          <h2 class="text-lg font-semibold text-neutral-100">Kort</h2>
-          <button class="p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors" @click="emit('close')">
-            <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close" class="size-5 dark:invert" />
+        <div class="flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-700/50">
+          <h2 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Kort</h2>
+          <button class="p-1 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors" @click="emit('close')">
+            <img src="/icons/x.svg" alt="Close" class="size-5 dark:invert" />
           </button>
         </div>
 
@@ -101,7 +99,7 @@ onUnmounted(() => {
 
         <!-- Fallback when no locations -->
         <div v-if="locations.length === 0"
-          class="absolute inset-0 flex items-center justify-center text-neutral-400 text-sm pointer-events-none">
+          class="absolute inset-0 flex items-center justify-center text-neutral-500 dark:text-neutral-400 text-sm pointer-events-none">
           Ingen lokationer tilgængelige
         </div>
       </div>

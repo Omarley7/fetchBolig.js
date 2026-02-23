@@ -23,23 +23,23 @@ async function handleLogin() {
     </div>
 
     <!-- Inline login form -->
-    <div class="w-full bg-white dark:bg-violet-950 rounded-lg shadow-lg p-6">
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ t("landing.getStarted") }}</p>
+    <div class="w-full bg-violet-50 dark:bg-violet-950 border border-violet-200 dark:border-violet-800/50 rounded-lg shadow-lg p-6">
+      <p class="text-sm font-medium text-violet-700 dark:text-violet-300 mb-4">{{ t("landing.getStarted") }}</p>
 
       <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
         <input
           v-model="auth.email"
           type="email"
-          :placeholder="t('common.email')"
+          :placeholder="t('landing.emailPlaceholder')"
           :disabled="auth.isLoading"
-          class="disabled:opacity-50 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent"
+          class="disabled:opacity-50 px-3 py-2 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent"
         />
         <input
           v-model="auth.password"
           type="password"
-          :placeholder="t('common.password')"
+          :placeholder="t('landing.passwordPlaceholder')"
           :disabled="auth.isLoading"
-          class="disabled:opacity-50 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent"
+          class="disabled:opacity-50 px-3 py-2 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent"
         />
 
         <div class="flex items-center gap-2">
@@ -48,7 +48,7 @@ async function handleLogin() {
             type="checkbox"
             v-model="auth.rememberPassword"
             :disabled="auth.isLoading"
-            class="w-4 h-4"
+            class="w-4 h-4 accent-violet-600"
           />
           <label for="landing-remember" class="text-sm text-gray-600 dark:text-gray-300">
             {{ t("auth.rememberPassword") }}
@@ -58,9 +58,9 @@ async function handleLogin() {
         <button
           type="submit"
           :disabled="auth.isLoading"
-          class="disabled:opacity-50 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors font-medium"
+          class="disabled:opacity-50 bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 transition-colors font-medium"
         >
-          {{ auth.isLoading ? t("auth.loggingIn") : t("common.login") }}
+          {{ auth.isLoading ? t("auth.loggingIn") : t("landing.loginButton") }}
         </button>
       </form>
 
@@ -82,18 +82,18 @@ async function handleLogin() {
       <language-switcher />
       <div
         @click="toggleDarkMode"
-        class="cursor-pointer p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+        class="cursor-pointer p-2 bg-black/5 dark:bg-white/10 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
         :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
       >
         <img
           v-if="isDark"
-          src="https://unpkg.com/lucide-static@latest/icons/sun.svg"
+          src="/icons/sun.svg"
           alt="Light mode"
           class="size-6 dark:invert"
         />
         <img
           v-else
-          src="https://unpkg.com/lucide-static@latest/icons/moon.svg"
+          src="/icons/moon.svg"
           alt="Dark mode"
           class="size-6"
         />

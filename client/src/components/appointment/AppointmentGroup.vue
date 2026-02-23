@@ -41,7 +41,7 @@ function toggleExpanded() {
           {{ props.appointments.length }}
         </span>
       </div>
-      <img src="https://unpkg.com/lucide-static@latest/icons/chevron-down.svg" alt="Expand/Collapse"
+      <img src="/icons/chevron-down.svg" alt="Expand/Collapse"
         class="size-5 dark:invert opacity-70 transition-transform duration-200" :class="{ '-rotate-90': !expanded }" />
     </div>
 
@@ -53,7 +53,7 @@ function toggleExpanded() {
         <div
           class="flex flex-row items-center gap-1.5 border rounded-lg dark:border-zinc-50/25 dark:bg-white/5 bg-neutral-200 p-1.5 mb-2 cursor-pointer select-none hover:scale-[1.02] hover:bg-neutral-300 dark:hover:bg-white/10 active:scale-[0.98] transition-all duration-150">
           <p class="dark:text-white/50">{{ t('appointments.mapOfLocations', { count: props.appointments.length }) }}</p>
-          <img src="https://unpkg.com/lucide-static@latest/icons/map-pin.svg" alt="Map"
+          <img src="/icons/map-pin.svg" alt="Map"
             class="size-5 dark:invert opacity-70" />
 
         </div>

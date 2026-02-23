@@ -64,9 +64,9 @@ const borderColor = computed(() => {
                    dark:bg-white/10 bg-neutral-300 dark:hover:bg-white/20 hover:bg-neutral-400
                    dark:text-neutral-200 text-neutral-700 transition-colors
                    disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-            <img v-show="store.isLoading" src="https://unpkg.com/lucide-static@latest/icons/refresh-ccw.svg" alt=""
+            <img v-show="store.isLoading" src="/icons/refresh-ccw.svg" alt=""
               class="size-3.5 dark:invert opacity-70 animate-spin" />
-            <img v-show="!store.isLoading" src="https://unpkg.com/lucide-static@latest/icons/cloud-download.svg" alt=""
+            <img v-show="!store.isLoading" src="/icons/cloud-download.svg" alt=""
               class="size-3.5 dark:invert opacity-70" />
             <span>{{ store.isLoading ? t("sync.syncing") : t("sync.fetchData") }}</span>
           </button>
