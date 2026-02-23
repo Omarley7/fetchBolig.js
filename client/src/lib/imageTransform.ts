@@ -97,3 +97,15 @@ const GALLERY_PARAMS: ImageParams = {
 export function galleryImage(url: string): string {
     return resolve(url, GALLERY_PARAMS);
 }
+
+const BLUEPRINT_PARAMS: ImageParams = {
+    w: 1200,
+    h: 900,
+    fit: "inside",
+    q: 85,
+    output: "webp",
+};
+
+export function blueprintImage(url: string): string {
+    return resolve(url, BLUEPRINT_PARAMS);
+}

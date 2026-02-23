@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
-import { galleryImage } from "~/lib/imageTransform";
-import GalleryNav from "./GalleryNav.vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation, Keyboard, Pagination } from "swiper/modules";
+import type { Swiper as SwiperClass } from "swiper/types";
+import { galleryImage, blueprintImage } from "~/lib/imageTransform";
 import { useAppointmentsStore } from "~/stores/appointments";
+
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const { getImageUrl } = useAppointmentsStore();
 
@@ -18,49 +24,46 @@ const emit = defineEmits<{
 type Tab = "images" | "blueprints";
 const activeTab = ref<Tab>("images");
 
-const currentIndex = ref(0);
-
 const activeList = computed(() =>
-  activeTab.value === "images" ? props.images : (props.blueprints ?? [])
+  activeTab.value === "images" ? props.images : (props.blueprints ?? []),
 );
 
-const currentUrl = computed(() => {
-  const path = activeList.value[currentIndex.value];
-  if (!path) return undefined;
-  return galleryImage(getImageUrl(path));
-});
+const hasBlueprints = computed(() => props.blueprints && props.blueprints.length > 0);
 
-const hasBlueprints = computed(
-  () => props.blueprints && props.blueprints.length > 0
-);
+const swiperInstance = ref<SwiperClass | null>(null);
+
+function onSwiperInit(swiper: SwiperClass) {
+  swiperInstance.value = swiper;
+}
 
 function switchTab(tab: Tab) {
   activeTab.value = tab;
-  currentIndex.value = 0;
 }
 
-function prev() {
-  if (currentIndex.value > 0) currentIndex.value--;
-}
+// Reset to first slide on tab switch
+watch(activeTab, () => {
+  if (swiperInstance.value) {
+    swiperInstance.value.slideTo(0, 0);
+  }
+});
 
-function next() {
-  if (currentIndex.value < activeList.value.length - 1) currentIndex.value++;
-}
-
-function onKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape") emit("close");
-  if (e.key === "ArrowLeft") prev();
-  if (e.key === "ArrowRight") next();
-}
-
-// Reset index when images change
+// Reset tab when images prop changes (different appointment)
 watch(
   () => props.images,
   () => {
-    currentIndex.value = 0;
     activeTab.value = "images";
-  }
+  },
 );
+
+function resolveUrl(path: string): string {
+  const transform = activeTab.value === "blueprints" ? blueprintImage : galleryImage;
+  return transform(getImageUrl(path));
+}
+
+// Escape to close — arrow keys handled by Swiper Keyboard module
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === "Escape") emit("close");
+}
 
 onMounted(() => {
   window.addEventListener("keydown", onKeydown);
@@ -74,51 +77,116 @@ onUnmounted(() => {
 
 <template>
   <Teleport to="body">
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80" @click.self="emit('close')">
-      <div class="relative flex flex-col items-center max-w-[90vw] max-h-[90vh]">
-        <!-- Close button -->
-        <button class="absolute right-0 z-10 p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-          @click="emit('close')">
-          <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close" class="size-6 dark:invert" />
+    <div
+      class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm"
+      @click.self="emit('close')"
+    >
+      <!-- Close -->
+      <button
+        class="absolute top-4 right-4 z-20 p-2 rounded-full! bg-white/10! hover:bg-white/20! border-none! transition-colors duration-200"
+        aria-label="Close gallery"
+        @click="emit('close')"
+      >
+        <img
+          src="/icons/x.svg"
+          alt="Close"
+          class="size-5 invert"
+        />
+      </button>
+
+      <!-- Tabs -->
+      <div v-if="hasBlueprints" class="flex gap-1 mb-4 z-10">
+        <button
+          v-for="tab in (['images', 'blueprints'] as Tab[])"
+          :key="tab"
+          class="px-5 py-1.5 rounded-full! text-sm font-medium tracking-wide transition-all duration-200 border-none!"
+          :class="
+            activeTab === tab
+              ? 'bg-white/15! text-white shadow-sm'
+              : 'bg-transparent! text-white/50 hover:text-white/80 hover:bg-white/5!'
+          "
+          @click="switchTab(tab)"
+        >
+          {{ tab === "images" ? $t("gallery.photos") : $t("gallery.blueprints") }}
         </button>
+      </div>
 
-        <!-- Tabs -->
-        <div v-if="hasBlueprints" class="flex gap-2 mb-3">
-          <button class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-            :class="activeTab === 'images' ? 'dark:bg-neutral-500!' : 'not-dark:bg-neutral-400!'"
-            @click="switchTab('images')">
-            {{ $t("gallery.photos") }}
-          </button>
-          <button class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-            :class="activeTab === 'blueprints' ? 'dark:bg-neutral-500!' : 'not-dark:bg-neutral-400!'"
-            @click="switchTab('blueprints')">
-            {{ $t("gallery.blueprints") }}
-          </button>
-        </div>
-
-        <!-- Image -->
-        <div class="relative flex items-center">
-          <GalleryNav class="hidden sm:block" direction="prev" :disabled="currentIndex === 0" @click="prev" />
-
-          <div v-if="currentUrl" class="relative select-none">
-            <img :src="currentUrl" alt="Gallery image"
-              class="max-h-[75vh] max-w-[80vw] sm:max-w-[70vw] rounded-lg object-contain" />
-            <!-- Click zones: left 40% = prev, right 60% = next -->
-            <div class="absolute inset-0 flex">
-              <div class="w-[40%] cursor-pointer" @click="prev" />
-              <div class="w-[60%] cursor-pointer" @click="next" />
-            </div>
-          </div>
-
-          <GalleryNav class="hidden sm:block" direction="next" :disabled="currentIndex >= activeList.length - 1"
-            @click="next" />
-        </div>
-
-        <!-- Counter -->
-        <p v-if="activeList.length > 1" class="mt-2 text-sm text-gray-400">
-          {{ currentIndex + 1 }} / {{ activeList.length }}
-        </p>
+      <!-- Swiper -->
+      <div class="relative w-full max-w-5xl px-4 sm:px-12">
+        <Swiper
+          :key="activeTab"
+          :modules="[Navigation, Keyboard, Pagination]"
+          :navigation="true"
+          :keyboard="{ enabled: true }"
+          :pagination="{ type: 'fraction' }"
+          :slides-per-view="1"
+          :space-between="0"
+          :lazy-preload-prev-next="1"
+          :grab-cursor="true"
+          class="gallery-swiper"
+          @swiper="onSwiperInit"
+        >
+          <SwiperSlide
+            v-for="(path, index) in activeList"
+            :key="path"
+            class="!flex items-center justify-center"
+          >
+            <img
+              :src="resolveUrl(path)"
+              :loading="index <= 1 ? 'eager' : 'lazy'"
+              :alt="`${activeTab === 'images' ? 'Photo' : 'Blueprint'} ${index + 1}`"
+              class="max-h-[75vh] max-w-full object-contain select-none rounded-lg"
+            />
+            <div v-if="index > 1" class="swiper-lazy-preloader swiper-lazy-preloader-white" />
+          </SwiperSlide>
+        </Swiper>
       </div>
     </div>
   </Teleport>
 </template>
+
+<style scoped>
+/* Navigation arrows */
+.gallery-swiper :deep(.swiper-button-next),
+.gallery-swiper :deep(.swiper-button-prev) {
+  color: rgba(255, 255, 255, 0.7);
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+  --swiper-navigation-size: 22px;
+}
+
+.gallery-swiper :deep(.swiper-button-next:hover),
+.gallery-swiper :deep(.swiper-button-prev:hover) {
+  color: rgba(255, 255, 255, 1);
+}
+
+.gallery-swiper :deep(.swiper-button-disabled) {
+  opacity: 0.15 !important;
+}
+
+/* Hide arrows on mobile — swipe is primary */
+@media (max-width: 639px) {
+  .gallery-swiper :deep(.swiper-button-next),
+  .gallery-swiper :deep(.swiper-button-prev) {
+    display: none;
+  }
+}
+
+/* Fraction counter */
+.gallery-swiper :deep(.swiper-pagination-fraction) {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  bottom: auto;
+  position: relative;
+  margin-top: 0.75rem;
+}
+
+/* Preloader */
+.gallery-swiper :deep(.swiper-lazy-preloader) {
+  --swiper-preloader-color: rgba(255, 255, 255, 0.4);
+}
+
+</style>
