@@ -88,7 +88,7 @@ export const useAuth = defineStore(
         } catch (e) {
           console.error("Keep-alive failed:", e);
         }
-      }, 5 * 60 * 1000);
+      }, 3 * 60 * 1000);
     }
 
     function stopKeepAlive() {
@@ -151,6 +151,22 @@ export const useAuth = defineStore(
 
     // resume keep-alive if already authenticated on startup
     if (isAuthenticated.value) startKeepAlive();
+
+    // Validate session when tab regains focus (Page Visibility API)
+    let lastVisibilityCheck = 0;
+    const VISIBILITY_COOLDOWN = 30_000; // 30 seconds
+
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState !== "visible") return;
+      if (!isAuthenticated.value) return;
+
+      const now = Date.now();
+      if (now - lastVisibilityCheck < VISIBILITY_COOLDOWN) return;
+      lastVisibilityCheck = now;
+
+      const valid = await validateSession();
+      if (!valid) await ensureSession();
+    });
 
     return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, login, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
   },
