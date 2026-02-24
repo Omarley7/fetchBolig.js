@@ -1,5 +1,5 @@
 import type { Appointment } from "@/types";
-import { computed, type Ref } from "vue";
+import { computed, type Ref, unref } from "vue";
 import { useI18n } from "~/i18n";
 import { formatDay, formatMonth, formatWeek, getISOWeekStart } from "~/lib/dateHelper";
 
@@ -40,7 +40,7 @@ function getAppointmentsByDay(appointments: Appointment[]): GroupedAppointments 
 
 function getAppointmentsByWeek(appointments: Appointment[]): GroupedAppointments {
   return groupBy(appointments, (appt) =>
-    hasValidDate(appt) ? getISOWeekStart(new Date(appt.date!)) : null
+    hasValidDate(appt) ? getISOWeekStart(new Date(appt.date!)) : null,
   );
 }
 
@@ -87,19 +87,20 @@ export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: 
     });
   });
 
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   function formatLabel(key: string): string {
     if (key === NO_DATE_KEY) {
       return t("appointments.noDate");
     }
+    const loc = unref(locale);
     switch (groupBy.value) {
       case "day":
-        return formatDay(key);
+        return formatDay(key, loc);
       case "week":
-        return formatWeek(key);
+        return formatWeek(key, loc, t("listings.week"));
       case "month":
-        return formatMonth(key);
+        return formatMonth(key, loc);
     }
   }
 

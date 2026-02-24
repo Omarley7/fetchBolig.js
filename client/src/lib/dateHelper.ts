@@ -16,40 +16,46 @@ export function getISOWeekStart(date: Date): string {
 }
 
 // ---- Formatting helpers ----
+const LOCALE_MAP: Record<string, string> = { da: "da-DK", en: "en-GB" };
+function toDateLocale(locale: string): string {
+  return LOCALE_MAP[locale] ?? locale;
+}
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-export function formatDay(key: string): string {
-  return capitalize(new Date(key).toLocaleDateString("da-DK", {
+export function formatDay(key: string, locale: string): string {
+  return capitalize(new Date(key).toLocaleDateString(toDateLocale(locale), {
     weekday: "long",
     day: "2-digit",
     month: "2-digit",
   }));
 }
 
-export function formatWeek(key: string): string {
+export function formatWeek(key: string, locale: string, weekLabel: string): string {
   const weekStart = new Date(key);
   const weekNumber = getISOWeek(weekStart);
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekEnd.getDate() + 6);
 
-  const startStr = weekStart.toLocaleDateString("da-DK", {
+  const dl = toDateLocale(locale);
+  const startStr = weekStart.toLocaleDateString(dl, {
     day: "2-digit",
     month: "2-digit",
   });
 
-  const endStr = weekEnd.toLocaleDateString("da-DK", {
+  const endStr = weekEnd.toLocaleDateString(dl, {
     day: "2-digit",
     month: "2-digit",
   });
 
-  return `Uge ${weekNumber} (${startStr} - ${endStr})`;
+  return `${weekLabel} ${weekNumber} (${startStr} - ${endStr})`;
 }
 
-export function formatMonth(key: string): string {
+export function formatMonth(key: string, locale: string): string {
   const [year, month] = key.split("-");
-  return capitalize(new Date(`${year}-${month}-01`).toLocaleDateString("da-DK", {
+  return capitalize(new Date(`${year}-${month}-01`).toLocaleDateString(toDateLocale(locale), {
     month: "long",
     year: "numeric",
   }));
