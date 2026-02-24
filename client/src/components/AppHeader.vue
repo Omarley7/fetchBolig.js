@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import LoginForm from "./LoginForm.vue";
-import { useI18n } from "../i18n";
 import { useDarkMode } from "~/composables/useDarkMode";
+import { useI18n } from "../i18n";
+import LoginForm from "./LoginForm.vue";
 
 const { t } = useI18n();
 const { isDark, toggle: toggleDarkMode } = useDarkMode();
@@ -30,7 +30,7 @@ const { isDark, toggle: toggleDarkMode } = useDarkMode();
     <div class="flex-1 flex items-center justify-end gap-2">
       <button
         @click="toggleDarkMode"
-        class="cursor-pointer p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+        class="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
         :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
       >
         <img
