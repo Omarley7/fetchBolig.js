@@ -35,7 +35,7 @@ function toggleExpanded() {
     <!-- Group header -->
     <div class="flex items-center justify-between cursor-pointer" @click="toggleExpanded">
       <div class="flex items-center gap-2">
-        <h2 class="text-lg font-semibold pl-1">{{ label }}</h2>
+        <h2 class="text-[clamp(0.95rem,3vw,1.125rem)] font-semibold pl-1">{{ label }}</h2>
         <span v-if="!expanded"
           class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 text-xs font-medium rounded-full dark:bg-white/15 bg-neutral-400/30 dark:text-neutral-300 text-neutral-600">
           {{ props.appointments.length }}
@@ -52,7 +52,7 @@ function toggleExpanded() {
       <div v-if="props.appointments.length > 1" class="flex flex-col items-center p-1" @click="showMap = true">
         <div
           class="flex flex-row items-center gap-1.5 border rounded-lg dark:border-zinc-50/25 dark:bg-white/5 bg-neutral-200 p-1.5 mb-2 cursor-pointer select-none hover:scale-[1.02] hover:bg-neutral-300 dark:hover:bg-white/10 active:scale-[0.98] transition-all duration-150">
-          <p class="dark:text-white/50">{{ t('appointments.mapOfLocations', { count: props.appointments.length }) }}</p>
+          <p class="text-[clamp(0.8rem,2.5vw,0.925rem)] dark:text-white/50">{{ t('appointments.mapOfLocations', { count: props.appointments.length }) }}</p>
           <img src="/icons/map-pin.svg" alt="Map"
             class="size-5 dark:invert opacity-70" />
 

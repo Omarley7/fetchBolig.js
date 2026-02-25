@@ -16,7 +16,7 @@ const props = defineProps<{
 <template>
   <div class="flex flex-col items-center">
     <GlassPill interactive @click="emit('openGallery')">
-      <h3 class="text-xl px-8 py-2 font-semibold drop-shadow-(--shady)">
+      <h3 class="text-[clamp(1rem,3.5vw,1.25rem)] px-8 max-sm:px-4 py-2 font-semibold drop-shadow-(--shady)">
         {{ props.appointment.title }}</h3>
     </GlassPill>
   </div>

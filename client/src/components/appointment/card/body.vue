@@ -34,7 +34,7 @@ function handleMapClick() {
 
     <GlassPill v-if="props.appointment.date" class="flex p-2 gap-3 items-center self-start">
       <div>
-        <p class="text-lg drop-shadow-(--shady)">
+        <p class="text-[clamp(0.9rem,3vw,1.125rem)] drop-shadow-(--shady)">
           {{ t("appointments.openHouse") }}
         </p>
         <p class="text-sm drop-shadow-(--shady)">
