@@ -5,20 +5,19 @@ import { useI18n } from "vue-i18n";
 
 const auth = useAuth();
 const { t } = useI18n();
-const isModalOpen = ref(false);
 const isLogoutModalOpen = ref(false);
 
 async function handleLogin() {
   if (await auth.login(auth.email, auth.password))
-    isModalOpen.value = false;
+    auth.showLoginModal = false;
 }
 
 function openModal() {
-  isModalOpen.value = true;
+  auth.showLoginModal = true;
 }
 
 function closeModal() {
-  isModalOpen.value = false;
+  auth.showLoginModal = false;
 }
 
 function openLogoutModal() {
@@ -51,7 +50,7 @@ function confirmLogout() {
 
     <!-- Modal -->
     <Teleport to="body">
-      <div v-if="isModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      <div v-if="auth.showLoginModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
         @click.self="closeModal">
         <div
           class="bg-violet-50 dark:bg-violet-950 text-gray-900 dark:text-gray-100 border border-violet-200 dark:border-violet-800/50 rounded-lg shadow-xl p-6 max-w-md w-full mx-20">

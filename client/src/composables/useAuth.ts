@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { login as apiLogin, isTimeoutError } from "~/data/appointmentsSource";
+import { login as apiLogin, handleApiError } from "~/data/appointmentsSource";
 import { useToastStore } from "~/stores/toast";
 import { useI18n } from "~/i18n";
 import config from "~/config";
@@ -17,6 +17,7 @@ export const useAuth = defineStore(
     const cookies = ref<string>("");
     const name = ref("");
     const rememberPassword = ref(false);
+    const showLoginModal = ref(false);
     let keepAliveTimer: number | null = null;
     const toast = useToastStore();
 
@@ -42,12 +43,7 @@ export const useAuth = defineStore(
         if (ok) startKeepAlive();
         return ok;
       } catch (err) {
-        const { t } = useI18n();
-        if (isTimeoutError(err)) {
-          toast.warning(t("errors.timeoutLogin"), 8000);
-        } else {
-          toast.error(err instanceof Error ? err.message : "Login failed unexpectedly...");
-        }
+        handleApiError(err, toast, useI18n().t, "Login failed unexpectedly...", "errors.timeoutLogin");
         return setAuthenticated(false);
       } finally {
         isLoading.value = false;
@@ -185,7 +181,7 @@ export const useAuth = defineStore(
       if (!valid) await ensureSession();
     });
 
-    return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, login, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
+    return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, showLoginModal, login, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
   },
   {
     persist: {

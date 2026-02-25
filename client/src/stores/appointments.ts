@@ -2,7 +2,7 @@ import type { Appointment } from "@/types";
 import { defineStore, storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 import { getAppointments, isCacheStale } from "~/data/appointments";
-import { isTimeoutError } from "~/data/appointmentsSource";
+import { handleApiError } from "~/data/appointmentsSource";
 import { useAuth } from "~/composables/useAuth";
 import { useToastStore } from "~/stores/toast";
 import { useI18n } from "~/i18n";
@@ -43,13 +43,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         appointments.value = payload.appointments;
         updatedAt.value = payload.updatedAt;
       } catch (error) {
-        const toast = useToastStore();
-        const { t } = useI18n();
-        if (isTimeoutError(error)) {
-          toast.warning(t("errors.timeout"), 8000);
-        } else {
-          toast.error(error instanceof Error ? error.message : "Failed to load appointments");
-        }
+        handleApiError(error, useToastStore(), useI18n().t, "Failed to load appointments");
       }
     } finally {
       isLoading.value = false;
@@ -87,13 +81,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
           return;
         }
       }
-      const toast = useToastStore();
-      const { t } = useI18n();
-      if (isTimeoutError(error)) {
-        toast.warning(t("errors.timeout"), 8000);
-      } else {
-        toast.error(error instanceof Error ? error.message : "Failed to refresh appointments");
-      }
+      handleApiError(error, useToastStore(), useI18n().t, "Failed to refresh appointments");
     } finally {
       isLoading.value = false;
     }
@@ -103,8 +91,15 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     needsRefresh.value = false;
   }
 
+  let pendingRefresh = false;
+
   async function handleRefresh() {
     const auth = useAuth();
+    if (!auth.isAuthenticated && !auth.cookies) {
+      pendingRefresh = true;
+      auth.showLoginModal = true;
+      return;
+    }
     const sessionValid = await auth.ensureSession();
     if (!sessionValid) {
       sessionExpired.value = true;
@@ -114,10 +109,16 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     await refresh();
   }
 
-  // Clear "session expired" banner when the user logs back in
+  // When the user logs back in, clear expired banner and fulfill any pending refresh
   const { isAuthenticated } = storeToRefs(useAuth());
   watch(isAuthenticated, (loggedIn) => {
-    if (loggedIn) sessionExpired.value = false;
+    if (loggedIn) {
+      sessionExpired.value = false;
+      if (pendingRefresh) {
+        pendingRefresh = false;
+        refresh();
+      }
+    }
   });
 
   function toggleShowAllOffers() {

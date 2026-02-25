@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAuth } from "~/composables/useAuth";
 import { formatRelativeTime, formatUpdatedAt, getStalenessLevel } from "~/lib/formatters";
 import { useAppointmentsStore } from "~/stores/appointments";
 const props = defineProps<{
   class?: string;
 }>();
-const auth = useAuth();
 const store = useAppointmentsStore();
 const { t } = useI18n();
 const expanded = ref(false);

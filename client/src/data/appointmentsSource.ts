@@ -3,8 +3,8 @@ import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
 import config from "~/config";
 
 // Client-side timeouts (safety net — server timeouts should fire first)
-const TIMEOUT_LOGIN = 25_000;         // 25s – covers 2 sequential server requests
-const TIMEOUT_APPOINTMENTS = 90_000;  // 90s – orchestrates N×3 server sub-calls
+const TIMEOUT_LOGIN = 25_000; // 25s – covers 2 sequential server requests
+const TIMEOUT_APPOINTMENTS = 90_000; // 90s – orchestrates N×3 server sub-calls
 
 function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
   const controller = new AbortController();
@@ -12,14 +12,36 @@ function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number):
   return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer));
 }
 
+export class HttpError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
 /** Check if an error is a timeout (client-side abort or server 504) */
 export function isTimeoutError(error: unknown): boolean {
   if (error instanceof DOMException && error.name === "AbortError") return true;
-  if (error instanceof Error && error.message.includes("504")) return true;
+  if (error instanceof HttpError && error.status === 504) return true;
   return false;
 }
 
-console.log(config);
+/** Shared handler: shows a timeout warning or generic error toast */
+export function handleApiError(
+  error: unknown,
+  toast: { warning: (msg: string, dur?: number) => void; error: (msg: string, dur?: number) => void },
+  t: (key: string) => string,
+  fallback: string = "An unexpected error occurred",
+  timeoutKey: string = "errors.timeout",
+) {
+  if (isTimeoutError(error)) {
+    toast.warning(t(timeoutKey), 8000);
+  } else {
+    toast.error(error instanceof Error ? error.message : fallback);
+  }
+}
 
 export async function fetchAppointments(
   cookies: string,
@@ -41,12 +63,16 @@ export async function fetchAppointments(
     };
 
     const queryParam = includeAll ? "?includeAll=true" : "";
-    const result = await fetchWithTimeout(`${config.backendDomain}/api/appointments/upcoming${queryParam}`, {
-      method: "GET",
-      headers,
-    }, TIMEOUT_APPOINTMENTS);
+    const result = await fetchWithTimeout(
+      `${config.backendDomain}/api/appointments/upcoming${queryParam}`,
+      {
+        method: "GET",
+        headers,
+      },
+      TIMEOUT_APPOINTMENTS
+    );
     if (!result.ok) {
-      throw new Error(`Failed to fetch appointments: ${result.status}`);
+      throw new HttpError(`Failed to fetch appointments: ${result.status}`, result.status);
     }
     const data = await result.json();
     return { updatedAt: new Date(), appointments: data as Appointment[] };
@@ -58,18 +84,22 @@ export async function fetchAppointments(
 
 export async function login(email: string, password: string): Promise<UserData | null> {
   try {
-    const result = await fetchWithTimeout(`${config.backendDomain}/api/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const result = await fetchWithTimeout(
+      `${config.backendDomain}/api/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
       },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    }, TIMEOUT_LOGIN);
+      TIMEOUT_LOGIN
+    );
     if (!result.ok) {
-      throw new Error(`Failed to login: ${result.status}`);
+      throw new HttpError(`Failed to login: ${result.status}`, result.status);
     }
     const data = await result.json();
     return data;
