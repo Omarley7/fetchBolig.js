@@ -1,17 +1,8 @@
 export default {
   common: {
     appTitle: "FetchBolig.js",
-    loading: "Indlæser...",
     login: "Login",
     logout: "Log ud",
-    email: "Email",
-    password: "Adgangskode",
-    refresh: "Opdater",
-    close: "Luk",
-    groupBy: "Gruppér efter",
-    perDay: "pr. dag",
-    perWeek: "pr. uge",
-    perMonth: "pr. måned",
     pageNotFound: "Siden blev ikke fundet",
     backToHome: "Tilbage til forsiden",
     day: "Dag",
@@ -19,11 +10,9 @@ export default {
     month: "Måned",
   },
   appointments: {
-    title: "Kommende aftaler",
-    loading: "Indlæser kommende aftaler...",
-    noAppointments: "Ingen aftaler fundet",
     emptyTitle: "Ingen kommende aftaler",
-    emptyDescription: "Det ser ud til, at du ikke har nogen kommende fremvisninger endnu. Søg efter boliger på FindBolig.nu og vent på invitationer.",
+    emptyDescription:
+      "Det ser ud til, at du ikke har nogen kommende fremvisninger endnu. Søg efter boliger på FindBolig.nu og vent på invitationer.",
     searchOnFindbolig: "Søg boliger på FindBolig.nu",
     openHouse: "Åbent hus",
     noDate: "Afventer dato",
@@ -45,7 +34,6 @@ export default {
   auth: {
     loggingIn: "Logger ind...",
     loggingOut: "Logger ud...",
-    loginFailed: "Login fejlede",
     logoutConfirm:
       "Dine data er stadig gemt på din enhed, men du vil ikke kunne hente nye opdateringer, før du logger ind igen.",
     rememberPassword: "Husk mig på denne enhed",
@@ -53,11 +41,6 @@ export default {
     securityNote:
       "Dine loginoplysninger sendes direkte til findbolig.nu - vi gemmer dem aldrig på vores servere.",
     findboligCredentials: "Brug dine findbolig.nu-loginoplysninger",
-  },
-  errors: {
-    generic: "Der opstod en fejl",
-    networkError: "Netværksfejl - prøv igen senere",
-    mapNotAvailable: "Kort ikke tilgængelig for: {address}",
   },
   gallery: {
     photos: "Fotos",
@@ -67,8 +50,6 @@ export default {
     welcomeUser: "Velkommen, {0}!",
     welcomeBack: "Velkommen tilbage, {0}!",
     welcome: "Din data, din kontrol",
-    pleaseLogin:
-      "Vi henter dine kommende aftaler direkte fra findbolig.nu (DEAS) og viser dem i en praktisk kronologisk liste. Udover det vi data der bliver sendt til en AI model for at udlede den dato du er inviteret til åbent hus, bliver data kun gemt lokalt på din enhed. Log ind for at komme i gang.",
     viewAppointments: "Se dine {0} aftaler",
     fetchAppointments: "Hent dine aftaler",
     readyToFetch: "Dine aftaler fra FindBolig.nu er klar til at blive hentet.",

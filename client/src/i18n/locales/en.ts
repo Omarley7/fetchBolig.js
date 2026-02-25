@@ -1,17 +1,8 @@
 export default {
   common: {
     appTitle: "FetchBolig.js",
-    loading: "Loading...",
     login: "Login",
     logout: "Logout",
-    email: "Email",
-    password: "Password",
-    refresh: "Refresh",
-    close: "Close",
-    groupBy: "Group by",
-    perDay: "per day",
-    perWeek: "per week",
-    perMonth: "per month",
     pageNotFound: "Page not found",
     backToHome: "Back to home",
     day: "Day",
@@ -19,11 +10,9 @@ export default {
     month: "Month",
   },
   appointments: {
-    title: "Upcoming Appointments",
-    loading: "Loading upcoming appointments...",
-    noAppointments: "No appointments found",
     emptyTitle: "No upcoming appointments",
-    emptyDescription: "It looks like you don't have any upcoming viewings yet. Search for housing on FindBolig.nu and wait for invitations.",
+    emptyDescription:
+      "It looks like you don't have any upcoming viewings yet. Search for housing on FindBolig.nu and wait for invitations.",
     searchOnFindbolig: "Search housing on FindBolig.nu",
     openHouse: "Open House",
     noDate: "Awaiting date",
@@ -45,7 +34,6 @@ export default {
   auth: {
     loggingIn: "Logging in...",
     loggingOut: "Logging out...",
-    loginFailed: "Login failed",
     logoutConfirm:
       "Your data is still stored on your device, but you will not be able to fetch new updates until you log in again.",
     rememberPassword: "Remember me on this device",
@@ -53,11 +41,6 @@ export default {
     securityNote:
       "Your credentials are sent directly to findbolig.nu - we never store them on our servers.",
     findboligCredentials: "Use your findbolig.nu credentials",
-  },
-  errors: {
-    generic: "An error occurred",
-    networkError: "Network error - please try again later",
-    mapNotAvailable: "Map not available for: {address}",
   },
   gallery: {
     photos: "Photos",
@@ -67,8 +50,6 @@ export default {
     welcomeUser: "Welcome, {0}!",
     welcomeBack: "Welcome back, {0}!",
     welcome: "Your data, your control",
-    pleaseLogin:
-      "We fetch your upcoming appointments directly from findbolig.nu (DEAS) and display them in a convenient chronological list. Besides the data that is sent to an AI model to deduce the date you are invited to open house, data is only stored locally on your device. Log in to get started.",
     viewAppointments: "View your {0} appointments",
     fetchAppointments: "Fetch your appointments",
     readyToFetch: "Your appointments from FindBolig.nu are ready to be fetched.",

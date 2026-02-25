@@ -40,7 +40,7 @@ function getAppointmentsByDay(appointments: Appointment[]): GroupedAppointments 
 
 function getAppointmentsByWeek(appointments: Appointment[]): GroupedAppointments {
   return groupBy(appointments, (appt) =>
-    hasValidDate(appt) ? getISOWeekStart(new Date(appt.date!)) : null,
+    hasValidDate(appt) ? getISOWeekStart(new Date(appt.date!)) : null
   );
 }
 
@@ -98,7 +98,7 @@ export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: 
       case "day":
         return formatDay(key, loc);
       case "week":
-        return formatWeek(key, loc, t("listings.week"));
+        return formatWeek(key, loc, t("common.week"));
       case "month":
         return formatMonth(key, loc);
     }
