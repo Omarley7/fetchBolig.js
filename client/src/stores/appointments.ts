@@ -2,8 +2,10 @@ import type { Appointment } from "@/types";
 import { defineStore, storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 import { getAppointments, isCacheStale } from "~/data/appointments";
+import { isTimeoutError } from "~/data/appointmentsSource";
 import { useAuth } from "~/composables/useAuth";
 import { useToastStore } from "~/stores/toast";
+import { useI18n } from "~/i18n";
 import config from "~/config";
 
 export const useAppointmentsStore = defineStore("appointments", () => {
@@ -42,7 +44,12 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         updatedAt.value = payload.updatedAt;
       } catch (error) {
         const toast = useToastStore();
-        toast.error(error instanceof Error ? error.message : "Failed to load appointments");
+        const { t } = useI18n();
+        if (isTimeoutError(error)) {
+          toast.warning(t("errors.timeout"), 8000);
+        } else {
+          toast.error(error instanceof Error ? error.message : "Failed to load appointments");
+        }
       }
     } finally {
       isLoading.value = false;
@@ -81,7 +88,12 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
       }
       const toast = useToastStore();
-      toast.error(error instanceof Error ? error.message : "Failed to refresh appointments");
+      const { t } = useI18n();
+      if (isTimeoutError(error)) {
+        toast.warning(t("errors.timeout"), 8000);
+      } else {
+        toast.error(error instanceof Error ? error.message : "Failed to refresh appointments");
+      }
     } finally {
       isLoading.value = false;
     }

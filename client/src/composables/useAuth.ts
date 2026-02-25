@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { login as apiLogin } from "~/data/appointmentsSource";
+import { login as apiLogin, isTimeoutError } from "~/data/appointmentsSource";
 import { useToastStore } from "~/stores/toast";
+import { useI18n } from "~/i18n";
 import config from "~/config";
+
+const TIMEOUT_REFRESH = 15_000; // 15s – background session checks
 
 export const useAuth = defineStore(
   "auth",
@@ -25,7 +28,7 @@ export const useAuth = defineStore(
         if (!userData)
           return setAuthenticated(false);
 
-        if (!userData.cookies) { // Login succeeded but no cookies received - this shouldn't happen
+        if (!userData.cookies?.length) { // Login succeeded but no cookies received - this shouldn't happen
           toast.error("Login successful but no authentication cookies received. Please try again.");
           return setAuthenticated(false);
         }
@@ -39,7 +42,12 @@ export const useAuth = defineStore(
         if (ok) startKeepAlive();
         return ok;
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Login failed unexpectedly...");
+        const { t } = useI18n();
+        if (isTimeoutError(err)) {
+          toast.warning(t("errors.timeoutLogin"), 8000);
+        } else {
+          toast.error(err instanceof Error ? err.message : "Login failed unexpectedly...");
+        }
         return setAuthenticated(false);
       } finally {
         isLoading.value = false;
@@ -50,8 +58,8 @@ export const useAuth = defineStore(
       isAuthenticated.value = value;
       // Only clear password if the user didn't ask to remember it
       if (!rememberPassword.value) password.value = "";
-      if (newCookies) cookies.value = newCookies;
-      if (newName) name.value = newName;
+      if (newCookies !== undefined) cookies.value = newCookies;
+      if (newName !== undefined) name.value = newName;
       if (!value) stopKeepAlive();
       return value;
     }
@@ -62,13 +70,17 @@ export const useAuth = defineStore(
       keepAliveTimer = window.setInterval(async () => {
         try {
           if (!cookies.value) return;
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), TIMEOUT_REFRESH);
           const res = await fetch(`${config.backendDomain}/api/auth/refresh`, {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
               "x-findbolig-cookies": cookies.value,
             },
+            signal: controller.signal,
           });
+          clearTimeout(timer);
 
           if (!res.ok) {
             // if unauthorized, mark logged out
@@ -79,7 +91,7 @@ export const useAuth = defineStore(
           }
 
           const data = await res.json();
-          if (data && data.cookies) {
+          if (data?.cookies?.length) {
             cookies.value = parseCookies(data.cookies);
           }
           if (data && data.fullName) {
@@ -107,13 +119,17 @@ export const useAuth = defineStore(
     async function validateSession(): Promise<boolean> {
       if (!cookies.value) return false;
       try {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), TIMEOUT_REFRESH);
         const res = await fetch(`${config.backendDomain}/api/auth/refresh`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             "x-findbolig-cookies": cookies.value,
           },
+          signal: controller.signal,
         });
+        clearTimeout(timer);
 
         if (!res.ok) {
           if (res.status === 401) {
@@ -123,7 +139,7 @@ export const useAuth = defineStore(
         }
 
         const data = await res.json();
-        if (data?.cookies) cookies.value = parseCookies(data.cookies);
+        if (data?.cookies?.length) cookies.value = parseCookies(data.cookies);
         if (data?.fullName) name.value = data.fullName;
         return true;
       } catch {
@@ -145,7 +161,8 @@ export const useAuth = defineStore(
         return !!ok;
       }
 
-      // 3. No stored credentials — user must log in manually
+      // Definitively cannot recover session — clear stale auth state
+      setAuthenticated(false, "", "");
       return false;
     }
 

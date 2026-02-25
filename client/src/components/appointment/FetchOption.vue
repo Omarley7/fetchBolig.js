@@ -59,7 +59,7 @@ const borderColor = computed(() => {
           </svg>
         </button>
         <!-- Right: refresh button with label -->
-        <div v-if="auth.isAuthenticated" class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-2 shrink-0">
           <button :disabled="store.isLoading" @click="store.handleRefresh()" class="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md
                    dark:bg-white/10 bg-neutral-300 dark:hover:bg-white/20 hover:bg-neutral-400
                    dark:text-neutral-200 text-neutral-700 transition-colors
