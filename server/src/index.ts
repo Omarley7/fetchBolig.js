@@ -6,7 +6,17 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import * as findboligService from "~/findbolig-service";
+import { TimeoutError } from "~/findbolig-service";
 import { requireAuth } from "~/lib/auth-helpers";
+import type { Context } from "hono";
+
+function handleError(c: Context, error: unknown) {
+  console.error(error);
+  if (error instanceof TimeoutError) {
+    return c.json({ error: "timeout", message: "findbolig.nu is not responding" }, 504);
+  }
+  return c.json({ error: "Internal server error" }, 500);
+}
 
 const app = new Hono();
 
@@ -37,8 +47,7 @@ appointments.get("/upcoming", async (c) => {
     );
     return c.json(appointments);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 
@@ -52,8 +61,7 @@ auth.post("/login", async (c) => {
     const result = await findboligService.login(email, password);
     return c.json(result);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 
@@ -68,8 +76,7 @@ auth.get("/refresh", async (c) => {
     }
     return c.json(result);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 
@@ -81,8 +88,7 @@ offers.get("/", async (c) => {
     const offers = await findboligService.fetchOffers(cookies);
     return c.json(offers.results);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 
@@ -101,8 +107,7 @@ offers.get("/:offerId/position", async (c) => {
     );
     return c.json(position);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 
@@ -114,8 +119,7 @@ threads.get("/", async (c) => {
     const threads = await findboligService.fetchThreads(cookies);
     return c.json(threads.results);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 
@@ -127,8 +131,7 @@ users.get("/me", async (c) => {
     const user = await findboligService.getUserData(cookies);
     return c.json(user);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 
@@ -141,8 +144,7 @@ residences.get("/:residenceId", async (c) => {
     const residence = await findboligService.getResidence(residenceId, cookies);
     return c.json(residence);
   } catch (error) {
-    console.error(error);
-    return c.json({ error: "Internal server error" }, 500);
+    return handleError(c, error);
   }
 });
 

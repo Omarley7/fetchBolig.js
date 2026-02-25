@@ -15,6 +15,38 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
 const BASE_URL = "https://findbolig.nu";
 
+// Timeout constants (milliseconds)
+const TIMEOUT_LOGIN = 10_000;     // 10s – user is waiting on a modal
+const TIMEOUT_REFRESH = 10_000;   // 10s – background session check
+const TIMEOUT_DATA = 20_000;      // 20s – heavier data fetches
+
+export class TimeoutError extends Error {
+  constructor(url: string, timeoutMs: number) {
+    super(`Request to ${url} timed out after ${timeoutMs / 1000}s`);
+    this.name = "TimeoutError";
+  }
+}
+
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new TimeoutError(url, timeoutMs);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /**
  * Performs initial GET and login to establish authenticated session
  * Returns the Set-Cookie headers if successful
@@ -25,12 +57,12 @@ export async function login(
 ): Promise<UserData | null> {
   try {
     // Initial GET to receive __Secure-SID cookie
-    const initialRes = await fetch(BASE_URL, { redirect: "follow" });
+    const initialRes = await fetchWithTimeout(BASE_URL, { redirect: "follow" }, TIMEOUT_LOGIN);
     const initialCookies = initialRes.headers.getSetCookie();
 
     // Perform login with initial cookies
     const cookieHeader = initialCookies.join("; ");
-    const res = await fetch(`${BASE_URL}/api/authentication/login`, {
+    const res = await fetchWithTimeout(`${BASE_URL}/api/authentication/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +70,7 @@ export async function login(
         ...(cookieHeader && { Cookie: cookieHeader }),
       },
       body: JSON.stringify({ email, password }),
-    });
+    }, TIMEOUT_LOGIN);
 
     if (!res.ok) {
       return null;
@@ -56,7 +88,7 @@ export async function login(
  * Fetches offers from the API (requires prior authentication)
  */
 export async function fetchOffers(cookies: string): Promise<ApiOffersPage> {
-  const res = await fetch(`${BASE_URL}/api/search/offers`, {
+  const res = await fetchWithTimeout(`${BASE_URL}/api/search/offers`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -71,7 +103,7 @@ export async function fetchOffers(cookies: string): Promise<ApiOffersPage> {
       orderDirection: "desc",
       orderBy: "created",
     }),
-  });
+  }, TIMEOUT_DATA);
 
   if (!res.ok) {
     throw new Error(`Failed to fetch offers: ${res.status}`);
@@ -86,7 +118,7 @@ export async function fetchOffers(cookies: string): Promise<ApiOffersPage> {
 export async function fetchThreads(
   cookies: string,
 ): Promise<ApiMessageThreadsPage> {
-  const res = await fetch(`${BASE_URL}/api/communications/threads`, {
+  const res = await fetchWithTimeout(`${BASE_URL}/api/communications/threads`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -98,7 +130,7 @@ export async function fetchThreads(
       pageSize: 100,
       orderDirection: "DESC",
     }),
-  });
+  }, TIMEOUT_DATA);
 
   if (!res.ok) {
     throw new Error(`Failed to fetch threads: ${res.status}`);
@@ -113,7 +145,7 @@ export async function fetchThreads(
  * @returns
  */
 export async function getPositionOnOffer(offerId: string, cookies: string) {
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `${BASE_URL}/api/search/waiting-lists/applicants/position-on-offer/${offerId}`,
     {
       method: "GET",
@@ -123,6 +155,7 @@ export async function getPositionOnOffer(offerId: string, cookies: string) {
         Cookie: cookies,
       },
     },
+    TIMEOUT_DATA,
   );
 
   if (!res.ok) {
@@ -140,14 +173,14 @@ export async function getPositionOnOffer(offerId: string, cookies: string) {
  * @returns
  */
 export async function getResidence(residenceId: string, cookies: string) {
-  const res = await fetch(`${BASE_URL}/api/models/residence/${residenceId}`, {
+  const res = await fetchWithTimeout(`${BASE_URL}/api/models/residence/${residenceId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
       Cookie: cookies,
     },
-  });
+  }, TIMEOUT_DATA);
 
   if (!res.ok) {
     throw new Error(
@@ -169,7 +202,7 @@ export async function getThreadForOffer(
   offerId: string,
   cookies: string,
 ): Promise<ApiMessageThreadFull> {
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `${BASE_URL}/api/communications/messages/thread/related-to/${offerId}`,
     {
       method: "GET",
@@ -179,6 +212,7 @@ export async function getThreadForOffer(
         Cookie: cookies,
       },
     },
+    TIMEOUT_DATA,
   );
 
   if (!res.ok) {
@@ -239,14 +273,14 @@ export async function getUpcomingAppointments(
  * @returns
  */
 export async function getUserData(cookies: string) {
-  const res = await fetch(`${BASE_URL}/api/users/me`, {
+  const res = await fetchWithTimeout(`${BASE_URL}/api/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
       Cookie: cookies,
     },
-  });
+  }, TIMEOUT_DATA);
 
   if (!res.ok) {
     throw new Error(`Failed to fetch user data: ${res.status}`);
@@ -261,14 +295,14 @@ export async function getUserData(cookies: string) {
  * so the client can update its stored cookie header.
  */
 export async function refreshSession(cookies: string) {
-  const res = await fetch(`${BASE_URL}/api/users/me`, {
+  const res = await fetchWithTimeout(`${BASE_URL}/api/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
       Cookie: cookies,
     },
-  });
+  }, TIMEOUT_REFRESH);
 
   if (!res.ok) {
     return null;

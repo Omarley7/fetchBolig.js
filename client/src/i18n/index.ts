@@ -1,21 +1,25 @@
 import { createI18n } from "vue-i18n";
-import da from "./locales/da";
-import en from "./locales/en";
+import da from "./locales/da.json";
+import en from "./locales/en.json";
 
-export type MessageSchema = typeof da;
+type MessageSchema = typeof da;
+
+declare module "vue-i18n" {
+  export interface DefineLocaleMessage extends MessageSchema {}
+}
 
 const i18n = createI18n<[MessageSchema], "da" | "en">({
-    legacy: false,
-    locale: "da",
-    fallbackLocale: "en",
-    messages: {
-        da,
-        en,
-    },
+  legacy: false,
+  locale: "da",
+  fallbackLocale: "en",
+  messages: {
+    da,
+    en,
+  },
 });
 
 export default i18n;
 
 export function useI18n() {
-    return i18n.global;
+  return i18n.global;
 }

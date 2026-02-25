@@ -20,8 +20,5 @@
   ],
   "devDependencies": {
     "concurrently": "^9.2.1"
-  },
-  "dependencies": {
-    "add-to-calendar-button": "^2.13.5"
   }
 }

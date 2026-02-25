@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appTitle": "FetchBolig.js",
+    "login": "Login",
+    "logout": "Log ud",
+    "pageNotFound": "Siden blev ikke fundet",
+    "backToHome": "Tilbage til forsiden",
+    "day": "Dag",
+    "week": "Uge",
+    "month": "Måned"
+  },
+  "appointments": {
+    "emptyTitle": "Ingen kommende aftaler",
+    "emptyDescription": "Det ser ud til, at du ikke har nogen kommende fremvisninger endnu. Søg efter boliger på FindBolig.nu og vent på invitationer.",
+    "searchOnFindbolig": "Søg boliger på FindBolig.nu",
+    "openHouse": "Åbent hus",
+    "noDate": "Afventer dato",
+    "mapOfLocations": "Kort over {count} lokationer",
+    "openOnFindbolig": "Åbn på findbolig.nu",
+    "addToCalendar": "Tilføj til kalender"
+  },
+  "financials": {
+    "rent": "Leje",
+    "perMonth": "pr. måned",
+    "monthlyRentIncludingAconto": "Månedlig leje inkl. aconto",
+    "monthlyRentExcludingAconto": "Månedlig leje ekskl. aconto",
+    "utilityCosts": "Forbrug",
+    "deposit": "Depositum",
+    "prepaidRent": "Forudbetalt leje",
+    "firstPayment": "Indskud",
+    "shortMonth": "md"
+  },
+  "auth": {
+    "loggingIn": "Logger ind...",
+    "loggingOut": "Logger ud...",
+    "logoutConfirm": "Dine data er stadig gemt på din enhed, men du vil ikke kunne hente nye opdateringer, før du logger ind igen.",
+    "rememberPassword": "Husk mig på denne enhed",
+    "cancel": "Annuller",
+    "securityNote": "Dine loginoplysninger sendes direkte til findbolig.nu - vi gemmer dem aldrig på vores servere.",
+    "findboligCredentials": "Brug dine findbolig.nu-loginoplysninger"
+  },
+  "gallery": {
+    "photos": "Fotos",
+    "blueprints": "Plantegninger"
+  },
+  "home": {
+    "welcomeUser": "Velkommen, {0}!",
+    "welcomeBack": "Velkommen tilbage, {0}!",
+    "welcome": "Din data, din kontrol",
+    "viewAppointments": "Se dine {0} aftaler",
+    "fetchAppointments": "Hent dine aftaler",
+    "readyToFetch": "Dine aftaler fra FindBolig.nu er klar til at blive hentet.",
+    "noAppointmentsHint": "Har du ingen aftaler endnu? Brug findbolig.nu til at søge efter boliger og vent på invitationer.",
+    "lastUpdated": "Sidst opdateret for {0} siden"
+  },
+  "landing": {
+    "tagline": "Et bedre dashboard til dine FindBolig.nu aftaler",
+    "description": "Vi henter dine kommende boligfremvisninger direkte fra findbolig.nu og viser dem i en praktisk kronologisk liste - med offline adgang og lokal lagring.",
+    "featureAppointments": "Kronologisk aftaleoversigt",
+    "featureOffline": "Offline adgang med lokal lagring",
+    "featureAI": "AI-drevet udtrækning af åbent hus-datoer",
+    "getStarted": "Log ind med din findbolig.nu-konto for at komme i gang.",
+    "loginButton": "Log ind med FindBolig.nu",
+    "emailPlaceholder": "FindBolig.nu email",
+    "passwordPlaceholder": "FindBolig.nu adgangskode"
+  },
+  "stale": {
+    "dataAge": "Dine data er {0} gamle.",
+    "refreshNow": "Opdater nu",
+    "dismiss": "Afvis",
+    "sessionExpired": "Din session er udløbet. Log venligst ind igen for at hente opdateringer.",
+    "loginAgain": "Log ind"
+  },
+  "errors": {
+    "timeout": "findbolig.nu svarer ikke lige nu. Prøv igen senere.",
+    "timeoutLogin": "Kunne ikke nå findbolig.nu for at logge ind. Prøv igen senere."
+  },
+  "sync": {
+    "updatedAgo": "Opdateret {0}",
+    "justNow": "lige nu",
+    "minutesAgo": "for {0} min. siden",
+    "hoursAgo": "for {0}t siden",
+    "daysAgo": "for {0}d siden",
+    "fetchData": "Hent data",
+    "syncing": "Henter...",
+    "clickToExpand": "Klik for at se præcist tidspunkt",
+    "date": "Dato",
+    "time": "Kl"
+  }
+}
