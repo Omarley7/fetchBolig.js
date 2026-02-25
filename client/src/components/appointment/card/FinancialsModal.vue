@@ -40,11 +40,11 @@ onUnmounted(() => {
 <template>
     <Teleport to="body">
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80" @click.self="emit('close')">
-            <div class="relative w-[90vw] max-w-md rounded-xl bg-neutral-900 p-6 shadow-xl text-neutral-100">
+            <div class="relative w-[90vw] max-w-md rounded-xl bg-white dark:bg-neutral-900 p-6 shadow-xl text-neutral-900 dark:text-neutral-100">
                 <!-- Close button -->
-                <button class="absolute top-3 right-3 p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+                <button class="absolute top-3 right-3 p-1 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                     @click="emit('close')">
-                    <img src="https://unpkg.com/lucide-static@latest/icons/x.svg" alt="Close"
+                    <img src="/icons/x.svg" alt="Close"
                         class="size-5 dark:invert" />
                 </button>
 
@@ -52,10 +52,10 @@ onUnmounted(() => {
 
                 <table class="w-full text-sm">
                     <tbody>
-                        <tr v-for="row in rows" :key="row.key" class="border-b border-neutral-700/50 last:border-0">
-                            <td class="py-2 pr-4 text-neutral-400">
+                        <tr v-for="row in rows" :key="row.key" class="border-b border-neutral-200 dark:border-neutral-700/50 last:border-0">
+                            <td class="py-2 pr-4 text-neutral-500 dark:text-neutral-400">
                                 {{ t(`financials.${row.key}`) }}
-                                <span v-if="row.suffix" class="text-neutral-500 text-xs">
+                                <span v-if="row.suffix" class="text-neutral-400 dark:text-neutral-500 text-xs">
                                     ({{ t(`financials.${row.suffix}`) }})
                                 </span>
                             </td>

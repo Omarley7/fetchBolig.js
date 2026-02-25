@@ -88,7 +88,7 @@ export const useAuth = defineStore(
         } catch (e) {
           console.error("Keep-alive failed:", e);
         }
-      }, 5 * 60 * 1000);
+      }, 3 * 60 * 1000);
     }
 
     function stopKeepAlive() {
@@ -104,10 +104,71 @@ export const useAuth = defineStore(
       if (!rememberPassword.value) password.value = "";
     }
 
+    async function validateSession(): Promise<boolean> {
+      if (!cookies.value) return false;
+      try {
+        const res = await fetch(`${config.backendDomain}/api/auth/refresh`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-findbolig-cookies": cookies.value,
+          },
+        });
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            setAuthenticated(false, "", "");
+          }
+          return false;
+        }
+
+        const data = await res.json();
+        if (data?.cookies) cookies.value = parseCookies(data.cookies);
+        if (data?.fullName) name.value = data.fullName;
+        return true;
+      } catch {
+        // Network error — don't clear auth (user might be offline with valid cache)
+        return false;
+      }
+    }
+
+    async function ensureSession(): Promise<boolean> {
+      // 1. Try existing session first
+      if (cookies.value) {
+        const valid = await validateSession();
+        if (valid) return true;
+      }
+
+      // 2. Session invalid — try auto-relogin if credentials are remembered
+      if (rememberPassword.value && email.value && password.value) {
+        const ok = await login(email.value, password.value);
+        return !!ok;
+      }
+
+      // 3. No stored credentials — user must log in manually
+      return false;
+    }
+
     // resume keep-alive if already authenticated on startup
     if (isAuthenticated.value) startKeepAlive();
 
-    return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, login, logout, startKeepAlive, stopKeepAlive };
+    // Validate session when tab regains focus (Page Visibility API)
+    let lastVisibilityCheck = 0;
+    const VISIBILITY_COOLDOWN = 30_000; // 30 seconds
+
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState !== "visible") return;
+      if (!isAuthenticated.value) return;
+
+      const now = Date.now();
+      if (now - lastVisibilityCheck < VISIBILITY_COOLDOWN) return;
+      lastVisibilityCheck = now;
+
+      const valid = await validateSession();
+      if (!valid) await ensureSession();
+    });
+
+    return { email, password, isLoading, isAuthenticated, cookies, name, rememberPassword, login, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
   },
   {
     persist: {

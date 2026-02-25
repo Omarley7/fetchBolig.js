@@ -81,11 +81,11 @@ const displayItems = computed(() => {
 </script>
 
 <template>
-  <div class="border p-2">
+  <div class="border border-neutral-200 dark:border-neutral-700 p-2">
     <p v-for="item in displayItems" :key="item.label">
       {{ item.label }}:
       <span class="font-medium">{{ formatCurrency(item.value) }}</span>
-      <span v-if="item.suffix" class="text-gray-400"> {{ item.suffix }}</span>
+      <span v-if="item.suffix" class="text-gray-500 dark:text-gray-400"> {{ item.suffix }}</span>
     </p>
   </div>
 </template>

@@ -65,8 +65,8 @@ function resolve(url: string, params: ImageParams): string {
 // ---------------------------------------------------------------------------
 
 const THUMBNAIL_PARAMS: ImageParams = {
-    w: 350,
-    h: 300,
+    w: 800,
+    h: 500,
     fit: "cover",
     output: "webp",
 };
@@ -96,4 +96,16 @@ const GALLERY_PARAMS: ImageParams = {
  */
 export function galleryImage(url: string): string {
     return resolve(url, GALLERY_PARAMS);
+}
+
+const BLUEPRINT_PARAMS: ImageParams = {
+    w: 1200,
+    h: 900,
+    fit: "inside",
+    q: 85,
+    output: "webp",
+};
+
+export function blueprintImage(url: string): string {
+    return resolve(url, BLUEPRINT_PARAMS);
 }
