@@ -13,6 +13,8 @@
     "emptyTitle": "No upcoming appointments",
     "emptyDescription": "It looks like you don't have any upcoming viewings yet. Search for housing on FindBolig.nu and wait for invitations.",
     "searchOnFindbolig": "Search housing on FindBolig.nu",
+    "pageTitle": "Upcoming viewings",
+    "count": "{count} viewing | {count} viewings",
     "openHouse": "Open House",
     "noDate": "Awaiting date",
     "mapOfLocations": "Map of {count} locations",

@@ -201,7 +201,7 @@ export async function getResidence(residenceId: string, cookies: string) {
 export async function getThreadForOffer(
   offerId: string,
   cookies: string,
-): Promise<ApiMessageThreadFull> {
+): Promise<ApiMessageThreadFull | null> {
   const res = await fetchWithTimeout(
     `${BASE_URL}/api/communications/messages/thread/related-to/${offerId}`,
     {
@@ -221,7 +221,12 @@ export async function getThreadForOffer(
     );
   }
 
-  return (await res.json()) as ApiMessageThreadFull;
+  const text = await res.text();
+  if (!text) {
+    return null;
+  }
+
+  return JSON.parse(text) as ApiMessageThreadFull;
 }
 
 /**
@@ -251,6 +256,9 @@ export async function getUpcomingAppointments(
         }
         const residence = await getResidence(offer.residenceId, cookies);
         const thread = await getThreadForOffer(offer.id, cookies);
+        if (!thread) {
+          return null;
+        }
         const details = await extractAppointmentDetailsWithLLM(thread);
         const domainAppointment = mapAppointmentToDomain({
           offer,
@@ -261,7 +269,9 @@ export async function getUpcomingAppointments(
       }),
     );
 
-    return offersWithResidenceAndThread;
+    return offersWithResidenceAndThread.filter(
+      (a): a is NonNullable<typeof a> => a !== null,
+    );
   } catch (error) {
     console.error("Failed to fetch upcoming appointments:", error);
     throw error;

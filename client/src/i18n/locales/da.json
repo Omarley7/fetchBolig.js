@@ -13,6 +13,8 @@
     "emptyTitle": "Ingen kommende aftaler",
     "emptyDescription": "Det ser ud til, at du ikke har nogen kommende fremvisninger endnu. Søg efter boliger på FindBolig.nu og vent på invitationer.",
     "searchOnFindbolig": "Søg boliger på FindBolig.nu",
+    "pageTitle": "Kommende fremvisninger",
+    "count": "{count} fremvisning | {count} fremvisninger",
     "openHouse": "Åbent hus",
     "noDate": "Afventer dato",
     "mapOfLocations": "Kort over {count} lokationer",
