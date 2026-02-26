@@ -48,6 +48,7 @@
   "home": {
     "welcomeUser": "Welcome, {0}!",
     "welcomeBack": "Welcome back, {0}!",
+    "welcomeBackAnonymous": "Welcome back!",
     "welcome": "Your data, your control",
     "viewAppointments": "View your {0} appointments",
     "fetchAppointments": "Fetch your appointments",

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Keyboard, Pagination } from "swiper/modules";
+import { Keyboard, Navigation, Pagination, Zoom } from "swiper/modules";
 import type { Swiper as SwiperClass } from "swiper/types";
-import { galleryImage, blueprintImage } from "~/lib/imageTransform";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { blueprintImage, galleryImage } from "~/lib/imageTransform";
 import { useAppointmentsStore } from "~/stores/appointments";
 
 import "swiper/css";
@@ -67,76 +67,50 @@ function onKeydown(e: KeyboardEvent) {
 
 onMounted(() => {
   window.addEventListener("keydown", onKeydown);
+  document.documentElement.style.overflow = "hidden";
   document.body.style.overflow = "hidden";
 });
 onUnmounted(() => {
   window.removeEventListener("keydown", onKeydown);
+  document.documentElement.style.overflow = "";
   document.body.style.overflow = "";
 });
 </script>
 
 <template>
   <Teleport to="body">
-    <div
-      class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm"
-      @click.self="emit('close')"
-    >
+    <div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm overscroll-contain"
+      @click.self="emit('close')">
       <!-- Close -->
       <button
         class="absolute top-4 right-4 z-20 p-2 rounded-full! bg-white/10! hover:bg-white/20! border-none! transition-colors duration-200"
-        aria-label="Close gallery"
-        @click="emit('close')"
-      >
-        <img
-          src="/icons/x.svg"
-          alt="Close"
-          class="size-5 invert"
-        />
+        aria-label="Close gallery" @click="emit('close')">
+        <img src="/icons/x.svg" alt="Close" class="size-5 invert" />
       </button>
 
       <!-- Tabs -->
       <div v-if="hasBlueprints" class="flex gap-1 mb-4 z-10">
-        <button
-          v-for="tab in (['images', 'blueprints'] as Tab[])"
-          :key="tab"
+        <button v-for="tab in (['images', 'blueprints'] as Tab[])" :key="tab"
           class="px-5 py-1.5 rounded-full! text-sm font-medium tracking-wide transition-all duration-200 border-none!"
-          :class="
-            activeTab === tab
+          :class="activeTab === tab
               ? 'bg-white/15! text-white shadow-sm'
               : 'bg-transparent! text-white/50 hover:text-white/80 hover:bg-white/5!'
-          "
-          @click="switchTab(tab)"
-        >
+            " @click="switchTab(tab)">
           {{ tab === "images" ? $t("gallery.photos") : $t("gallery.blueprints") }}
         </button>
       </div>
 
       <!-- Swiper -->
       <div class="relative w-full max-w-5xl px-4 sm:px-12">
-        <Swiper
-          :key="activeTab"
-          :modules="[Navigation, Keyboard, Pagination]"
-          :navigation="true"
-          :keyboard="{ enabled: true }"
-          :pagination="{ type: 'fraction' }"
-          :slides-per-view="1"
-          :space-between="0"
-          :lazy-preload-prev-next="1"
-          :grab-cursor="true"
-          class="gallery-swiper"
-          @swiper="onSwiperInit"
-        >
-          <SwiperSlide
-            v-for="(path, index) in activeList"
-            :key="path"
-            class="!flex items-center justify-center"
-          >
-            <img
-              :src="resolveUrl(path)"
-              :loading="index <= 1 ? 'eager' : 'lazy'"
-              :alt="`${activeTab === 'images' ? 'Photo' : 'Blueprint'} ${index + 1}`"
-              class="max-h-[75vh] max-w-full object-contain select-none rounded-lg"
-            />
+        <Swiper :key="activeTab" :modules="[Zoom, Navigation, Keyboard, Pagination]" :navigation="true"
+          :keyboard="{ enabled: true }" :pagination="{ type: 'fraction' }" :slides-per-view="1" :space-between="0"
+          :lazy-preload-prev-next="1" :grab-cursor="true" :zoom="true" class="gallery-swiper" @swiper="onSwiperInit">
+          <SwiperSlide v-for="(path, index) in activeList" :key="path" class="!flex items-center justify-center">
+            <div class="swiper-zoom-container">
+              <img :src="resolveUrl(path)" :loading="index <= 1 ? 'eager' : 'lazy'"
+                :alt="`${activeTab === 'images' ? 'Photo' : 'Blueprint'} ${index + 1}`"
+                class="max-h-[75vh] max-w-full object-contain rounded-lg" />
+            </div>
             <div v-if="index > 1" class="swiper-lazy-preloader swiper-lazy-preloader-white" />
           </SwiperSlide>
         </Swiper>
@@ -167,6 +141,7 @@ onUnmounted(() => {
 
 /* Hide arrows on mobile — swipe is primary */
 @media (max-width: 639px) {
+
   .gallery-swiper :deep(.swiper-button-next),
   .gallery-swiper :deep(.swiper-button-prev) {
     display: none;
@@ -188,5 +163,4 @@ onUnmounted(() => {
 .gallery-swiper :deep(.swiper-lazy-preloader) {
   --swiper-preloader-color: rgba(255, 255, 255, 0.4);
 }
-
 </style>

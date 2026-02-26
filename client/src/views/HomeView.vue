@@ -10,12 +10,14 @@ const auth = useAuth();
 const store = useAppointmentsStore();
 const { t } = useI18n();
 
+const hasCache = computed(() => getCacheAge() !== null);
+
 onMounted(() => {
-  if (auth.isAuthenticated) store.init();
+  if (auth.isAuthenticated || hasCache.value) store.init();
 });
 
 const hasAppointments = computed(() => store.appointments.length > 0);
-const firstName = computed(() => auth.name.split(" ")[0] || auth.name);
+const firstName = computed(() => auth.name.split(" ")[0] || "");
 
 const lastUpdatedText = computed(() => {
   const age = getCacheAge();
@@ -28,8 +30,8 @@ const lastUpdatedText = computed(() => {
 </script>
 
 <template>
-  <!-- Unauthenticated: landing page -->
-  <LandingSection v-if="!auth.isAuthenticated" />
+  <!-- Unauthenticated with no cache: landing page -->
+  <LandingSection v-if="!auth.isAuthenticated && !hasCache" />
 
   <!-- First-time user: no cached appointments -->
   <div
@@ -58,7 +60,7 @@ const lastUpdatedText = computed(() => {
       class="w-full bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-neutral-700/50 rounded-lg shadow-lg p-8 flex flex-col items-center gap-5"
     >
       <img src="/icons/calendar-days.svg" alt="" class="size-12 dark:invert opacity-70" />
-      <h2 class="text-2xl font-bold">{{ t("home.welcomeBack", [firstName]) }}</h2>
+      <h2 class="text-2xl font-bold">{{ firstName ? t("home.welcomeBack", [firstName]) : t("home.welcomeBackAnonymous") }}</h2>
       <p v-if="lastUpdatedText" class="text-sm text-gray-500 dark:text-gray-400">
         {{ lastUpdatedText }}
       </p>

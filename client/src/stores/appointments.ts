@@ -18,14 +18,19 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
   async function init() {
     const auth = useAuth();
-    if (!auth.isAuthenticated) return;
 
     isLoading.value = true;
     try {
-      // Always load from cache first for instant display
+      // Always load from cache first — does NOT require auth
       const cached = await getAppointments(false, auth.cookies, showAllOffers.value);
       appointments.value = cached.appointments;
       updatedAt.value = cached.updatedAt;
+
+      if (!auth.isAuthenticated) {
+        // Cached data loaded, but user needs to log in for fresh data
+        sessionExpired.value = true;
+        return;
+      }
 
       // Check if cache is stale
       if (isCacheStale()) {
@@ -37,7 +42,8 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
       }
     } catch {
-      // No cache available — try to fetch fresh if authenticated
+      // No cache available — only try network if authenticated
+      if (!auth.isAuthenticated) return;
       try {
         const payload = await getAppointments(true, auth.cookies, showAllOffers.value);
         appointments.value = payload.appointments;

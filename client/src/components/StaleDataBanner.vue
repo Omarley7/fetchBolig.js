@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { useAppointmentsStore } from "~/stores/appointments";
-import { getCacheAge } from "~/data/appointments";
 import { useI18n } from "vue-i18n";
+import { getCacheAge } from "~/data/appointments";
+import { useAppointmentsStore } from "~/stores/appointments";
 
 const store = useAppointmentsStore();
 const { t } = useI18n();

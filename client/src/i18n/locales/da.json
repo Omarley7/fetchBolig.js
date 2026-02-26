@@ -48,6 +48,7 @@
   "home": {
     "welcomeUser": "Velkommen, {0}!",
     "welcomeBack": "Velkommen tilbage, {0}!",
+    "welcomeBackAnonymous": "Velkommen tilbage!",
     "welcome": "Din data, din kontrol",
     "viewAppointments": "Se dine {0} aftaler",
     "fetchAppointments": "Hent dine aftaler",

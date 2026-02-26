@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useAppointmentsStore } from "~/stores/appointments";
-import { useAuth } from "~/composables/useAuth";
-import { getCacheAge } from "~/data/appointments";
+import { useRouter } from "vue-router";
 import AppointmentsList from "~/components/appointment/AppointmentsList.vue";
 import StaleDataBanner from "~/components/StaleDataBanner.vue";
+import { useAuth } from "~/composables/useAuth";
+import { getCacheAge } from "~/data/appointments";
+import { useAppointmentsStore } from "~/stores/appointments";
 
 const store = useAppointmentsStore();
 const auth = useAuth();
@@ -28,7 +28,7 @@ onMounted(() => {
 });
 
 function handleOpenLogin() {
-    router.replace("/");
+    auth.showLoginModal = true;
 }
 </script>
 
