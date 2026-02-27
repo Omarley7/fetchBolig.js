@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Appointment } from "@/types";
-import { computed, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAppointmentsStore } from "~/stores/appointments";
 import { compactThumb } from "~/lib/imageTransform";
@@ -17,6 +17,27 @@ const props = defineProps<{
 }>();
 
 const showDetail = ref(false);
+const detailMounted = ref(false);
+
+function openDetail() {
+  showDetail.value = true;
+  detailMounted.value = true;
+}
+
+function onDetailClose() {
+  showDetail.value = false;
+}
+
+async function onDetailAfterLeave() {
+  if (showDetail.value) {
+    // User re-opened during close animation — force remount
+    detailMounted.value = false;
+    await nextTick();
+    detailMounted.value = true;
+  } else {
+    detailMounted.value = false;
+  }
+}
 
 const thumbUrl = computed(() => {
   if (props.loadImage === false) return undefined;
@@ -30,13 +51,13 @@ const timeLabel = computed(() => formatTimeSlot(props.appointment, props.include
   <li>
     <div
       class="flex gap-3 p-2 rounded-xl
-             bg-white/60 dark:bg-white/[0.03]
-             hover:bg-white dark:hover:bg-white/[0.06]
-             border border-transparent hover:border-neutral-200/50 dark:hover:border-white/[0.06]
+             bg-white/80 dark:bg-white/[0.06]
+             hover:bg-white dark:hover:bg-white/[0.10]
+             border border-transparent dark:border-white/[0.04] hover:border-neutral-200/50 dark:hover:border-white/[0.08]
              cursor-pointer transition-all duration-150
              active:scale-[0.99] select-none"
       :class="{ 'opacity-50 grayscale-[30%]': appointment.cancelled }"
-      @click="showDetail = true"
+      @click="openDetail"
     >
       <!-- Thumbnail -->
       <div class="relative w-24 md:w-32 shrink-0 aspect-[3/2] rounded-lg overflow-hidden bg-neutral-200 dark:bg-white/10">
@@ -93,10 +114,11 @@ const timeLabel = computed(() => formatTimeSlot(props.appointment, props.include
     </div>
 
     <AppointmentDetailSheet
-      v-if="showDetail"
+      v-if="detailMounted"
       :appointment="appointment"
       :include-date="includeDate"
-      @close="showDetail = false"
+      @close="onDetailClose"
+      @after-leave="onDetailAfterLeave"
     />
   </li>
 </template>

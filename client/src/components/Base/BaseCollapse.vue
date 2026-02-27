@@ -37,7 +37,10 @@ watch(isExpanded, (newVal) => {
     // Expanding: set concrete pixel height, then switch to auto after transition
     contentHeight.value = `${el.scrollHeight}px`;
     setTimeout(() => {
-      if (isExpanded.value) contentHeight.value = "auto";
+      if (isExpanded.value) {
+        contentHeight.value = "auto";
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
     }, props.duration);
   } else {
     // Collapsing: if currently "auto", pin to concrete pixel height first,

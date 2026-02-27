@@ -9,6 +9,7 @@ import "swiper/css/pagination";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDarkMode } from "~/composables/useDarkMode";
+import { useScrollLock } from "~/composables/useScrollLock";
 import { formatCurrency, formatTimeSlot } from "~/lib/formatters";
 import { galleryImage } from "~/lib/imageTransform";
 import { useAppointmentsStore } from "~/stores/appointments";
@@ -19,6 +20,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 const { t } = useI18n();
 const { isDark } = useDarkMode();
+useScrollLock();
 const { getImageUrl } = useAppointmentsStore();
 
 const props = defineProps<{
@@ -28,16 +30,19 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   close: [];
+  "after-leave": [];
 }>();
 
 const visible = ref(false);
 const showGallery = ref(false);
 const showFinancials = ref(false);
-
+const galleryActiveIndex = ref(0);
+const sheetEl = ref<HTMLElement | null>(null);
 // Drag-to-dismiss
 const dragY = ref(0);
 const isDragging = ref(false);
 let dragStartY = 0;
+let lastPointerId = 0;
 
 const DISMISS_THRESHOLD = 120;
 
@@ -59,6 +64,7 @@ function onDragStart(e: PointerEvent) {
   isDragging.value = true;
   dragStartY = e.clientY;
   dragY.value = 0;
+  lastPointerId = e.pointerId;
   (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
 }
 
@@ -68,9 +74,10 @@ function onDragMove(e: PointerEvent) {
   dragY.value = Math.max(0, delta);
 }
 
-function onDragEnd() {
+function onDragEnd(e: PointerEvent) {
   if (!isDragging.value) return;
   isDragging.value = false;
+  (e.currentTarget as HTMLElement).releasePointerCapture(lastPointerId);
   if (dragY.value > DISMISS_THRESHOLD) {
     close();
   } else {
@@ -85,8 +92,34 @@ const allImages = computed(() => {
   return [props.appointment.imageUrl];
 });
 
-function openGallery() {
+// Gallery click vs swipe — track pointer displacement
+let galleryStartX = 0;
+let galleryStartY = 0;
+
+function onGalleryPointerDown(e: PointerEvent) {
+  galleryStartX = e.clientX;
+  galleryStartY = e.clientY;
+}
+
+function openGallery(e: MouseEvent) {
+  if (Math.abs(e.clientX - galleryStartX) > 5 || Math.abs(e.clientY - galleryStartY) > 5) return;
   showGallery.value = true;
+  history.pushState({ sheet: true, gallery: true }, "");
+}
+
+function openFinancials() {
+  showFinancials.value = true;
+  history.pushState({ sheet: true, financials: true }, "");
+}
+
+function onGalleryClose() {
+  showGallery.value = false;
+  history.back();
+}
+
+function onFinancialsClose() {
+  showFinancials.value = false;
+  history.back();
 }
 
 function handleMapClick() {
@@ -108,21 +141,47 @@ function openOnFindbolig() {
 let closedViaPopState = false;
 
 function close() {
+  if (!visible.value) return; // guard against double-close
+
   visible.value = false;
+
   if (!closedViaPopState) {
-    // Remove the history entry we pushed on open
     window.removeEventListener("popstate", onPopState);
     history.back();
   }
-  setTimeout(() => emit("close"), 320);
+
+  // Notify parent immediately so logical state stays in sync with touches
+  emit("close");
+
+  // Signal DOM unmount after the CSS transition completes
+  let fired = false;
+  const emitAfterLeave = () => {
+    if (!fired) {
+      fired = true;
+      emit("after-leave");
+    }
+  };
+  sheetEl.value?.addEventListener("transitionend", emitAfterLeave, { once: true });
+  setTimeout(emitAfterLeave, 350); // fallback if transitionend doesn't fire
 }
 
 function onKeydown(e: KeyboardEvent) {
   if (e.key === "Escape" && !showGallery.value && !showFinancials.value) close();
 }
 
-function onPopState() {
-  // Back button pressed — close without calling history.back() again
+function onPopState(event: PopStateEvent) {
+  // Sub-modal open? Back closes it instead of the sheet
+  if (showGallery.value) {
+    showGallery.value = false;
+    return;
+  }
+  if (showFinancials.value) {
+    showFinancials.value = false;
+    return;
+  }
+  // Still at the sheet's own history entry — nothing to close
+  if (event.state?.sheet) return;
+  // Past the sheet entry — close the sheet
   closedViaPopState = true;
   close();
 }
@@ -131,8 +190,6 @@ onMounted(() => {
   window.addEventListener("keydown", onKeydown);
   window.addEventListener("popstate", onPopState);
   history.pushState({ sheet: true }, "");
-  document.documentElement.style.overflow = "hidden";
-  document.body.style.overflow = "hidden";
   requestAnimationFrame(() => {
     visible.value = true;
   });
@@ -141,14 +198,12 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("keydown", onKeydown);
   window.removeEventListener("popstate", onPopState);
-  document.documentElement.style.overflow = "";
-  document.body.style.overflow = "";
 });
 </script>
 
 <template>
   <Teleport to="body">
-    <div class="fixed inset-0 z-50 flex items-end justify-center">
+    <div class="fixed inset-0 z-50 flex items-end justify-center" :class="{ 'pointer-events-none': !visible }">
       <!-- Backdrop -->
       <div
         class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
@@ -159,6 +214,9 @@ onUnmounted(() => {
 
       <!-- Sheet -->
       <div
+        ref="sheetEl"
+        role="dialog"
+        aria-modal="true"
         class="sheet-panel relative w-full max-w-2xl max-h-[92vh]
                bg-white dark:bg-neutral-900
                rounded-t-2xl overflow-hidden
@@ -192,14 +250,15 @@ onUnmounted(() => {
         <!-- Scrollable content -->
         <div class="overflow-y-auto overscroll-contain flex-1">
           <!-- Image gallery -->
-          <div v-if="allImages.length > 0" class="relative cursor-pointer" @click="openGallery">
+          <div v-if="allImages.length > 0" class="relative cursor-pointer" @pointerdown="onGalleryPointerDown" @click="openGallery">
             <Swiper
               :modules="[Navigation, Pagination]"
               :slides-per-view="1"
               :space-between="0"
-              :pagination="{ clickable: true }"
+              :pagination="{ clickable: true, dynamicBullets: true }"
               :navigation="allImages.length > 1"
               class="detail-swiper"
+              @slide-change="(s: any) => galleryActiveIndex = s.activeIndex"
             >
               <SwiperSlide v-for="(img, i) in allImages" :key="img">
                 <img
@@ -308,7 +367,7 @@ onUnmounted(() => {
                      bg-neutral-100 dark:bg-white/5
                      hover:bg-neutral-200/70 dark:hover:bg-white/8
                      transition-colors text-left"
-              @click="showFinancials = true"
+              @click="openFinancials"
             >
               <div>
                 <p
@@ -359,14 +418,15 @@ onUnmounted(() => {
       v-if="showGallery"
       :images="allImages"
       :blueprints="appointment.blueprints ?? []"
-      @close="showGallery = false"
+      :initial-index="galleryActiveIndex"
+      @close="onGalleryClose"
     />
 
     <!-- Financials modal -->
     <FinancialsModal
       v-if="showFinancials"
       :financials="appointment.financials"
-      @close="showFinancials = false"
+      @close="onFinancialsClose"
     />
   </Teleport>
 </template>

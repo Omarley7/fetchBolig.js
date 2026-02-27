@@ -3,6 +3,7 @@ import type { Financials } from "@/types";
 import { onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatCurrency } from "~/lib/formatters";
+import { useScrollLock } from "~/composables/useScrollLock";
 
 const props = defineProps<{
     financials: Financials;
@@ -13,6 +14,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+useScrollLock();
 
 const rows = [
     { key: "monthlyRentIncludingAconto" as const, suffix: "perMonth" },
@@ -29,11 +31,9 @@ function onKeydown(e: KeyboardEvent) {
 
 onMounted(() => {
     window.addEventListener("keydown", onKeydown);
-    document.body.style.overflow = "hidden";
 });
 onUnmounted(() => {
     window.removeEventListener("keydown", onKeydown);
-    document.body.style.overflow = "";
 });
 </script>
 
