@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { login as apiLogin, handleApiError } from "~/data/appointmentsSource";
+import { login as apiLogin, handleApiError, HttpError } from "~/data/appointmentsSource";
 import { useToastStore } from "~/stores/toast";
 import { useI18n } from "~/i18n";
 import config from "~/config";
@@ -26,10 +26,8 @@ export const useAuth = defineStore(
 
       try {
         const userData = await apiLogin(userEmail, userPassword);
-        if (!userData)
-          return setAuthenticated(false);
 
-        if (!userData.cookies?.length) { // Login succeeded but no cookies received - this shouldn't happen
+        if (!userData?.cookies?.length) { // Login succeeded but no cookies received - this shouldn't happen
           toast.error("Login successful but no authentication cookies received. Please try again.");
           return setAuthenticated(false);
         }
@@ -40,10 +38,17 @@ export const useAuth = defineStore(
         }
 
         const ok = setAuthenticated(true, parseCookies(userData.cookies), userData.fullName);
-        if (ok) startKeepAlive();
+        if (ok) {
+          startKeepAlive();
+          toast.success(useI18n().t("auth.loginSuccess"));
+        }
         return ok;
       } catch (err) {
-        handleApiError(err, toast, useI18n().t, "Login failed unexpectedly...", "errors.timeoutLogin");
+        if (err instanceof HttpError && err.status === 401) {
+          toast.error(useI18n().t("errors.invalidCredentials"), 6000);
+        } else {
+          handleApiError(err, toast, useI18n().t, "Login failed unexpectedly...", "errors.timeoutLogin");
+        }
         return setAuthenticated(false);
       } finally {
         isLoading.value = false;

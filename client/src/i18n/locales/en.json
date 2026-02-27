@@ -41,7 +41,8 @@
     "rememberPassword": "Remember me on this device",
     "cancel": "Cancel",
     "securityNote": "Your credentials are sent directly to findbolig.nu - we never store them on our servers.",
-    "findboligCredentials": "Use your findbolig.nu credentials"
+    "findboligCredentials": "Use your findbolig.nu credentials",
+    "loginSuccess": "You are now logged in!"
   },
   "gallery": {
     "photos": "Photos",
@@ -78,7 +79,8 @@
   },
   "errors": {
     "timeout": "findbolig.nu is not responding right now. Please try again later.",
-    "timeoutLogin": "Could not reach findbolig.nu to log in. Please try again later."
+    "timeoutLogin": "Could not reach findbolig.nu to log in. Please try again later.",
+    "invalidCredentials": "Invalid email or password. Please try again."
   },
   "sync": {
     "updatedAgo": "Synced {0}",

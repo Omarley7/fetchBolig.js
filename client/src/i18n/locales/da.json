@@ -41,7 +41,8 @@
     "rememberPassword": "Husk mig på denne enhed",
     "cancel": "Annuller",
     "securityNote": "Dine loginoplysninger sendes direkte til findbolig.nu - vi gemmer dem aldrig på vores servere.",
-    "findboligCredentials": "Brug dine findbolig.nu-loginoplysninger"
+    "findboligCredentials": "Brug dine findbolig.nu-loginoplysninger",
+    "loginSuccess": "Du er nu logget ind!"
   },
   "gallery": {
     "photos": "Fotos",
@@ -78,7 +79,8 @@
   },
   "errors": {
     "timeout": "findbolig.nu svarer ikke lige nu. Prøv igen senere.",
-    "timeoutLogin": "Kunne ikke nå findbolig.nu for at logge ind. Prøv igen senere."
+    "timeoutLogin": "Kunne ikke nå findbolig.nu for at logge ind. Prøv igen senere.",
+    "invalidCredentials": "Forkert email eller adgangskode. Prøv igen."
   },
   "sync": {
     "updatedAgo": "Opdateret {0}",

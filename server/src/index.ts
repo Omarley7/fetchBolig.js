@@ -59,6 +59,9 @@ auth.post("/login", async (c) => {
     }
 
     const result = await findboligService.login(email, password);
+    if (!result) {
+      return c.json({ error: "Invalid email or password" }, 401);
+    }
     return c.json(result);
   } catch (error) {
     return handleError(c, error);
