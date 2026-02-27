@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Appointment } from "@/types";
 import { ref, watch } from "vue";
-import AppointmentCard from "./card/index.vue";
+import CompactCard from "./card/CompactCard.vue";
 import BaseCollapse from "~/components/Base/BaseCollapse.vue";
 import MapModal from "./MapModal.vue";
 import { useI18n } from "vue-i18n";
@@ -58,8 +58,8 @@ function toggleExpanded() {
 
         </div>
       </div>
-      <ul>
-        <AppointmentCard v-for="appointment in props.appointments" :key="appointment.id" :appointment="appointment"
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-1.5 p-1">
+        <CompactCard v-for="appointment in props.appointments" :key="appointment.id" :appointment="appointment"
           :include-date="props.includeDate" :load-image="hasBeenExpanded" />
       </ul>
     </BaseCollapse>

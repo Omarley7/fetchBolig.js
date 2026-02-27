@@ -19,7 +19,9 @@
     "noDate": "Awaiting date",
     "mapOfLocations": "Map of {count} locations",
     "openOnFindbolig": "Open on findbolig.nu",
-    "addToCalendar": "Add to calendar"
+    "addToCalendar": "Add to calendar",
+    "queuePosition": "Queue",
+    "cancelled": "Cancelled"
   },
   "financials": {
     "rent": "Rent",

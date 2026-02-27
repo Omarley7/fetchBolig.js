@@ -4,6 +4,7 @@ import type { Swiper as SwiperClass } from "swiper/types";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { blueprintImage, galleryImage } from "~/lib/imageTransform";
+import { useScrollLock } from "~/composables/useScrollLock";
 import { useAppointmentsStore } from "~/stores/appointments";
 
 import "swiper/css";
@@ -11,10 +12,12 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const { getImageUrl } = useAppointmentsStore();
+useScrollLock();
 
 const props = defineProps<{
   images: string[];
   blueprints?: string[];
+  initialIndex?: number;
 }>();
 
 const emit = defineEmits<{
@@ -67,13 +70,9 @@ function onKeydown(e: KeyboardEvent) {
 
 onMounted(() => {
   window.addEventListener("keydown", onKeydown);
-  document.documentElement.style.overflow = "hidden";
-  document.body.style.overflow = "hidden";
 });
 onUnmounted(() => {
   window.removeEventListener("keydown", onKeydown);
-  document.documentElement.style.overflow = "";
-  document.body.style.overflow = "";
 });
 </script>
 
@@ -104,7 +103,9 @@ onUnmounted(() => {
       <div class="relative w-full max-w-5xl px-4 sm:px-12">
         <Swiper :key="activeTab" :modules="[Zoom, Navigation, Keyboard, Pagination]" :navigation="true"
           :keyboard="{ enabled: true }" :pagination="{ type: 'fraction' }" :slides-per-view="1" :space-between="0"
-          :lazy-preload-prev-next="1" :grab-cursor="true" :zoom="true" class="gallery-swiper" @swiper="onSwiperInit">
+          :lazy-preload-prev-next="1" :grab-cursor="true" :zoom="true"
+          :initial-slide="activeTab === 'images' ? (props.initialIndex ?? 0) : 0"
+          class="gallery-swiper" @swiper="onSwiperInit">
           <SwiperSlide v-for="(path, index) in activeList" :key="path" class="!flex items-center justify-center">
             <div class="swiper-zoom-container">
               <img :src="resolveUrl(path)" :loading="index <= 1 ? 'eager' : 'lazy'"
