@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import "dotenv/config";
+import type { Context } from "hono";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -8,7 +9,6 @@ import { prettyJSON } from "hono/pretty-json";
 import * as findboligService from "~/findbolig-service";
 import { TimeoutError } from "~/findbolig-service";
 import { requireAuth } from "~/lib/auth-helpers";
-import type { Context } from "hono";
 
 function handleError(c: Context, error: unknown) {
   console.error(error);
@@ -160,7 +160,7 @@ app.route("/api", api);
 // SPA fallback: serve index.html for any unmatched routes so client-side routing works on refresh
 app.get("*", serveStatic({ root: "../client/dist", rewriteRequestPath: () => "/index.html" }));
 
-const server = serve(app, (info) => {
+const server = serve({ ...app, hostname: '0.0.0.0' }, (info) => {
   console.log(`Server is running on ${info.address}:${info.port}`);
 });
 

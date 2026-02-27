@@ -9,6 +9,7 @@
     "start": "npm run start --workspace=server",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "npm run dev --workspace=client",
+    "dev:client:host": "npm run dev:host --workspace=client",
     "dev:server": "npm run dev --workspace=server",
     "clean:client": "npm run clean --workspace=client",
     "clean:server": "npm run clean --workspace=server",
