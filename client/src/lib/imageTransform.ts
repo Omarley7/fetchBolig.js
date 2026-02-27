@@ -64,23 +64,6 @@ function resolve(url: string, params: ImageParams): string {
 // Public presets
 // ---------------------------------------------------------------------------
 
-const THUMBNAIL_PARAMS: ImageParams = {
-    w: 800,
-    h: 500,
-    fit: "cover",
-    output: "webp",
-};
-
-/**
- * Return a thumbnail-sized, optimised version of the given image URL.
- *
- * Internally selects the best available adapter for the URL and applies
- * fixed thumbnail parameters (200×140, cover-fit, q60, webp).
- */
-export function thumbnail(url: string): string {
-    return resolve(url, THUMBNAIL_PARAMS);
-}
-
 const GALLERY_PARAMS: ImageParams = {
     w: 800,
     h: 600,
@@ -108,4 +91,17 @@ const BLUEPRINT_PARAMS: ImageParams = {
 
 export function blueprintImage(url: string): string {
     return resolve(url, BLUEPRINT_PARAMS);
+}
+
+const COMPACT_THUMB_PARAMS: ImageParams = {
+    w: 400,
+    h: 300,
+    fit: "cover",
+    q: 60,
+    output: "webp",
+};
+
+/** Small thumbnail for compact card views (400×300, cover-fit, q60, webp). */
+export function compactThumb(url: string): string {
+    return resolve(url, COMPACT_THUMB_PARAMS);
 }
