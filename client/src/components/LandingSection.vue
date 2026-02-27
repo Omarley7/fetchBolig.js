@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { useAuth } from "~/composables/useAuth";
-import { useDarkMode } from "~/composables/useDarkMode";
 import { useI18n } from "vue-i18n";
-import LanguageSwitcher from "~/components/LanguageSwitcher.vue";
 
 const auth = useAuth();
-const { isDark, toggle: toggleDarkMode } = useDarkMode();
 const { t } = useI18n();
 
 async function handleLogin() {
@@ -77,27 +74,5 @@ async function handleLogin() {
       <li>&#10003; {{ t("landing.featureAI") }}</li>
     </ul>
 
-    <!-- Controls -->
-    <div class="flex items-center gap-3">
-      <language-switcher />
-      <div
-        @click="toggleDarkMode"
-        class="cursor-pointer p-2 bg-black/5 dark:bg-white/10 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
-        :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-      >
-        <img
-          v-if="isDark"
-          src="/icons/sun.svg"
-          alt="Light mode"
-          class="size-6 dark:invert"
-        />
-        <img
-          v-else
-          src="/icons/moon.svg"
-          alt="Dark mode"
-          class="size-6"
-        />
-      </div>
-    </div>
   </div>
 </template>

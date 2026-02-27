@@ -7,10 +7,12 @@ export function mapAppointmentToDomain({
   offer,
   residence,
   details,
+  position,
 }: {
   offer: ApiOffer;
   residence: Residence;
   details: AppointmentDetails;
+  position: number | null;
 }): Appointment {
   return {
     id: `DEAS-O-${offer.id}`,
@@ -36,6 +38,7 @@ export function mapAppointmentToDomain({
     imageUrl: residence.images[0] || "",
     images: residence.images,
     blueprints: residence.blueprints,
+    position,
   };
 }
 

@@ -1,18 +1,45 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
+import { useLocale } from "~/composables/useLocale";
 
-const { locale } = useI18n();
-
-function toggleLanguage() {
-    locale.value = locale.value === "da" ? "en" : "da";
-}
+const { locale, toggle } = useLocale();
 </script>
 
 <template>
-    <div @click="toggleLanguage" class="cursor-pointer p-2 bg-white/10 rounded-full hover:bg-white/20 transition-all"
-        :aria-label="locale === 'da' ? 'Switch to English' : 'Skift til dansk'">
-        <img v-if="locale === 'da'" src="/flags/dk.png" alt="Danish flag"
-            class="w-6 h-6 object-contain rounded-xl" />
-        <img v-else src="/flags/gb.png" alt="British flag" class="w-6 h-6 object-contain rounded-xl" />
-    </div>
+  <button
+    @click="toggle"
+    class="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+    :aria-label="locale === 'da' ? 'Switch to English' : 'Skift til dansk'"
+  >
+    <Transition name="flag" mode="out-in">
+      <img
+        v-if="locale === 'da'"
+        key="da"
+        src="/flags/dk.png"
+        alt="Dansk"
+        class="size-5 object-contain rounded-sm"
+      />
+      <img
+        v-else
+        key="en"
+        src="/flags/gb.png"
+        alt="English"
+        class="size-5 object-contain rounded-sm"
+      />
+    </Transition>
+  </button>
 </template>
+
+<style scoped>
+.flag-enter-active,
+.flag-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.flag-enter-from {
+  opacity: 0;
+  transform: scale(0.8);
+}
+.flag-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+</style>

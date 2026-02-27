@@ -1,6 +1,7 @@
 import "dotenv/config";
 
-import { mapAppointmentToDomain, apiResidenceToDomain, apiUserDataToDomain } from "~/lib/findbolig-domain";
+import { UserData } from "@/types";
+import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain } from "~/lib/findbolig-domain";
 import type { ApiOffersPage, ApiUserData } from "~/types/offers";
 import type { ApiResidence } from "~/types/residences";
 import type {
@@ -8,7 +9,6 @@ import type {
   ApiMessageThreadsPage,
 } from "~/types/threads";
 import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
-import { Appointment, UserData } from "@/types";
 
 // Disable TLS verification for development (remove in production)
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
@@ -164,7 +164,8 @@ export async function getPositionOnOffer(offerId: string, cookies: string) {
     );
   }
 
-  return res.json();
+  const data = await res.json();
+  return data;
 }
 
 /**
@@ -254,8 +255,11 @@ export async function getUpcomingAppointments(
         if (!offer.residenceId || !offer.id) {
           return null;
         }
-        const residence = await getResidence(offer.residenceId, cookies);
-        const thread = await getThreadForOffer(offer.id, cookies);
+        const [residence, thread, position] = await Promise.all([
+          getResidence(offer.residenceId, cookies),
+          getThreadForOffer(offer.id, cookies),
+          getPositionOnOffer(offer.id, cookies).catch(() => null),
+        ]);
         if (!thread) {
           return null;
         }
@@ -264,6 +268,7 @@ export async function getUpcomingAppointments(
           offer,
           residence,
           details,
+          position,
         });
         return domainAppointment;
       }),

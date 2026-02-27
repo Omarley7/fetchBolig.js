@@ -11,6 +11,7 @@ export type Appointment = {
   imageUrl: string;
   images: string[];
   blueprints: string[];
+  position: number | null;
 };
 
 export type Financials = {

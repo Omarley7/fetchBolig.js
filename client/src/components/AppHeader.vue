@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDarkMode } from "~/composables/useDarkMode";
 import { useI18n } from "../i18n";
+import LanguageSwitcher from "./LanguageSwitcher.vue";
 import LoginForm from "./LoginForm.vue";
 
 const { t } = useI18n();
@@ -32,6 +33,7 @@ const { isDark, toggle: toggleDarkMode } = useDarkMode();
 
     <!-- Right: dark mode toggle + login (equal width to left for centering) -->
     <div class="flex-1 flex items-center justify-end gap-2">
+      <LanguageSwitcher />
       <button
         @click="toggleDarkMode"
         class="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
