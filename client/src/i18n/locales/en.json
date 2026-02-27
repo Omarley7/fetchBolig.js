@@ -19,7 +19,8 @@
     "noDate": "Awaiting date",
     "mapOfLocations": "Map of {count} locations",
     "openOnFindbolig": "Open on findbolig.nu",
-    "addToCalendar": "Add to calendar"
+    "addToCalendar": "Add to calendar",
+    "queuePosition": "Queue position"
   },
   "financials": {
     "rent": "Rent",
@@ -43,7 +44,8 @@
   },
   "gallery": {
     "photos": "Photos",
-    "blueprints": "Blueprints"
+    "blueprints": "Blueprints",
+    "viewGallery": "View photos"
   },
   "home": {
     "welcomeUser": "Welcome, {0}!",

@@ -19,7 +19,8 @@
     "noDate": "Afventer dato",
     "mapOfLocations": "Kort over {count} lokationer",
     "openOnFindbolig": "Åbn på findbolig.nu",
-    "addToCalendar": "Tilføj til kalender"
+    "addToCalendar": "Tilføj til kalender",
+    "queuePosition": "Køposition"
   },
   "financials": {
     "rent": "Leje",
@@ -43,7 +44,8 @@
   },
   "gallery": {
     "photos": "Fotos",
-    "blueprints": "Plantegninger"
+    "blueprints": "Plantegninger",
+    "viewGallery": "Se fotos"
   },
   "home": {
     "welcomeUser": "Velkommen, {0}!",

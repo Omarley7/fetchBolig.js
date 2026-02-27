@@ -1,38 +1,50 @@
 <template>
   <li class="mb-2">
     <div class="rounded-lg w-full p-2 skeleton-card overflow-hidden">
-      <!-- Header: centered title pill -->
-      <div class="flex flex-col items-center">
-        <div class="skeleton-pill rounded-2xl px-8 py-2">
-          <div class="h-6 w-36 rounded-md skeleton-bone" />
+      <!-- Header: left-aligned title + gallery pill -->
+      <div class="flex items-start justify-between gap-2">
+        <div class="h-5 w-44 rounded skeleton-bone" />
+        <div class="skeleton-pill rounded-2xl flex items-center gap-1.5 px-2.5 py-1 shrink-0">
+          <div class="size-4 rounded skeleton-bone" />
+          <div class="h-3 w-3 rounded skeleton-bone" />
         </div>
       </div>
 
-      <!-- Body -->
-      <div class="flex flex-col py-4 min-h-56 justify-between">
-        <!-- Address pill (right-aligned) -->
-        <div class="skeleton-pill rounded-2xl flex gap-4 p-2 mb-4 items-center self-end">
-          <div class="flex flex-col gap-1.5">
-            <div class="h-3.5 w-32 rounded skeleton-bone" />
-            <div class="h-3.5 w-24 rounded skeleton-bone" />
+      <!-- Body: unified info block at bottom -->
+      <div class="flex flex-col flex-1 py-3">
+        <div class="mt-auto skeleton-pill rounded-2xl p-3">
+          <!-- Address row -->
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex flex-col gap-1.5">
+              <div class="h-3.5 w-36 rounded skeleton-bone" />
+              <div class="h-3 w-24 rounded skeleton-bone" />
+            </div>
+            <div class="size-5 rounded skeleton-bone" />
           </div>
-          <div class="size-7 rounded skeleton-bone" />
-        </div>
-
-        <!-- Open house pill (left-aligned) -->
-        <div class="skeleton-pill rounded-2xl flex p-2 gap-3 items-center self-start">
-          <div class="flex flex-col gap-1.5">
-            <div class="h-5 w-24 rounded skeleton-bone" />
-            <div class="h-3.5 w-36 rounded skeleton-bone" />
+          <!-- Divider -->
+          <div class="border-t border-white/5 my-2"></div>
+          <!-- Time + queue row -->
+          <div class="flex items-end justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <div class="flex flex-col gap-1">
+                <div class="h-3 w-16 rounded skeleton-bone" />
+                <div class="h-4 w-28 rounded skeleton-bone" />
+              </div>
+              <div class="size-8 rounded-lg skeleton-bone" />
+            </div>
+            <div class="flex items-baseline gap-1.5">
+              <div class="h-3 w-12 rounded skeleton-bone" />
+              <div class="h-5 w-8 rounded skeleton-bone" />
+            </div>
           </div>
-          <div class="size-10 rounded-lg skeleton-bone" />
         </div>
       </div>
 
-      <!-- Footer: financials pill -->
-      <div class="skeleton-pill rounded-2xl flex flex-row justify-between py-2 px-4">
-        <div class="h-4 w-24 rounded skeleton-bone" />
-        <div class="h-4 w-32 rounded skeleton-bone" />
+      <!-- Footer: single financials row -->
+      <div class="skeleton-pill rounded-2xl flex items-center justify-between py-2 px-3 gap-2">
+        <div class="h-4 w-20 rounded skeleton-bone" />
+        <div class="h-3 w-28 rounded skeleton-bone" />
+        <div class="size-4 rounded skeleton-bone" />
       </div>
     </div>
   </li>
@@ -46,7 +58,7 @@
     rgb(163 163 163 / 0.18) 50%,
     rgb(163 163 163 / 0.12) 100%
   );
-  min-height: 380px;
+  min-height: 280px;
 }
 
 :where(.dark, .dark *) .skeleton-card {

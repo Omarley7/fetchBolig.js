@@ -25,19 +25,21 @@ function openOnFindbolig() {
 </script>
 
 <template>
-    <GlassPill interactive @click="showFinancials = true" class="flex flex-row justify-between py-2 px-4 max-sm:px-2">
-        <p class="text-[clamp(0.8rem,2.5vw,1rem)] drop-shadow-(--shady)">{{ formatCurrency(props.appointment.financials.monthlyRentIncludingAconto) }}
+    <GlassPill interactive @click="showFinancials = true" class="flex items-center justify-between py-2 px-3 gap-2">
+        <p class="text-[clamp(0.8rem,2.5vw,0.925rem)] drop-shadow-(--shady) truncate">
+            {{ formatCurrency(props.appointment.financials.monthlyRentIncludingAconto) }}
             / {{ t("financials.shortMonth") }}
         </p>
-        <p class="text-[clamp(0.8rem,2.5vw,1rem)] drop-shadow-(--shady)"> {{ t("financials.firstPayment") }}: {{
-            formatCurrency(props.appointment.financials.firstPayment) }}</p>
-    </GlassPill>
-
-    <GlassPill v-if="hasValidOfferId" interactive @click="openOnFindbolig"
-        class="flex flex-row items-center justify-center gap-2 py-2 px-4 mt-2">
-        <img src="/icons/external-link.svg" alt="Open on findbolig.nu"
-            class="size-4 dark:invert opacity-70" />
-        <p class="text-sm drop-shadow-(--shady)">{{ t("appointments.openOnFindbolig") }}</p>
+        <p class="text-[clamp(0.75rem,2vw,0.85rem)] text-white/70 drop-shadow-(--shady) truncate">
+            {{ t("financials.firstPayment") }}: {{ formatCurrency(props.appointment.financials.firstPayment) }}
+        </p>
+        <button v-if="hasValidOfferId"
+            class="shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors"
+            :aria-label="t('appointments.openOnFindbolig')"
+            @click.stop="openOnFindbolig">
+            <img src="/icons/external-link.svg" alt=""
+                class="size-4 dark:invert opacity-60 hover:opacity-100 transition-opacity" />
+        </button>
     </GlassPill>
 
     <FinancialsModal v-if="showFinancials" :financials="props.appointment.financials" @close="showFinancials = false" />
