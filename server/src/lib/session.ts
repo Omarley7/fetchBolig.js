@@ -2,8 +2,6 @@ import * as Iron from "iron-webcrypto";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import type { Context } from "hono";
 
-const crypto = globalThis.crypto;
-
 export interface SealedSession {
   fbCookies: string;
   fbEmail: string;
@@ -25,11 +23,11 @@ const SEAL_OPTIONS: Iron.SealOptions = {
 };
 
 export async function sealSession(session: SealedSession): Promise<string> {
-  return Iron.seal(crypto, session, COOKIE_SECRET!, SEAL_OPTIONS);
+  return Iron.seal(session, COOKIE_SECRET!, SEAL_OPTIONS);
 }
 
 export async function unsealSession(sealed: string): Promise<SealedSession> {
-  return Iron.unseal(crypto, sealed, COOKIE_SECRET!, SEAL_OPTIONS) as Promise<SealedSession>;
+  return Iron.unseal(sealed, COOKIE_SECRET!, SEAL_OPTIONS) as Promise<SealedSession>;
 }
 
 export async function getSessionFromCookie(c: Context): Promise<SealedSession | null> {
