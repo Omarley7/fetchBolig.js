@@ -10,9 +10,6 @@ import type {
 } from "~/types/threads";
 import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
 
-// Disable TLS verification for development (remove in production)
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
-
 const BASE_URL = "https://findbolig.nu";
 
 // Timeout constants (milliseconds)

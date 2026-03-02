@@ -71,7 +71,7 @@ export function apiResidenceToDomain(apiResidence: ApiResidence): Residence {
   };
 }
 
-export function apiUserDataToDomain(apiUserData: ApiUserData, cookies?: string[]): UserData {
+export function apiUserDataToDomain(apiUserData: ApiUserData, cookies?: string[]): UserData & { cookies: string[] } {
   return {
     email: apiUserData.email,
     fullName: apiUserData.notifications.fullName,
