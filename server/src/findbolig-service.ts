@@ -51,7 +51,7 @@ async function fetchWithTimeout(
 export async function login(
   email: string,
   password: string,
-): Promise<UserData | null> {
+): Promise<(UserData & { cookies: string[] }) | null> {
   try {
     // Initial GET to receive __Secure-SID cookie
     const initialRes = await fetchWithTimeout(BASE_URL, { redirect: "follow" }, TIMEOUT_LOGIN);
