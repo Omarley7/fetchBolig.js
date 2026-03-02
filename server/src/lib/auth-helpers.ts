@@ -6,7 +6,7 @@ import {
   parseCookies,
   type SealedSession,
 } from "./session";
-import { login } from "~/findbolig-service";
+import { login, UpstreamHttpError } from "~/findbolig-service";
 
 export class AuthError extends Error {
   constructor(message: string = "Authentication required") {
@@ -54,5 +54,5 @@ async function reauth(session: SealedSession): Promise<SealedSession | null> {
 }
 
 function isUpstream401(error: unknown): boolean {
-  return error instanceof Error && /:\s*401/.test(error.message);
+  return error instanceof UpstreamHttpError && error.status === 401;
 }

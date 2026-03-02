@@ -24,6 +24,15 @@ export class TimeoutError extends Error {
   }
 }
 
+export class UpstreamHttpError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "UpstreamHttpError";
+    this.status = status;
+  }
+}
+
 async function fetchWithTimeout(
   url: string,
   options: RequestInit,
@@ -103,7 +112,7 @@ export async function fetchOffers(cookies: string): Promise<ApiOffersPage> {
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch offers: ${res.status}`);
+    throw new UpstreamHttpError(`Failed to fetch offers: ${res.status}`, res.status);
   }
 
   return (await res.json()) as ApiOffersPage;
@@ -130,7 +139,7 @@ export async function fetchThreads(
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch threads: ${res.status}`);
+    throw new UpstreamHttpError(`Failed to fetch threads: ${res.status}`, res.status);
   }
 
   return (await res.json()) as ApiMessageThreadsPage;
@@ -156,8 +165,8 @@ export async function getPositionOnOffer(offerId: string, cookies: string) {
   );
 
   if (!res.ok) {
-    throw new Error(
-      `Failed to fetch position on offer: ${res.status}: ${res.statusText}`,
+    throw new UpstreamHttpError(
+      `Failed to fetch position on offer: ${res.status}: ${res.statusText}`, res.status,
     );
   }
 
@@ -181,8 +190,8 @@ export async function getResidence(residenceId: string, cookies: string) {
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(
-      `Failed to fetch residence: ${res.status}: ${res.statusText}`,
+    throw new UpstreamHttpError(
+      `Failed to fetch residence: ${res.status}: ${res.statusText}`, res.status,
     );
   }
   const data = await res.json();
@@ -214,8 +223,8 @@ export async function getThreadForOffer(
   );
 
   if (!res.ok) {
-    throw new Error(
-      `Failed to fetch thread for offer: ${res.status}: ${res.statusText}`,
+    throw new UpstreamHttpError(
+      `Failed to fetch thread for offer: ${res.status}: ${res.statusText}`, res.status,
     );
   }
 
@@ -295,7 +304,7 @@ export async function getUserData(cookies: string) {
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch user data: ${res.status}`);
+    throw new UpstreamHttpError(`Failed to fetch user data: ${res.status}`, res.status);
   }
 
   return res.json();

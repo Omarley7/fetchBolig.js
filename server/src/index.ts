@@ -43,10 +43,15 @@ const users = new Hono().basePath("/users");
 const residences = new Hono().basePath("/residence");
 const appointments = new Hono().basePath("/appointments");
 
+const ALLOWED_ORIGINS =
+  process.env.NODE_ENV === "production"
+    ? [] // same-origin in production — CORS not needed
+    : ["http://localhost:5173", "http://0.0.0.0:5173", "http://localhost:3000", "http://0.0.0.0:3000"];
+
 api.use(
   "/*",
   cors({
-    origin: (origin) => origin,
+    origin: (origin) => (ALLOWED_ORIGINS.includes(origin) ? origin : ""),
     credentials: true,
   }),
   logger(),
