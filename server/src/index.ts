@@ -8,9 +8,19 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import * as findboligService from "~/findbolig-service";
 import { TimeoutError } from "~/findbolig-service";
-import { requireAuth } from "~/lib/auth-helpers";
+import { AuthError, withReauth } from "~/lib/auth-helpers";
+import {
+  setSessionCookie,
+  clearSessionCookie,
+  getSessionFromCookie,
+  parseCookies,
+  type SealedSession,
+} from "~/lib/session";
 
 function handleError(c: Context, error: unknown) {
+  if (error instanceof AuthError) {
+    return c.json({ error: error.message }, 401);
+  }
   console.error(error);
   if (error instanceof TimeoutError) {
     return c.json({ error: "timeout", message: "findbolig.nu is not responding" }, 504);
@@ -33,50 +43,92 @@ const users = new Hono().basePath("/users");
 const residences = new Hono().basePath("/residence");
 const appointments = new Hono().basePath("/appointments");
 
-api.use("/*", cors(), logger(), prettyJSON());
+api.use(
+  "/*",
+  cors({
+    origin: (origin) => origin,
+    credentials: true,
+  }),
+  logger(),
+  prettyJSON(),
+);
 
-appointments.get("/upcoming", async (c) => {
-  try {
-    const cookies = requireAuth(c);
-    if (cookies instanceof Response) return cookies;
-
-    const includeAll = c.req.query("includeAll") === "true";
-    const appointments = await findboligService.getUpcomingAppointments(
-      cookies,
-      includeAll
-    );
-    return c.json(appointments);
-  } catch (error) {
-    return handleError(c, error);
-  }
-});
+// ── Auth routes ──────────────────────────────────────────────
 
 auth.post("/login", async (c) => {
   try {
-    const { email, password } = await c.req.json();
+    const { email, password, remember } = await c.req.json();
     if (!email || !password) {
       return c.json({ error: "Email and password are required" }, 400);
     }
 
     const result = await findboligService.login(email, password);
-    if (!result) {
+    if (!result?.cookies?.length) {
       return c.json({ error: "Invalid email or password" }, 401);
     }
-    return c.json(result);
+
+    const session: SealedSession = {
+      fbCookies: parseCookies(result.cookies),
+      fbEmail: email,
+      fbPassword: password,
+      fullName: result.fullName,
+      email: result.email,
+    };
+
+    await setSessionCookie(c, session, remember !== false);
+    return c.json({ fullName: result.fullName, email: result.email });
   } catch (error) {
     return handleError(c, error);
   }
 });
 
+auth.post("/logout", async (c) => {
+  await clearSessionCookie(c);
+  return c.json({ ok: true });
+});
+
 auth.get("/refresh", async (c) => {
   try {
-    const cookies = requireAuth(c);
-    if (cookies instanceof Response) return cookies;
+    const session = await getSessionFromCookie(c);
+    if (!session) return c.json({ error: "Not authenticated" }, 401);
 
-    const result = await findboligService.refreshSession(cookies);
-    if (!result) {
-      return c.json({ error: "Failed to refresh session" }, 401);
+    const result = await findboligService.refreshSession(session.fbCookies);
+    if (result) {
+      // Update cookies if findbolig sent new ones
+      if (result.cookies?.length) {
+        session.fbCookies = parseCookies(result.cookies);
+      }
+      session.fullName = result.fullName;
+      session.email = result.email;
+      await setSessionCookie(c, session);
+      return c.json({ fullName: result.fullName, email: result.email });
     }
+
+    // findbolig session expired — try re-auth with stored credentials
+    const fresh = await findboligService.login(session.fbEmail, session.fbPassword);
+    if (!fresh?.cookies?.length) {
+      await clearSessionCookie(c);
+      return c.json({ error: "Session expired" }, 401);
+    }
+
+    session.fbCookies = parseCookies(fresh.cookies);
+    session.fullName = fresh.fullName;
+    session.email = fresh.email;
+    await setSessionCookie(c, session);
+    return c.json({ fullName: fresh.fullName, email: fresh.email });
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
+// ── Data routes (all use withReauth) ─────────────────────────
+
+appointments.get("/upcoming", async (c) => {
+  try {
+    const includeAll = c.req.query("includeAll") === "true";
+    const result = await withReauth(c, (cookies) =>
+      findboligService.getUpcomingAppointments(cookies, includeAll),
+    );
     return c.json(result);
   } catch (error) {
     return handleError(c, error);
@@ -85,11 +137,10 @@ auth.get("/refresh", async (c) => {
 
 offers.get("/", async (c) => {
   try {
-    const cookies = requireAuth(c);
-    if (cookies instanceof Response) return cookies;
-
-    const offers = await findboligService.fetchOffers(cookies);
-    return c.json(offers.results);
+    const result = await withReauth(c, (cookies) =>
+      findboligService.fetchOffers(cookies),
+    );
+    return c.json(result.results);
   } catch (error) {
     return handleError(c, error);
   }
@@ -97,18 +148,12 @@ offers.get("/", async (c) => {
 
 offers.get("/:offerId/position", async (c) => {
   try {
-    const cookies = requireAuth(c);
-    if (cookies instanceof Response) return cookies;
-
     const offerId = c.req.param("offerId");
-    if (!offerId) {
-      return c.json({ error: "Offer ID is required" }, 400);
-    }
-    const position = await findboligService.getPositionOnOffer(
-      offerId,
-      cookies
+    if (!offerId) return c.json({ error: "Offer ID is required" }, 400);
+    const result = await withReauth(c, (cookies) =>
+      findboligService.getPositionOnOffer(offerId, cookies),
     );
-    return c.json(position);
+    return c.json(result);
   } catch (error) {
     return handleError(c, error);
   }
@@ -116,11 +161,10 @@ offers.get("/:offerId/position", async (c) => {
 
 threads.get("/", async (c) => {
   try {
-    const cookies = requireAuth(c);
-    if (cookies instanceof Response) return cookies;
-
-    const threads = await findboligService.fetchThreads(cookies);
-    return c.json(threads.results);
+    const result = await withReauth(c, (cookies) =>
+      findboligService.fetchThreads(cookies),
+    );
+    return c.json(result.results);
   } catch (error) {
     return handleError(c, error);
   }
@@ -128,11 +172,10 @@ threads.get("/", async (c) => {
 
 users.get("/me", async (c) => {
   try {
-    const cookies = requireAuth(c);
-    if (cookies instanceof Response) return cookies;
-
-    const user = await findboligService.getUserData(cookies);
-    return c.json(user);
+    const result = await withReauth(c, (cookies) =>
+      findboligService.getUserData(cookies),
+    );
+    return c.json(result);
   } catch (error) {
     return handleError(c, error);
   }
@@ -140,12 +183,11 @@ users.get("/me", async (c) => {
 
 residences.get("/:residenceId", async (c) => {
   try {
-    const cookies = requireAuth(c);
-    if (cookies instanceof Response) return cookies;
-
     const residenceId = c.req.param("residenceId");
-    const residence = await findboligService.getResidence(residenceId, cookies);
-    return c.json(residence);
+    const result = await withReauth(c, (cookies) =>
+      findboligService.getResidence(residenceId, cookies),
+    );
+    return c.json(result);
   } catch (error) {
     return handleError(c, error);
   }
@@ -160,14 +202,13 @@ api.route("/", appointments);
 
 app.route("/api", api);
 
-// SPA fallback: serve index.html for any unmatched routes so client-side routing works on refresh
+// SPA fallback
 app.get("*", serveStatic({ root: "../client/dist", rewriteRequestPath: () => "/index.html" }));
 
-const server = serve({ ...app, hostname: '0.0.0.0' }, (info) => {
+const server = serve({ ...app, hostname: "0.0.0.0" }, (info) => {
   console.log(`Server is running on ${info.address}:${info.port}`);
 });
 
-// graceful shutdown
 process.on("SIGINT", () => {
   server.close();
   process.exit(0);
