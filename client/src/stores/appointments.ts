@@ -21,18 +21,15 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
     isLoading.value = true;
     try {
-      // Always load from cache first — does NOT require auth
-      const cached = await getAppointments(false, auth.cookies, showAllOffers.value);
+      const cached = await getAppointments(false, showAllOffers.value);
       appointments.value = cached.appointments;
       updatedAt.value = cached.updatedAt;
 
       if (!auth.isAuthenticated) {
-        // Cached data loaded, but user needs to log in for fresh data
         sessionExpired.value = true;
         return;
       }
 
-      // Check if cache is stale
       if (isCacheStale()) {
         const sessionValid = await auth.ensureSession();
         if (sessionValid) {
@@ -42,10 +39,9 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         }
       }
     } catch {
-      // No cache available — only try network if authenticated
       if (!auth.isAuthenticated) return;
       try {
-        const payload = await getAppointments(true, auth.cookies, showAllOffers.value);
+        const payload = await getAppointments(true, showAllOffers.value);
         appointments.value = payload.appointments;
         updatedAt.value = payload.updatedAt;
       } catch (error) {
@@ -61,26 +57,21 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     needsRefresh.value = false;
     const auth = useAuth();
     try {
-      const payload = await getAppointments(
-        true,
-        auth.cookies,
-        showAllOffers.value,
-      );
+      const payload = await getAppointments(true, showAllOffers.value);
       appointments.value = payload.appointments;
       updatedAt.value = payload.updatedAt;
     } catch (error) {
-      // If we got a 401, attempt re-auth and retry once
       const is401 = error instanceof Error && error.message.includes("401");
       if (is401) {
         const recovered = await auth.ensureSession();
         if (recovered) {
           try {
-            const payload = await getAppointments(true, auth.cookies, showAllOffers.value);
+            const payload = await getAppointments(true, showAllOffers.value);
             appointments.value = payload.appointments;
             updatedAt.value = payload.updatedAt;
             return;
           } catch {
-            // retry also failed — fall through to error handling
+            // retry also failed
           }
         } else {
           sessionExpired.value = true;
@@ -101,7 +92,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
   async function handleRefresh() {
     const auth = useAuth();
-    if (!auth.isAuthenticated && !auth.cookies) {
+    if (!auth.isAuthenticated) {
       pendingRefresh = true;
       auth.showLoginModal = true;
       return;
@@ -115,7 +106,6 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     await refresh();
   }
 
-  // When the user logs back in, clear expired banner and fulfill any pending refresh
   const { isAuthenticated } = storeToRefs(useAuth());
   watch(isAuthenticated, (loggedIn) => {
     if (loggedIn) {

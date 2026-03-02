@@ -5,11 +5,14 @@ import { useI18n } from "vue-i18n";
 
 const auth = useAuth();
 const { t } = useI18n();
+const password = ref("");
 const isLogoutModalOpen = ref(false);
 
 async function handleLogin() {
-  if (await auth.login(auth.email, auth.password))
+  if (await auth.login(auth.email, password.value)) {
+    password.value = "";
     auth.showLoginModal = false;
+  }
 }
 
 function openModal() {
@@ -48,7 +51,7 @@ function confirmLogout() {
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Login Modal -->
     <Teleport to="body">
       <div v-if="auth.showLoginModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
         @click.self="closeModal">
@@ -70,14 +73,9 @@ function confirmLogout() {
             </div>
 
             <div class="flex flex-col gap-2">
-              <input id="password" v-model="auth.password" type="password" :placeholder="t('landing.passwordPlaceholder')"
+              <input id="password" v-model="password" type="password" :placeholder="t('landing.passwordPlaceholder')"
                 :disabled="auth.isLoading"
                 class="disabled:opacity-50 px-3 py-2 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent" />
-            </div>
-
-            <div class="flex items-center gap-2">
-              <input id="remember" type="checkbox" v-model="auth.rememberPassword" :disabled="auth.isLoading" class="w-4 h-4 accent-violet-600" />
-              <label for="remember" class="text-sm text-gray-600 dark:text-gray-300">{{ t('auth.rememberPassword') }}</label>
             </div>
 
             <button type="submit" :disabled="auth.isLoading"
