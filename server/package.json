@@ -16,6 +16,7 @@
     "@openrouter/sdk": "^0.2.9",
     "dotenv": "^17.2.3",
     "hono": "^4.10.7",
+    "iron-webcrypto": "^2.0.0",
     "openai": "^6.10.0",
     "tsx": "^4.21.0",
     "zod": "^4.1.13"
