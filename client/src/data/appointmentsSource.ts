@@ -2,9 +2,8 @@ import type { Appointment, UserData } from "@/types";
 import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
 import config from "~/config";
 
-// Client-side timeouts (safety net — server timeouts should fire first)
-const TIMEOUT_LOGIN = 25_000; // 25s – covers 2 sequential server requests
-const TIMEOUT_APPOINTMENTS = 90_000; // 90s – orchestrates N×3 server sub-calls
+const TIMEOUT_LOGIN = 25_000;
+const TIMEOUT_APPOINTMENTS = 90_000;
 
 function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
   const controller = new AbortController();
@@ -21,14 +20,12 @@ export class HttpError extends Error {
   }
 }
 
-/** Check if an error is a timeout (client-side abort or server 504) */
 export function isTimeoutError(error: unknown): boolean {
   if (error instanceof DOMException && error.name === "AbortError") return true;
   if (error instanceof HttpError && error.status === 504) return true;
   return false;
 }
 
-/** Shared handler: shows a timeout warning or generic error toast */
 export function handleApiError(
   error: unknown,
   toast: { warning: (msg: string, dur?: number) => void; error: (msg: string, dur?: number) => void },
@@ -44,7 +41,6 @@ export function handleApiError(
 }
 
 export async function fetchAppointments(
-  cookies: string,
   includeAll: boolean = false
 ): Promise<{
   updatedAt: Date;
@@ -57,19 +53,14 @@ export async function fetchAppointments(
   }
 
   try {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      "x-findbolig-cookies": cookies,
-    };
-
     const queryParam = includeAll ? "?includeAll=true" : "";
     const result = await fetchWithTimeout(
       `${config.backendDomain}/api/appointments/upcoming${queryParam}`,
       {
         method: "GET",
-        headers,
+        credentials: "include",
       },
-      TIMEOUT_APPOINTMENTS
+      TIMEOUT_APPOINTMENTS,
     );
     if (!result.ok) {
       throw new HttpError(`Failed to fetch appointments: ${result.status}`, result.status);
@@ -82,27 +73,26 @@ export async function fetchAppointments(
   }
 }
 
-export async function login(email: string, password: string): Promise<UserData | null> {
+export async function login(
+  email: string,
+  password: string,
+  remember: boolean = true,
+): Promise<UserData | null> {
   try {
     const result = await fetchWithTimeout(
       `${config.backendDomain}/api/auth/login`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password, remember }),
       },
-      TIMEOUT_LOGIN
+      TIMEOUT_LOGIN,
     );
     if (!result.ok) {
       throw new HttpError(`Failed to login: ${result.status}`, result.status);
     }
-    const data = await result.json();
-    return data;
+    return await result.json();
   } catch (error) {
     console.error("Failed to login:", error);
     throw error;

@@ -22,18 +22,10 @@ export function isCacheStale(thresholdMs = 24 * 60 * 60 * 1000): boolean {
   return age > thresholdMs;
 }
 
-/**
- * Cache-first data strategy:
- * 1. Check LocalStorage first (if !forceRefresh)
- * 2. Parse and deserialize Date objects
- * 3. Fallback to fetch fresh data and cache it
- */
 export async function getAppointments(
   forceRefresh: boolean = false,
-  cookies: string,
   includeAll: boolean = false,
 ) {
-  // Check cache first (unless force refresh)
   if (!forceRefresh) {
     const cached = localStorage.getItem(STORAGE_KEY);
     if (cached) {
@@ -43,12 +35,11 @@ export async function getAppointments(
       } catch (error) {
         const toast = useToastStore();
         toast.warning("Failed to load cached data, fetching fresh data...");
-        // Continue to fallback
       }
     }
   }
 
-  const payload = await fetchAppointments(cookies, includeAll);
+  const payload = await fetchAppointments(includeAll);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   return payload;
 }
