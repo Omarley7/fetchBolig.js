@@ -81,6 +81,12 @@
     "timeoutLogin": "Kunne ikke nå findbolig.nu for at logge ind. Prøv igen senere.",
     "invalidCredentials": "Forkert email eller adgangskode. Prøv igen."
   },
+  "pwa": {
+    "offlineReady": "App klar til offline brug",
+    "newContent": "Ny version tilgængelig",
+    "reload": "Opdater",
+    "dismiss": "Luk"
+  },
   "sync": {
     "updatedAgo": "Opdateret {0}",
     "justNow": "lige nu",

@@ -81,6 +81,12 @@
     "timeoutLogin": "Could not reach findbolig.nu to log in. Please try again later.",
     "invalidCredentials": "Invalid email or password. Please try again."
   },
+  "pwa": {
+    "offlineReady": "App ready to work offline",
+    "newContent": "New version available",
+    "reload": "Refresh",
+    "dismiss": "Dismiss"
+  },
   "sync": {
     "updatedAgo": "Synced {0}",
     "justNow": "just now",

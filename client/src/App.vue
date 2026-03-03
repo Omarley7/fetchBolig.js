@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppHeader from "~/components/AppHeader.vue";
+import AppUpdatePrompt from "~/components/AppUpdatePrompt.vue";
 import ToastContainer from "~/components/Base/ToastContainer.vue";
 </script>
 
@@ -12,4 +13,5 @@ import ToastContainer from "~/components/Base/ToastContainer.vue";
     </main>
   </div>
   <ToastContainer />
+  <AppUpdatePrompt />
 </template>
