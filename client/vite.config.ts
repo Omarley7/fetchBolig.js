@@ -18,6 +18,7 @@ export default defineConfig({
       registerType: "prompt",
       includeAssets: ["icons/*.svg", "flags/*.svg", "leaflet/**/*"],
       manifest: {
+        id: "/",
         name: "FetchBolig",
         short_name: "FetchBolig",
         description: "Track your findbolig.nu appointments",
