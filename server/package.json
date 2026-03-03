@@ -19,6 +19,7 @@
     "iron-webcrypto": "^2.0.0",
     "openai": "^6.10.0",
     "tsx": "^4.21.0",
+    "undici": "^7.22.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {

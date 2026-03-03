@@ -1,3 +1,4 @@
+import "~/lib/tls-setup";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import "dotenv/config";
@@ -23,7 +24,10 @@ function handleError(c: Context, error: unknown) {
   }
   console.error(error);
   if (error instanceof TimeoutError) {
-    return c.json({ error: "timeout", message: "findbolig.nu is not responding" }, 504);
+    return c.json(
+      { error: "timeout", message: "findbolig.nu is not responding" },
+      504
+    );
   }
   return c.json({ error: "Internal server error" }, 500);
 }
@@ -46,7 +50,12 @@ const appointments = new Hono().basePath("/appointments");
 const ALLOWED_ORIGINS =
   process.env.NODE_ENV === "production"
     ? [] // same-origin in production — CORS not needed
-    : ["http://localhost:5173", "http://0.0.0.0:5173", "http://localhost:3000", "http://0.0.0.0:3000"];
+    : [
+        "http://localhost:5173",
+        "http://0.0.0.0:5173",
+        "http://localhost:3000",
+        "http://0.0.0.0:3000",
+      ];
 
 api.use(
   "/*",
@@ -55,7 +64,7 @@ api.use(
     credentials: true,
   }),
   logger(),
-  prettyJSON(),
+  prettyJSON()
 );
 
 // ── Auth routes ──────────────────────────────────────────────
@@ -110,7 +119,10 @@ auth.get("/refresh", async (c) => {
     }
 
     // findbolig session expired — try re-auth with stored credentials
-    const fresh = await findboligService.login(session.fbEmail, session.fbPassword);
+    const fresh = await findboligService.login(
+      session.fbEmail,
+      session.fbPassword
+    );
     if (!fresh?.cookies?.length) {
       await clearSessionCookie(c);
       return c.json({ error: "Session expired" }, 401);
@@ -132,7 +144,7 @@ appointments.get("/upcoming", async (c) => {
   try {
     const includeAll = c.req.query("includeAll") === "true";
     const result = await withReauth(c, (cookies) =>
-      findboligService.getUpcomingAppointments(cookies, includeAll),
+      findboligService.getUpcomingAppointments(cookies, includeAll)
     );
     return c.json(result);
   } catch (error) {
@@ -143,7 +155,7 @@ appointments.get("/upcoming", async (c) => {
 offers.get("/", async (c) => {
   try {
     const result = await withReauth(c, (cookies) =>
-      findboligService.fetchOffers(cookies),
+      findboligService.fetchOffers(cookies)
     );
     return c.json(result.results);
   } catch (error) {
@@ -156,7 +168,7 @@ offers.get("/:offerId/position", async (c) => {
     const offerId = c.req.param("offerId");
     if (!offerId) return c.json({ error: "Offer ID is required" }, 400);
     const result = await withReauth(c, (cookies) =>
-      findboligService.getPositionOnOffer(offerId, cookies),
+      findboligService.getPositionOnOffer(offerId, cookies)
     );
     return c.json(result);
   } catch (error) {
@@ -167,7 +179,7 @@ offers.get("/:offerId/position", async (c) => {
 threads.get("/", async (c) => {
   try {
     const result = await withReauth(c, (cookies) =>
-      findboligService.fetchThreads(cookies),
+      findboligService.fetchThreads(cookies)
     );
     return c.json(result.results);
   } catch (error) {
@@ -178,7 +190,7 @@ threads.get("/", async (c) => {
 users.get("/me", async (c) => {
   try {
     const result = await withReauth(c, (cookies) =>
-      findboligService.getUserData(cookies),
+      findboligService.getUserData(cookies)
     );
     return c.json(result);
   } catch (error) {
@@ -190,7 +202,7 @@ residences.get("/:residenceId", async (c) => {
   try {
     const residenceId = c.req.param("residenceId");
     const result = await withReauth(c, (cookies) =>
-      findboligService.getResidence(residenceId, cookies),
+      findboligService.getResidence(residenceId, cookies)
     );
     return c.json(result);
   } catch (error) {
@@ -208,7 +220,13 @@ api.route("/", appointments);
 app.route("/api", api);
 
 // SPA fallback
-app.get("*", serveStatic({ root: "../client/dist", rewriteRequestPath: () => "/index.html" }));
+app.get(
+  "*",
+  serveStatic({
+    root: "../client/dist",
+    rewriteRequestPath: () => "/index.html",
+  })
+);
 
 const server = serve({ ...app, hostname: "0.0.0.0" }, (info) => {
   console.log(`Server is running on ${info.address}:${info.port}`);
