@@ -1,8 +1,5 @@
-import {
-  createRouter,
-  createWebHistory,
-  type RouteRecordRaw,
-} from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import { usePostHog } from "~/composables/usePostHog";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -26,5 +23,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+const { posthog } = usePostHog();
 
 export default router;

@@ -22,13 +22,14 @@
     "vue-tsc": "^2.2.0"
   },
   "dependencies": {
+    "add-to-calendar-button": "^2.13.5",
     "leaflet": "^1.9.4",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^3.2.3",
+    "posthog-js": "^1.357.2",
     "swiper": "^12.1.2",
     "vue": "^3.5.13",
     "vue-i18n": "^9.14.5",
-    "vue-router": "^4.6.4",
-    "add-to-calendar-button": "^2.13.5"
+    "vue-router": "^4.6.4"
   }
 }
