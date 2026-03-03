@@ -24,6 +24,6 @@ const router = createRouter({
   routes,
 });
 
-const { posthog } = usePostHog();
+usePostHog();
 
 export default router;
