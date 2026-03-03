@@ -10,9 +10,6 @@ import type {
 } from "~/types/threads";
 import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
 
-// Disable TLS verification for development (remove in production)
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
-
 const BASE_URL = "https://findbolig.nu";
 
 // Timeout constants (milliseconds)
@@ -24,6 +21,15 @@ export class TimeoutError extends Error {
   constructor(url: string, timeoutMs: number) {
     super(`Request to ${url} timed out after ${timeoutMs / 1000}s`);
     this.name = "TimeoutError";
+  }
+}
+
+export class UpstreamHttpError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "UpstreamHttpError";
+    this.status = status;
   }
 }
 
@@ -54,7 +60,7 @@ async function fetchWithTimeout(
 export async function login(
   email: string,
   password: string,
-): Promise<UserData | null> {
+): Promise<(UserData & { cookies: string[] }) | null> {
   try {
     // Initial GET to receive __Secure-SID cookie
     const initialRes = await fetchWithTimeout(BASE_URL, { redirect: "follow" }, TIMEOUT_LOGIN);
@@ -106,7 +112,7 @@ export async function fetchOffers(cookies: string): Promise<ApiOffersPage> {
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch offers: ${res.status}`);
+    throw new UpstreamHttpError(`Failed to fetch offers: ${res.status}`, res.status);
   }
 
   return (await res.json()) as ApiOffersPage;
@@ -133,7 +139,7 @@ export async function fetchThreads(
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch threads: ${res.status}`);
+    throw new UpstreamHttpError(`Failed to fetch threads: ${res.status}`, res.status);
   }
 
   return (await res.json()) as ApiMessageThreadsPage;
@@ -159,8 +165,8 @@ export async function getPositionOnOffer(offerId: string, cookies: string) {
   );
 
   if (!res.ok) {
-    throw new Error(
-      `Failed to fetch position on offer: ${res.status}: ${res.statusText}`,
+    throw new UpstreamHttpError(
+      `Failed to fetch position on offer: ${res.status}: ${res.statusText}`, res.status,
     );
   }
 
@@ -184,8 +190,8 @@ export async function getResidence(residenceId: string, cookies: string) {
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(
-      `Failed to fetch residence: ${res.status}: ${res.statusText}`,
+    throw new UpstreamHttpError(
+      `Failed to fetch residence: ${res.status}: ${res.statusText}`, res.status,
     );
   }
   const data = await res.json();
@@ -217,8 +223,8 @@ export async function getThreadForOffer(
   );
 
   if (!res.ok) {
-    throw new Error(
-      `Failed to fetch thread for offer: ${res.status}: ${res.statusText}`,
+    throw new UpstreamHttpError(
+      `Failed to fetch thread for offer: ${res.status}: ${res.statusText}`, res.status,
     );
   }
 
@@ -298,7 +304,7 @@ export async function getUserData(cookies: string) {
   }, TIMEOUT_DATA);
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch user data: ${res.status}`);
+    throw new UpstreamHttpError(`Failed to fetch user data: ${res.status}`, res.status);
   }
 
   return res.json();

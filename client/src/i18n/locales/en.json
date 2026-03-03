@@ -38,10 +38,9 @@
     "loggingIn": "Logging in...",
     "loggingOut": "Logging out...",
     "logoutConfirm": "Your data is still stored on your device, but you will not be able to fetch new updates until you log in again.",
-    "rememberPassword": "Remember me on this device",
     "cancel": "Cancel",
-    "securityNote": "Your credentials are sent directly to findbolig.nu - we never store them on our servers.",
-    "findboligCredentials": "Use your findbolig.nu credentials",
+    "securityNote": "Your connection to findbolig.nu is encrypted and secure.",
+    "findboligCredentials": "Connect your findbolig.nu account",
     "loginSuccess": "You are now logged in!"
   },
   "gallery": {

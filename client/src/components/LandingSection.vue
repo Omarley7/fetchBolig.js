@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useAuth } from "~/composables/useAuth";
 import { useI18n } from "vue-i18n";
 
 const auth = useAuth();
 const { t } = useI18n();
+const password = ref("");
 
 async function handleLogin() {
-  await auth.login(auth.email, auth.password);
+  if (await auth.login(auth.email, password.value)) {
+    password.value = "";
+  }
 }
 </script>
 
@@ -32,25 +36,12 @@ async function handleLogin() {
           class="disabled:opacity-50 px-3 py-2 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent"
         />
         <input
-          v-model="auth.password"
+          v-model="password"
           type="password"
           :placeholder="t('landing.passwordPlaceholder')"
           :disabled="auth.isLoading"
           class="disabled:opacity-50 px-3 py-2 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent"
         />
-
-        <div class="flex items-center gap-2">
-          <input
-            id="landing-remember"
-            type="checkbox"
-            v-model="auth.rememberPassword"
-            :disabled="auth.isLoading"
-            class="w-4 h-4 accent-violet-600"
-          />
-          <label for="landing-remember" class="text-sm text-gray-600 dark:text-gray-300">
-            {{ t("auth.rememberPassword") }}
-          </label>
-        </div>
 
         <button
           type="submit"

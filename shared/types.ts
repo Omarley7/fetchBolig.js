@@ -34,5 +34,4 @@ export type Residence = {
 export type UserData = {
   email: string;
   fullName: string;
-  cookies?: string[];
 };
