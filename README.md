@@ -1,3 +1,8 @@
+Commercial use requires a commercial license.
+Contact: omarg@live.dk
+
+All contributors agree to the CLA defined in CLA.md by submitting a pull request.
+
 # FetchBolig.js
 
 Better dashboard for FindBolig.nu with local storage and offline access. Currently live on https://fetchBolig.dk.
@@ -20,7 +25,7 @@ fetchBolig.js/
 │   └── src/
 │       ├── main.ts
 │       ├── App.vue
-│       ├── config.ts           # client-side config (e.g. API base URL)  
+│       ├── config.ts           # client-side config (e.g. API base URL)
 │       ├── style.css
 │       ├── components/
 │ 	   ├── composables/
@@ -42,11 +47,13 @@ fetchBolig.js/
 ```
 
 Notes:
+
 - The client is a Vite + Vue 3 project located in `client/`.
 - The server is a TypeScript project in `server/` exposing services used by the client.
 - Shared types live in `shared/types.ts`.
 
 ## Setup (development)
+
 Install dependencies at the root level. This will install both client and server dependencies:
 
 ```bash
@@ -54,6 +61,7 @@ npm install
 ```
 
 Both server and client can be started in parrallel with:
+
 ```bash
 npm run dev
-``` 
+```
