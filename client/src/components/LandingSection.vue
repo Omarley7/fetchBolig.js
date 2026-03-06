@@ -12,6 +12,10 @@ async function handleLogin() {
     password.value = "";
   }
 }
+
+function handleDemoLogin() {
+  auth.loginAsDemo();
+}
 </script>
 
 <template>
@@ -49,6 +53,21 @@ async function handleLogin() {
           class="disabled:opacity-50 bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 transition-colors font-medium"
         >
           {{ auth.isLoading ? t("auth.loggingIn") : t("landing.loginButton") }}
+        </button>
+
+        <div class="relative flex items-center">
+          <div class="grow border-t border-violet-200 dark:border-violet-800"></div>
+          <span class="mx-3 text-xs text-violet-400 dark:text-violet-500">{{ t('auth.orSeparator') }}</span>
+          <div class="grow border-t border-violet-200 dark:border-violet-800"></div>
+        </div>
+
+        <button
+          type="button"
+          @click="handleDemoLogin"
+          :disabled="auth.isLoading"
+          class="disabled:opacity-50 border border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-300 px-4 py-2 rounded-md hover:bg-violet-100 dark:hover:bg-violet-900 transition-colors font-medium"
+        >
+          {{ t('auth.demoLogin') }}
         </button>
       </form>
 
