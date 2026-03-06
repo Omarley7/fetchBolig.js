@@ -13,6 +13,7 @@ export const useAuth = defineStore(
     const email = ref("");
     const isLoading = ref(false);
     const isAuthenticated = ref(false);
+    const isDemo = ref(false);
     const name = ref("");
     const showLoginModal = ref(false);
     let keepAliveTimer: number | null = null;
@@ -50,8 +51,19 @@ export const useAuth = defineStore(
     function setAuthenticated(value: boolean, newName?: string) {
       isAuthenticated.value = value;
       if (newName !== undefined) name.value = newName;
-      if (!value) stopKeepAlive();
+      if (!value) {
+        isDemo.value = false;
+        stopKeepAlive();
+      }
       return value;
+    }
+
+    function loginAsDemo() {
+      isDemo.value = true;
+      name.value = "Demo User";
+      isAuthenticated.value = true;
+      showLoginModal.value = false;
+      toast.success(useI18n().t("auth.demoLoginSuccess"));
     }
 
     function startKeepAlive() {
@@ -101,6 +113,7 @@ export const useAuth = defineStore(
     }
 
     async function validateSession(): Promise<boolean> {
+      if (isDemo.value) return true;
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), TIMEOUT_REFRESH);
@@ -132,8 +145,8 @@ export const useAuth = defineStore(
       return valid;
     }
 
-    // Resume keep-alive if already authenticated on startup
-    if (isAuthenticated.value) startKeepAlive();
+    // Resume keep-alive if already authenticated on startup (skip in demo mode)
+    if (isAuthenticated.value && !isDemo.value) startKeepAlive();
 
     // Validate session when tab regains focus
     let lastVisibilityCheck = 0;
@@ -141,7 +154,7 @@ export const useAuth = defineStore(
 
     document.addEventListener("visibilitychange", async () => {
       if (document.visibilityState !== "visible") return;
-      if (!isAuthenticated.value) return;
+      if (!isAuthenticated.value || isDemo.value) return;
 
       const now = Date.now();
       if (now - lastVisibilityCheck < VISIBILITY_COOLDOWN) return;
@@ -150,7 +163,7 @@ export const useAuth = defineStore(
       await ensureSession();
     });
 
-    return { email, isLoading, isAuthenticated, name, showLoginModal, login, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
+    return { email, isLoading, isAuthenticated, isDemo, name, showLoginModal, login, loginAsDemo, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
   },
   {
     persist: {

@@ -15,6 +15,10 @@ async function handleLogin() {
   }
 }
 
+function handleDemoLogin() {
+  auth.loginAsDemo();
+}
+
 function openModal() {
   auth.showLoginModal = true;
 }
@@ -40,14 +44,13 @@ function confirmLogout() {
 <template>
   <div>
     <!-- Login/Logout Button -->
-    <div class="disabled:opacity-50 cursor-pointer p-2 bg-black/5 dark:bg-white/10 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition-colors">
+    <div
+      class="disabled:opacity-50 cursor-pointer p-2 bg-black/5 dark:bg-white/10 rounded-full hover:bg-black/10 dark:hover:bg-white/20 transition-colors">
       <div v-if="!auth.isAuthenticated" @click="openModal" :aria-label="t('common.login')">
-        <img src="/icons/user-round-key.svg" :alt="t('common.login')"
-          class="size-6 dark:invert" />
+        <img src="/icons/user-round-key.svg" :alt="t('common.login')" class="size-6 dark:invert" />
       </div>
       <div v-else @click="openLogoutModal" :disabled="auth.isLoading" :aria-label="t('common.logout')">
-        <img src="/icons/log-out.svg" :alt="t('common.logout')"
-          class="size-6 dark:invert" />
+        <img src="/icons/log-out.svg" :alt="t('common.logout')" class="size-6 dark:invert" />
       </div>
     </div>
 
@@ -68,7 +71,8 @@ function confirmLogout() {
 
           <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
             <div class="flex flex-col gap-2">
-              <input id="email" v-model="auth.email" type="email" :placeholder="t('landing.emailPlaceholder')" :disabled="auth.isLoading"
+              <input id="email" v-model="auth.email" type="email" :placeholder="t('landing.emailPlaceholder')"
+                :disabled="auth.isLoading"
                 class="disabled:opacity-50 px-3 py-2 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent" />
             </div>
 
@@ -81,6 +85,17 @@ function confirmLogout() {
             <button type="submit" :disabled="auth.isLoading"
               class="disabled:opacity-50 bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 transition-colors font-medium">
               {{ auth.isLoading ? t('auth.loggingIn') : t('common.login') }}
+            </button>
+
+            <div class="relative flex items-center">
+              <div class="grow border-t border-violet-200 dark:border-violet-800"></div>
+              <span class="mx-3 text-xs text-violet-400 dark:text-violet-500">{{ t('auth.orSeparator') }}</span>
+              <div class="grow border-t border-violet-200 dark:border-violet-800"></div>
+            </div>
+
+            <button type="button" @click="handleDemoLogin" :disabled="auth.isLoading"
+              class="disabled:opacity-50 border border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-300 px-4 py-2 rounded-md hover:bg-violet-100 dark:hover:bg-violet-900 transition-colors font-medium">
+              {{ t('auth.demoLogin') }}
             </button>
           </form>
         </div>

@@ -7,6 +7,7 @@ import { useAuth } from "~/composables/useAuth";
 import { useToastStore } from "~/stores/toast";
 import { useI18n } from "~/i18n";
 import config from "~/config";
+import { MOCK_DEAS_APPOINTMENTS } from "~/data/mockData";
 
 export const useAppointmentsStore = defineStore("appointments", () => {
   const appointments = ref<Appointment[]>([]);
@@ -18,6 +19,15 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
   async function init() {
     const auth = useAuth();
+
+    if (auth.isDemo) {
+      isLoading.value = true;
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      appointments.value = MOCK_DEAS_APPOINTMENTS;
+      updatedAt.value = new Date();
+      isLoading.value = false;
+      return;
+    }
 
     isLoading.value = true;
     try {
@@ -56,6 +66,15 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     isLoading.value = true;
     needsRefresh.value = false;
     const auth = useAuth();
+
+    if (auth.isDemo) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      appointments.value = MOCK_DEAS_APPOINTMENTS;
+      updatedAt.value = new Date();
+      isLoading.value = false;
+      return;
+    }
+
     try {
       const payload = await getAppointments(true, showAllOffers.value);
       appointments.value = payload.appointments;

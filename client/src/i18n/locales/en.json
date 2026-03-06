@@ -41,7 +41,10 @@
     "cancel": "Cancel",
     "securityNote": "Your connection to findbolig.nu is encrypted and secure.",
     "findboligCredentials": "Connect your findbolig.nu account",
-    "loginSuccess": "You are now logged in!"
+    "loginSuccess": "You are now logged in!",
+    "demoLogin": "Try as demo",
+    "demoLoginSuccess": "You are now in demo mode.",
+    "orSeparator": "or"
   },
   "gallery": {
     "photos": "Photos",
