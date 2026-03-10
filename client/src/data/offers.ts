@@ -1,0 +1,45 @@
+import type { Offer } from "@/types";
+import { useToastStore } from "~/stores/toast";
+import { fetchActiveOffers } from "./offersSource";
+
+const STORAGE_KEY = "offers_cache";
+
+export function getOffersCacheAge(): number | null {
+  const cached = localStorage.getItem(STORAGE_KEY);
+  if (!cached) return null;
+  try {
+    const parsed = JSON.parse(cached);
+    if (!parsed.updatedAt) return null;
+    return Date.now() - new Date(parsed.updatedAt).getTime();
+  } catch {
+    return null;
+  }
+}
+
+export function isOffersCacheStale(thresholdMs = 24 * 60 * 60 * 1000): boolean {
+  const age = getOffersCacheAge();
+  if (age === null) return false;
+  return age > thresholdMs;
+}
+
+export async function getOffers(forceRefresh: boolean = false) {
+  if (!forceRefresh) {
+    const cached = localStorage.getItem(STORAGE_KEY);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        return {
+          updatedAt: new Date(parsed.updatedAt),
+          offers: parsed.offers as Offer[],
+        };
+      } catch {
+        const toast = useToastStore();
+        toast.warning("Failed to load cached data, fetching fresh data...");
+      }
+    }
+  }
+
+  const payload = await fetchActiveOffers();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  return payload;
+}
