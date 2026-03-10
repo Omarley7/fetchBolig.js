@@ -289,6 +289,7 @@ export async function getUpcomingAppointments(
   }
 }
 
+/** Fetches active (Published) offers with residence data eagerly loaded */
 export async function getActiveOffers(cookies: string) {
   const offersPage = await fetchOffers(cookies);
   const publishedOffers = offersPage.results.filter(
@@ -314,6 +315,7 @@ export async function getActiveOffers(cookies: string) {
   return offersWithData.filter((o): o is NonNullable<typeof o> => o !== null);
 }
 
+/** Accepts an offer on findbolig.nu */
 export async function acceptOffer(offerId: string, cookies: string) {
   const res = await fetchWithTimeout(
     `${BASE_URL}/api/data/offers/${offerId}/accept`,
@@ -333,6 +335,7 @@ export async function acceptOffer(offerId: string, cookies: string) {
   return (await res.json()) as ApiOffer;
 }
 
+/** Declines an offer on findbolig.nu */
 export async function declineOffer(offerId: string, cookies: string) {
   const res = await fetchWithTimeout(
     `${BASE_URL}/api/data/offers/${offerId}/decline`,
