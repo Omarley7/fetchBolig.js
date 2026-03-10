@@ -2,21 +2,27 @@
 import { computed, onMounted } from "vue";
 import { useAuth } from "~/composables/useAuth";
 import { useAppointmentsStore } from "~/stores/appointments";
+import { useOffersStore } from "~/stores/offers";
 import { useI18n } from "vue-i18n";
 import { getCacheAge } from "~/data/appointments";
+import { getOffersCacheAge } from "~/data/offers";
 import LandingSection from "~/components/LandingSection.vue";
 
 const auth = useAuth();
 const store = useAppointmentsStore();
+const offersStore = useOffersStore();
 const { t } = useI18n();
 
 const hasCache = computed(() => getCacheAge() !== null);
+const hasOffersCache = computed(() => getOffersCacheAge() !== null);
 
 onMounted(() => {
   if (auth.isAuthenticated || hasCache.value) store.init();
+  if (auth.isAuthenticated || hasOffersCache.value) offersStore.init();
 });
 
 const hasAppointments = computed(() => store.appointments.length > 0);
+const offerCount = computed(() => offersStore.offers.length);
 const firstName = computed(() => auth.name.split(" ")[0] || "");
 
 const lastUpdatedText = computed(() => {
@@ -44,31 +50,68 @@ const lastUpdatedText = computed(() => {
       <img src="/icons/cloud-download.svg" alt="" class="size-12 dark:invert opacity-70" />
       <h2 class="text-2xl font-bold">{{ t("home.welcomeUser", [firstName]) }}</h2>
       <p class="text-gray-600 dark:text-gray-300">{{ t("home.readyToFetch") }}</p>
-      <router-link
-        to="/appointments"
-        class="px-6 py-3 bg-blue-600 text-white! rounded-lg hover:bg-blue-700 transition-colors font-medium"
-      >
-        {{ t("home.fetchAppointments") }}
-      </router-link>
+      <div class="flex flex-col gap-3 w-full">
+        <router-link
+          to="/appointments"
+          class="px-6 py-3 bg-blue-600 text-white! rounded-lg hover:bg-blue-700 transition-colors font-medium"
+        >
+          {{ t("home.fetchAppointments") }}
+        </router-link>
+        <router-link
+          to="/offers"
+          class="px-6 py-3 border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors font-medium"
+        >
+          {{ t("home.viewOffers") }}
+        </router-link>
+      </div>
       <p class="text-xs text-gray-400 dark:text-gray-500">{{ t("home.noAppointmentsHint") }}</p>
     </div>
   </div>
 
-  <!-- Returning user: has cached appointments -->
-  <div v-else class="flex flex-col items-center justify-center gap-6 py-12 px-4 max-w-md mx-auto text-center">
-    <div
-      class="w-full bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-neutral-700/50 rounded-lg shadow-lg p-8 flex flex-col items-center gap-5"
-    >
-      <img src="/icons/calendar-days.svg" alt="" class="size-12 dark:invert opacity-70" />
-      <h2 class="text-2xl font-bold">{{ firstName ? t("home.welcomeBack", [firstName]) : t("home.welcomeBackAnonymous") }}</h2>
-      <p v-if="lastUpdatedText" class="text-sm text-gray-500 dark:text-gray-400">
-        {{ lastUpdatedText }}
-      </p>
+  <!-- Returning user: has cached data -->
+  <div v-else class="flex flex-col items-center justify-center gap-4 py-12 px-4 max-w-md mx-auto text-center">
+    <h2 class="text-2xl font-bold">{{ firstName ? t("home.welcomeBack", [firstName]) : t("home.welcomeBackAnonymous") }}</h2>
+    <p v-if="lastUpdatedText" class="text-sm text-gray-500 dark:text-gray-400">
+      {{ lastUpdatedText }}
+    </p>
+
+    <div class="w-full space-y-3 mt-2">
+      <!-- Appointments card -->
       <router-link
         to="/appointments"
-        class="px-6 py-3 bg-blue-600 text-white! rounded-lg hover:bg-blue-700 transition-colors font-medium"
+        class="w-full flex items-center gap-4 p-4 rounded-xl
+               bg-neutral-100 dark:bg-white/5
+               border border-neutral-200 dark:border-neutral-700/50
+               hover:bg-neutral-200/70 dark:hover:bg-white/8
+               transition-colors text-left"
       >
-        {{ t("home.viewAppointments", [store.appointments.length]) }}
+        <img src="/icons/calendar-days.svg" alt="" class="size-8 dark:invert opacity-60 shrink-0" />
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold text-neutral-800 dark:text-neutral-100">{{ t("nav.appointments") }}</p>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">
+            {{ t("home.viewAppointments", [store.appointments.length]) }}
+          </p>
+        </div>
+        <img src="/icons/chevron-down.svg" alt="" class="size-5 -rotate-90 opacity-30 dark:invert shrink-0" />
+      </router-link>
+
+      <!-- Offers card -->
+      <router-link
+        to="/offers"
+        class="w-full flex items-center gap-4 p-4 rounded-xl
+               bg-neutral-100 dark:bg-white/5
+               border border-neutral-200 dark:border-neutral-700/50
+               hover:bg-neutral-200/70 dark:hover:bg-white/8
+               transition-colors text-left"
+      >
+        <img src="/icons/cloud-download.svg" alt="" class="size-8 dark:invert opacity-60 shrink-0" />
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold text-neutral-800 dark:text-neutral-100">{{ t("nav.offers") }}</p>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">
+            {{ offerCount > 0 ? t("home.viewOffers", [offerCount]) : t("home.checkOffers") }}
+          </p>
+        </div>
+        <img src="/icons/chevron-down.svg" alt="" class="size-5 -rotate-90 opacity-30 dark:invert shrink-0" />
       </router-link>
     </div>
   </div>

@@ -1,6 +1,6 @@
 {
   "common": {
-    "appTitle": "FetchBolig.js",
+    "appTitle": "FetchBolig",
     "login": "Login",
     "logout": "Log ud",
     "pageNotFound": "Siden blev ikke fundet",
@@ -93,11 +93,18 @@
     "fetchAppointments": "Hent dine aftaler",
     "readyToFetch": "Dine aftaler fra FindBolig.nu er klar til at blive hentet.",
     "noAppointmentsHint": "Har du ingen aftaler endnu? Brug findbolig.nu til at søge efter boliger og vent på invitationer.",
-    "lastUpdated": "Sidst opdateret for {0} siden"
+    "lastUpdated": "Sidst opdateret for {0} siden",
+    "viewOffers": "Se dine {0} tilbud",
+    "checkOffers": "Tjek for boligtilbud"
+  },
+  "nav": {
+    "home": "Hjem",
+    "appointments": "Fremvisninger",
+    "offers": "Tilbud"
   },
   "landing": {
-    "tagline": "Et bedre dashboard til dine FindBolig.nu aftaler",
-    "description": "Vi henter dine kommende boligfremvisninger direkte fra findbolig.nu og viser dem i en praktisk kronologisk liste - med offline adgang og lokal lagring.",
+    "tagline": "Et bedre dashboard til din FindBolig.nu-konto",
+    "description": "Vi henter dine aftaler, boligtilbud og mere direkte fra findbolig.nu - med offline adgang og lokal lagring.",
     "featureAppointments": "Kronologisk aftaleoversigt",
     "featureOffline": "Offline adgang med lokal lagring",
     "featureAI": "AI-drevet udtrækning af åbent hus-datoer",

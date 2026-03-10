@@ -1,6 +1,6 @@
 {
   "common": {
-    "appTitle": "FetchBolig.js",
+    "appTitle": "FetchBolig",
     "login": "Login",
     "logout": "Logout",
     "pageNotFound": "Page not found",
@@ -93,11 +93,18 @@
     "fetchAppointments": "Fetch your appointments",
     "readyToFetch": "Your appointments from FindBolig.nu are ready to be fetched.",
     "noAppointmentsHint": "Don't have any appointments yet? Use findbolig.nu to search for housing and wait for invitations.",
-    "lastUpdated": "Last updated {0} ago"
+    "lastUpdated": "Last updated {0} ago",
+    "viewOffers": "View your {0} offers",
+    "checkOffers": "Check for housing offers"
+  },
+  "nav": {
+    "home": "Home",
+    "appointments": "Appointments",
+    "offers": "Offers"
   },
   "landing": {
-    "tagline": "A better dashboard for your FindBolig.nu appointments",
-    "description": "We fetch your upcoming apartment viewings directly from findbolig.nu and display them in a convenient chronological list - with offline access and local storage.",
+    "tagline": "A better dashboard for your FindBolig.nu account",
+    "description": "We fetch your appointments, housing offers and more directly from findbolig.nu - with offline access and local storage.",
     "featureAppointments": "Chronological appointment overview",
     "featureOffline": "Offline access with local storage",
     "featureAI": "AI-powered open house date extraction",
