@@ -11,16 +11,17 @@ const { isDark, toggle: toggleDarkMode } = useDarkMode();
 <template>
   <nav class="flex items-center gap-3">
     <!-- Left: nav icon (equal width to right for centering) -->
-    <div class="flex-1 flex justify-start">
+    <div class="flex-1 flex justify-start gap-1">
       <router-link v-if="$route.path !== '/'" to="/" class="transition-colors">
-        <img src="/icons/home.svg" alt="Home" class="size-8 dark:invert" />
+        <img src="/icons/home.svg" alt="Home" class="size-7 dark:invert" />
       </router-link>
-      <router-link v-else to="/appointments">
-        <img
-          src="/icons/calendar-days.svg"
-          alt="Appointments"
-          class="size-8 dark:invert transition-transform hover:scale-125"
-        />
+      <router-link v-if="$route.path !== '/appointments'" to="/appointments"
+        class="transition-transform hover:scale-110">
+        <img src="/icons/calendar-days.svg" alt="Appointments" class="size-7 dark:invert" />
+      </router-link>
+      <router-link v-if="$route.path !== '/offers'" to="/offers"
+        class="transition-transform hover:scale-110">
+        <img src="/icons/cloud-download.svg" alt="Offers" class="size-7 dark:invert" />
       </router-link>
     </div>
 
