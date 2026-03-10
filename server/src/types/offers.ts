@@ -1,5 +1,20 @@
 import { z } from "zod";
 
+const ApiOfferRecipient = z.object({
+  created: z.string(),
+  updated: z.string(),
+  accepted: z.string().nullable(),
+  declined: z.string().nullable(),
+  received: z.string().nullable(),
+  offerId: z.string(),
+  userId: z.string(),
+  state: z.enum(["OfferReceived", "OfferAccepted", "OfferDeclined"]),
+  internalState: z.string().nullable(),
+  note: z.string().nullable(),
+});
+
+export type ApiOfferRecipient = z.infer<typeof ApiOfferRecipient>;
+
 // API schema from findbolig.nu
 const ApiOffer = z.object({
   id: z.string(),
@@ -10,7 +25,7 @@ const ApiOffer = z.object({
   showingText: z.string(),
   internalNote: z.string().nullable(),
   deadline: z.string().nullable(),
-  recipients: z.array(z.unknown()).optional(),
+  recipients: z.array(ApiOfferRecipient).optional(),
   recipientsCount: z.number().optional(),
   winnerId: z.string().nullable(),
   state: z.string(), // 'Awarded', 'AwardedFromExternal', 'RetiredFromAwarded', 'Finished', 'Published', 'Released', 'Changed'
