@@ -1,8 +1,8 @@
 import "dotenv/config";
 
 import { UserData } from "@/types";
-import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain } from "~/lib/findbolig-domain";
-import type { ApiOffersPage, ApiUserData } from "~/types/offers";
+import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain, mapOfferToDomain } from "~/lib/findbolig-domain";
+import type { ApiOffer, ApiOffersPage, ApiUserData } from "~/types/offers";
 import type { ApiResidence } from "~/types/residences";
 import type {
   ApiMessageThreadFull,
@@ -287,6 +287,69 @@ export async function getUpcomingAppointments(
     console.error("Failed to fetch upcoming appointments:", error);
     throw error;
   }
+}
+
+export async function getActiveOffers(cookies: string) {
+  const offersPage = await fetchOffers(cookies);
+  const publishedOffers = offersPage.results.filter(
+    (offer) => offer.state === "Published",
+  );
+
+  const offersWithData = await Promise.all(
+    publishedOffers.map(async (offer) => {
+      if (!offer.residenceId || !offer.id) return null;
+      try {
+        const [residence, position] = await Promise.all([
+          getResidence(offer.residenceId, cookies),
+          getPositionOnOffer(offer.id, cookies).catch(() => null),
+        ]);
+        return mapOfferToDomain({ offer, residence, position });
+      } catch (error) {
+        console.error(`Failed to load residence for offer ${offer.id}:`, error);
+        return null;
+      }
+    }),
+  );
+
+  return offersWithData.filter((o): o is NonNullable<typeof o> => o !== null);
+}
+
+export async function acceptOffer(offerId: string, cookies: string) {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/offers/${offerId}/accept`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+  if (!res.ok) {
+    throw new UpstreamHttpError(`Failed to accept offer: ${res.status}`, res.status);
+  }
+  return (await res.json()) as ApiOffer;
+}
+
+export async function declineOffer(offerId: string, cookies: string) {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/offers/${offerId}/decline`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+  if (!res.ok) {
+    throw new UpstreamHttpError(`Failed to decline offer: ${res.status}`, res.status);
+  }
+  return (await res.json()) as ApiOffer;
 }
 
 /**
