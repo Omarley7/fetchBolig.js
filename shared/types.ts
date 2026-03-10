@@ -35,3 +35,19 @@ export type UserData = {
   email: string;
   fullName: string;
 };
+
+export type RecipientState = "OfferReceived" | "OfferAccepted" | "OfferDeclined";
+
+export type Offer = {
+  id: string;
+  residence: Pick<Residence, "adressLine1" | "adressLine2" | "location">;
+  deadline: string | null;
+  availableFrom: string | null;
+  recipientState: RecipientState;
+  company: string;
+  financials: Financials;
+  imageUrl: string;
+  images: string[];
+  blueprints: string[];
+  position: number | null;
+};
