@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Offer } from "@/types";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import OfferCard from "./card/OfferCard.vue";
 import BaseCollapse from "~/components/Base/BaseCollapse.vue";
 import MapModal from "~/components/appointment/MapModal.vue";
@@ -29,11 +29,11 @@ function toggleExpanded() {
 }
 
 // Adapt offers to the shape MapModal expects (it uses Appointment[] with residence.location)
-const mapItems = props.offers.map((o) => ({
+const mapItems = computed(() => props.offers.map((o) => ({
   id: o.id,
   residence: o.residence,
   title: o.residence.adressLine1 ?? "",
-}));
+})));
 </script>
 
 <template>

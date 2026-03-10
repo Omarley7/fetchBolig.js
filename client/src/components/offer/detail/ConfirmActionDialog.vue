@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAuth } from "~/composables/useAuth";
 import { useScrollLock } from "~/composables/useScrollLock";
@@ -18,13 +19,13 @@ const emit = defineEmits<{
   cancel: [];
 }>();
 
-const title = props.action === "accept"
+const title = computed(() => props.action === "accept"
   ? t("offers.confirmAcceptTitle")
-  : t("offers.confirmDeclineTitle");
+  : t("offers.confirmDeclineTitle"));
 
-const body = props.action === "accept"
+const body = computed(() => props.action === "accept"
   ? t("offers.confirmAcceptBody")
-  : t("offers.confirmDeclineBody");
+  : t("offers.confirmDeclineBody"));
 </script>
 
 <template>

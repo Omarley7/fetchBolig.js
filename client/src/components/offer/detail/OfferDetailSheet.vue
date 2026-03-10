@@ -7,7 +7,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useDarkMode } from "~/composables/useDarkMode";
 import { useScrollLock } from "~/composables/useScrollLock";
 import { formatCurrency } from "~/lib/formatters";
 import { getDeadlineUrgency, urgencyColors } from "~/lib/deadlineUrgency";
@@ -18,7 +17,6 @@ import FinancialsModal from "~/components/appointment/card/FinancialsModal.vue";
 import ConfirmActionDialog from "./ConfirmActionDialog.vue";
 
 const { t } = useI18n();
-const { isDark } = useDarkMode();
 useScrollLock();
 const store = useOffersStore();
 const { getImageUrl } = store;
