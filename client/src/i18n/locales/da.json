@@ -55,7 +55,8 @@
     "openOnFindbolig": "Åbn på findbolig.nu",
     "queuePosition": "Placering",
     "mapOfLocations": "Kort over {count} lokationer",
-    "respondBefore": "Ønsker du at komme i betragtning?"
+    "respondBefore": "Ønsker du at komme i betragtning?",
+    "refresh": "Opdatér"
   },
   "financials": {
     "rent": "Leje",

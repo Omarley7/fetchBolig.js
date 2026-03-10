@@ -55,7 +55,8 @@
     "openOnFindbolig": "Open on findbolig.nu",
     "queuePosition": "Position",
     "mapOfLocations": "Map of {count} locations",
-    "respondBefore": "Would you like to be considered?"
+    "respondBefore": "Would you like to be considered?",
+    "refresh": "Refresh"
   },
   "financials": {
     "rent": "Rent",

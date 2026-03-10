@@ -21,6 +21,14 @@ export function useGroupOffers(offers: Ref<Offer[]>, t: (key: string) => string)
         return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
       });
 
+    const declined = offers.value
+      .filter((o) => o.recipientState === "OfferDeclined")
+      .sort((a, b) => {
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      });
+
     const groups: GroupedOffers = [];
 
     if (awaiting.length > 0) {
@@ -37,6 +45,15 @@ export function useGroupOffers(offers: Ref<Offer[]>, t: (key: string) => string)
         key: "accepted",
         label: t("offers.accepted"),
         offers: accepted,
+        isFirst: groups.length === 0,
+      });
+    }
+
+    if (declined.length > 0) {
+      groups.push({
+        key: "declined",
+        label: t("offers.declined"),
+        offers: declined,
         isFirst: groups.length === 0,
       });
     }
