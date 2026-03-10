@@ -419,6 +419,7 @@ onUnmounted(() => {
       :images="allImages"
       :blueprints="appointment.blueprints ?? []"
       :initial-index="galleryActiveIndex"
+      :get-image-url="getImageUrl"
       @close="onGalleryClose"
     />
 

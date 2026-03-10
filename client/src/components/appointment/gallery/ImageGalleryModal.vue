@@ -5,19 +5,18 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { blueprintImage, galleryImage } from "~/lib/imageTransform";
 import { useScrollLock } from "~/composables/useScrollLock";
-import { useAppointmentsStore } from "~/stores/appointments";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const { getImageUrl } = useAppointmentsStore();
 useScrollLock();
 
 const props = defineProps<{
   images: string[];
   blueprints?: string[];
   initialIndex?: number;
+  getImageUrl: (path: string) => string;
 }>();
 
 const emit = defineEmits<{
@@ -60,7 +59,7 @@ watch(
 
 function resolveUrl(path: string): string {
   const transform = activeTab.value === "blueprints" ? blueprintImage : galleryImage;
-  return transform(getImageUrl(path));
+  return transform(props.getImageUrl(path));
 }
 
 // Escape to close — arrow keys handled by Swiper Keyboard module
