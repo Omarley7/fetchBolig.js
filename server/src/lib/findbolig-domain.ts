@@ -1,4 +1,4 @@
-import type { Appointment, UserData } from "@/types";
+import type { Appointment, Offer, RecipientState, UserData } from "@/types";
 import type { AppointmentDetails } from "~/lib/llm/openai-extractor";
 import type { ApiOffer, ApiUserData } from "~/types/offers";
 import type { ApiResidence, Residence } from "~/types/residences";
@@ -27,6 +27,44 @@ export function mapAppointmentToDomain({
       adressLine2: residence.addressLine2,
       location: residence.location,
     },
+    financials: {
+      monthlyRentIncludingAconto: residence.monthlyRentIncludingAconto,
+      monthlyRentExcludingAconto: residence.monthlyRentExcludingAconto,
+      utilityCosts: residence.aconto,
+      deposit: residence.deposit,
+      prepaidRent: residence.prepaidRent,
+      firstPayment: residence.firstPayment,
+    },
+    imageUrl: residence.images[0] || "",
+    images: residence.images,
+    blueprints: residence.blueprints,
+    position,
+  };
+}
+
+export function mapOfferToDomain({
+  offer,
+  residence,
+  position,
+}: {
+  offer: ApiOffer;
+  residence: Residence;
+  position: number | null;
+}): Offer {
+  const recipientState: RecipientState =
+    (offer.recipients?.[0]?.state as RecipientState) ?? "OfferReceived";
+
+  return {
+    id: offer.id,
+    residence: {
+      adressLine1: residence.addressLine1,
+      adressLine2: residence.addressLine2,
+      location: residence.location,
+    },
+    deadline: offer.deadline ?? null,
+    availableFrom: residence.availableFrom ?? null,
+    recipientState,
+    company: offer.company ?? offer.organization ?? "",
     financials: {
       monthlyRentIncludingAconto: residence.monthlyRentIncludingAconto,
       monthlyRentExcludingAconto: residence.monthlyRentExcludingAconto,
