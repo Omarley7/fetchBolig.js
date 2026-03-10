@@ -16,6 +16,10 @@ export function getOffersCacheAge(): number | null {
   }
 }
 
+export function persistOffersCache(offers: Offer[], updatedAt: Date | null) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ updatedAt, offers }));
+}
+
 export function isOffersCacheStale(thresholdMs = 24 * 60 * 60 * 1000): boolean {
   const age = getOffersCacheAge();
   if (age === null) return false;

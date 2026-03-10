@@ -1,9 +1,9 @@
 import type { Offer, RecipientState } from "@/types";
 import { defineStore, storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import { getOffers, isOffersCacheStale } from "~/data/offers";
+import { getOffers, isOffersCacheStale, persistOffersCache } from "~/data/offers";
 import { acceptOffer as apiAcceptOffer, declineOffer as apiDeclineOffer } from "~/data/offersSource";
-import { handleApiError } from "~/data/appointmentsSource";
+import { handleApiError, HttpError } from "~/data/appointmentsSource";
 import { useAuth } from "~/composables/useAuth";
 import { useToastStore } from "~/stores/toast";
 import { useI18n } from "~/i18n";
@@ -81,7 +81,7 @@ export const useOffersStore = defineStore("offers", () => {
       offers.value = payload.offers;
       updatedAt.value = payload.updatedAt;
     } catch (error) {
-      const is401 = error instanceof Error && error.message.includes("401");
+      const is401 = error instanceof HttpError && error.status === 401;
       if (is401) {
         const recovered = await auth.ensureSession();
         if (recovered) {
@@ -142,6 +142,7 @@ export const useOffersStore = defineStore("offers", () => {
     const offer = offers.value.find((o) => o.id === offerId);
     if (offer) {
       offer.recipientState = newState;
+      persistOffersCache(offers.value, updatedAt.value);
     }
   }
 
