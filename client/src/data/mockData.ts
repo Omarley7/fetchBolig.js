@@ -1,4 +1,4 @@
-import type { Appointment } from "@/types";
+import type { Appointment, Offer } from "@/types";
 
 export const MOCK_DEAS_APPOINTMENTS: Appointment[] =
   [
@@ -90,3 +90,87 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] =
       position: 262,
     },
   ];
+
+export const MOCK_OFFERS: Offer[] = [
+  {
+    id: "cc687d34-4ed5-4beb-b3b8-08de747fab9e",
+    residence: {
+      adressLine1: "Philip Schous Vej 21, 3. TH.",
+      adressLine2: "2000 Frederiksberg",
+      location: { latitude: 55.68095, longitude: 12.52475 },
+    },
+    deadline: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] + "T00:00:00Z",
+    availableFrom: "2026-04-01T00:00:00Z",
+    recipientState: "OfferReceived",
+    company: "PFA (Capital Investment)",
+    financials: {
+      monthlyRentIncludingAconto: 12564,
+      monthlyRentExcludingAconto: 11564,
+      utilityCosts: 1000,
+      deposit: 37032,
+      prepaidRent: 37032,
+      firstPayment: 87628,
+    },
+    imageUrl: "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/4a495ae4-da44-4f65-827b-f51463d67111.jpg",
+    images: [
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/4a495ae4-da44-4f65-827b-f51463d67111.jpg",
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/1f611538-1a1f-4b51-ae27-6ba37c784a23.jpg",
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/0675e7db-0238-4331-9469-837765896653.jpg",
+    ],
+    blueprints: ["/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/083a47c9-fb38-4e3b-9da0-ab7d097c86cf.png"],
+    position: 36,
+  },
+  {
+    id: "dd787e45-5fe6-5cfc-c4c9-19ef858gbc0f",
+    residence: {
+      adressLine1: "Nitivej 13, 1 th",
+      adressLine2: "2000 Frederiksberg",
+      location: { latitude: 55.67892, longitude: 12.51234 },
+    },
+    deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] + "T00:00:00Z",
+    availableFrom: "2026-05-01T00:00:00Z",
+    recipientState: "OfferReceived",
+    company: "PFA (Capital Investment)",
+    financials: {
+      monthlyRentIncludingAconto: 9800,
+      monthlyRentExcludingAconto: 8800,
+      utilityCosts: 1000,
+      deposit: 26400,
+      prepaidRent: 26400,
+      firstPayment: 63600,
+    },
+    imageUrl: "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/a0203081-cfb0-485e-8f5e-d0e2cb4df99f.jpg",
+    images: [
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/a0203081-cfb0-485e-8f5e-d0e2cb4df99f.jpg",
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/76019d7c-d1b5-41b3-be2b-63b66962c512.jpg",
+    ],
+    blueprints: [],
+    position: 12,
+  },
+  {
+    id: "ee898f56-6gf7-6dgd-d5da-20fg969hcd1g",
+    residence: {
+      adressLine1: "Mariendalsvej 52G, 2. TV",
+      adressLine2: "2000 Frederiksberg",
+      location: { latitude: 55.69138, longitude: 12.5318 },
+    },
+    deadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] + "T00:00:00Z",
+    availableFrom: "2026-06-01T00:00:00Z",
+    recipientState: "OfferAccepted",
+    company: "DEAS",
+    financials: {
+      monthlyRentIncludingAconto: 10799,
+      monthlyRentExcludingAconto: 9799,
+      utilityCosts: 1000,
+      deposit: 29397,
+      prepaidRent: 29397,
+      firstPayment: 69593,
+    },
+    imageUrl: "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/03e6da45-21d3-432f-a32c-efba4e33f465.jpg",
+    images: [
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/03e6da45-21d3-432f-a32c-efba4e33f465.jpg",
+    ],
+    blueprints: [],
+    position: 8,
+  },
+];
