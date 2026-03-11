@@ -1,6 +1,6 @@
 {
   "common": {
-    "appTitle": "FetchBolig.js",
+    "appTitle": "FetchBolig",
     "login": "Login",
     "logout": "Logout",
     "pageNotFound": "Page not found",
@@ -22,6 +22,41 @@
     "addToCalendar": "Add to calendar",
     "queuePosition": "Queue",
     "cancelled": "Cancelled"
+  },
+  "offers": {
+    "pageTitle": "Housing Offers",
+    "count": "{count} offer | {count} offers",
+    "awaitingResponse": "Awaiting response",
+    "accepted": "Accepted",
+    "accept": "Accept",
+    "decline": "Decline",
+    "undoAccept": "Undo accept",
+    "declined": "Declined",
+    "deadline": "Deadline",
+    "noDeadline": "No deadline",
+    "availableFrom": "Available from",
+    "today": "today",
+    "tomorrow": "tomorrow",
+    "daysRemaining": "{count} days",
+    "confirmAcceptTitle": "Accept housing offer?",
+    "confirmDeclineTitle": "Decline housing offer?",
+    "confirmAcceptBody": "By accepting, you confirm your interest in",
+    "confirmDeclineBody": "Are you sure you want to decline the offer for",
+    "confirmNote": "You can change your response until the deadline expires",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "name": "Name",
+    "email": "Email",
+    "acceptSuccess": "Offer accepted",
+    "declineSuccess": "Offer declined",
+    "actionFailed": "Action failed. Please try again.",
+    "emptyTitle": "No new offers",
+    "emptyDescription": "You don't have any active housing offers right now. Offers will appear here when you receive them on FindBolig.nu.",
+    "openOnFindbolig": "Open on findbolig.nu",
+    "queuePosition": "Position",
+    "mapOfLocations": "Map of {count} locations",
+    "respondBefore": "Would you like to be considered?",
+    "refresh": "Refresh"
   },
   "financials": {
     "rent": "Rent",
@@ -59,11 +94,18 @@
     "fetchAppointments": "Fetch your appointments",
     "readyToFetch": "Your appointments from FindBolig.nu are ready to be fetched.",
     "noAppointmentsHint": "Don't have any appointments yet? Use findbolig.nu to search for housing and wait for invitations.",
-    "lastUpdated": "Last updated {0} ago"
+    "lastUpdated": "Last updated {0} ago",
+    "viewOffers": "View your {0} offers",
+    "checkOffers": "Check for housing offers"
+  },
+  "nav": {
+    "home": "Home",
+    "appointments": "Appointments",
+    "offers": "Offers"
   },
   "landing": {
-    "tagline": "A better dashboard for your FindBolig.nu appointments",
-    "description": "We fetch your upcoming apartment viewings directly from findbolig.nu and display them in a convenient chronological list - with offline access and local storage.",
+    "tagline": "A better dashboard for your FindBolig.nu account",
+    "description": "We fetch your appointments, housing offers and more directly from findbolig.nu - with offline access and local storage.",
     "featureAppointments": "Chronological appointment overview",
     "featureOffline": "Offline access with local storage",
     "featureAI": "AI-powered open house date extraction",

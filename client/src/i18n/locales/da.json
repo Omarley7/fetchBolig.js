@@ -1,6 +1,6 @@
 {
   "common": {
-    "appTitle": "FetchBolig.js",
+    "appTitle": "FetchBolig",
     "login": "Login",
     "logout": "Log ud",
     "pageNotFound": "Siden blev ikke fundet",
@@ -22,6 +22,41 @@
     "addToCalendar": "Tilføj til kalender",
     "queuePosition": "Køposition",
     "cancelled": "Aflyst"
+  },
+  "offers": {
+    "pageTitle": "Boligtilbud",
+    "count": "{count} tilbud | {count} tilbud",
+    "awaitingResponse": "Afventer svar",
+    "accepted": "Accepteret",
+    "accept": "Acceptér",
+    "decline": "Afvis",
+    "undoAccept": "Fortryd accept",
+    "declined": "Afvist",
+    "deadline": "Svarfrist",
+    "noDeadline": "Ingen frist",
+    "availableFrom": "Ledig fra",
+    "today": "i dag",
+    "tomorrow": "i morgen",
+    "daysRemaining": "{count} dage",
+    "confirmAcceptTitle": "Acceptér boligtilbud?",
+    "confirmDeclineTitle": "Afvis boligtilbud?",
+    "confirmAcceptBody": "Ved at acceptere bekræfter du din interesse i",
+    "confirmDeclineBody": "Er du sikker på, at du vil afvise tilbuddet på",
+    "confirmNote": "Du kan ændre dit svar indtil svarfristen udløber",
+    "confirm": "Bekræft",
+    "cancel": "Annuller",
+    "name": "Navn",
+    "email": "Email",
+    "acceptSuccess": "Tilbud accepteret",
+    "declineSuccess": "Tilbud afvist",
+    "actionFailed": "Handling mislykkedes. Prøv igen.",
+    "emptyTitle": "Ingen nye tilbud",
+    "emptyDescription": "Du har ingen aktive boligtilbud i øjeblikket. Tilbud vises her, når du modtager dem på FindBolig.nu.",
+    "openOnFindbolig": "Åbn på findbolig.nu",
+    "queuePosition": "Placering",
+    "mapOfLocations": "Kort over {count} lokationer",
+    "respondBefore": "Ønsker du at komme i betragtning?",
+    "refresh": "Opdatér"
   },
   "financials": {
     "rent": "Leje",
@@ -59,11 +94,18 @@
     "fetchAppointments": "Hent dine aftaler",
     "readyToFetch": "Dine aftaler fra FindBolig.nu er klar til at blive hentet.",
     "noAppointmentsHint": "Har du ingen aftaler endnu? Brug findbolig.nu til at søge efter boliger og vent på invitationer.",
-    "lastUpdated": "Sidst opdateret for {0} siden"
+    "lastUpdated": "Sidst opdateret for {0} siden",
+    "viewOffers": "Se dine {0} tilbud",
+    "checkOffers": "Tjek for boligtilbud"
+  },
+  "nav": {
+    "home": "Hjem",
+    "appointments": "Fremvisninger",
+    "offers": "Tilbud"
   },
   "landing": {
-    "tagline": "Et bedre dashboard til dine FindBolig.nu aftaler",
-    "description": "Vi henter dine kommende boligfremvisninger direkte fra findbolig.nu og viser dem i en praktisk kronologisk liste - med offline adgang og lokal lagring.",
+    "tagline": "Et bedre dashboard til din FindBolig.nu-konto",
+    "description": "Vi henter dine aftaler, boligtilbud og mere direkte fra findbolig.nu - med offline adgang og lokal lagring.",
     "featureAppointments": "Kronologisk aftaleoversigt",
     "featureOffline": "Offline adgang med lokal lagring",
     "featureAI": "AI-drevet udtrækning af åbent hus-datoer",

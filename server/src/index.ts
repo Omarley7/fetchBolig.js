@@ -163,6 +163,45 @@ offers.get("/", async (c) => {
   }
 });
 
+offers.get("/active", async (c) => {
+  try {
+    const result = await withReauth(c, (cookies) =>
+      findboligService.getActiveOffers(cookies)
+    );
+    return c.json(result);
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
+offers.post("/:offerId/accept", async (c) => {
+  try {
+    const offerId = c.req.param("offerId");
+    if (!offerId) return c.json({ error: "Offer ID is required" }, 400);
+    const result = await withReauth(c, (cookies) =>
+      findboligService.acceptOffer(offerId, cookies)
+    );
+    const recipientState = result.recipients?.[0]?.state ?? "OfferAccepted";
+    return c.json({ recipientState });
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
+offers.post("/:offerId/decline", async (c) => {
+  try {
+    const offerId = c.req.param("offerId");
+    if (!offerId) return c.json({ error: "Offer ID is required" }, 400);
+    const result = await withReauth(c, (cookies) =>
+      findboligService.declineOffer(offerId, cookies)
+    );
+    const recipientState = result.recipients?.[0]?.state ?? "OfferDeclined";
+    return c.json({ recipientState });
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
 offers.get("/:offerId/position", async (c) => {
   try {
     const offerId = c.req.param("offerId");

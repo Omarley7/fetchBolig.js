@@ -1,11 +1,16 @@
 import { z } from "zod";
 
 const ApiOfferRecipient = z.object({
+  created: z.string(),
+  updated: z.string(),
   accepted: z.string().nullable(),
   declined: z.string().nullable(),
   received: z.string().nullable(),
-  state: z.string(),
+  offerId: z.string(),
+  userId: z.string(),
+  state: z.enum(["OfferReceived", "OfferAccepted", "OfferDeclined"]),
   internalState: z.string().nullable(),
+  note: z.string().nullable(),
 });
 
 export type ApiOfferRecipient = z.infer<typeof ApiOfferRecipient>;

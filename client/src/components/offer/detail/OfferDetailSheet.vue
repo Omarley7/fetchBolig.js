@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Appointment } from "@/types";
-import "add-to-calendar-button";
+import type { Offer } from "@/types";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
@@ -8,24 +7,22 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useDarkMode } from "~/composables/useDarkMode";
 import { useScrollLock } from "~/composables/useScrollLock";
-import { formatCurrency, formatTimeSlot } from "~/lib/formatters";
+import { formatCurrency } from "~/lib/formatters";
+import { getDeadlineUrgency, urgencyColors } from "~/lib/deadlineUrgency";
 import { galleryImage } from "~/lib/imageTransform";
-import { useAppointmentsStore } from "~/stores/appointments";
-import ImageGalleryModal from "../gallery/ImageGalleryModal.vue";
-import FinancialsModal from "../card/FinancialsModal.vue";
-
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { useOffersStore } from "~/stores/offers";
+import ImageGalleryModal from "~/components/appointment/gallery/ImageGalleryModal.vue";
+import FinancialsModal from "~/components/appointment/card/FinancialsModal.vue";
+import ConfirmActionDialog from "./ConfirmActionDialog.vue";
 
 const { t } = useI18n();
-const { isDark } = useDarkMode();
 useScrollLock();
-const { getImageUrl } = useAppointmentsStore();
+const store = useOffersStore();
+const { getImageUrl } = store;
 
 const props = defineProps<{
-  appointment: Appointment;
-  includeDate?: boolean;
+  offer: Offer;
 }>();
 
 const emit = defineEmits<{
@@ -36,14 +33,15 @@ const emit = defineEmits<{
 const visible = ref(false);
 const showGallery = ref(false);
 const showFinancials = ref(false);
+const confirmAction = ref<"accept" | "decline" | null>(null);
 const galleryActiveIndex = ref(0);
 const sheetEl = ref<HTMLElement | null>(null);
+
 // Drag-to-dismiss
 const dragY = ref(0);
 const isDragging = ref(false);
 let dragStartY = 0;
 let lastPointerId = 0;
-
 const DISMISS_THRESHOLD = 120;
 
 const sheetStyle = computed(() => {
@@ -85,14 +83,23 @@ function onDragEnd(e: PointerEvent) {
   }
 }
 
-const hasValidOfferId = computed(() => UUID_RE.test(props.appointment.offerId ?? ""));
-
 const allImages = computed(() => {
-  if (props.appointment.images?.length) return props.appointment.images;
-  return [props.appointment.imageUrl];
+  if (props.offer.images?.length) return props.offer.images;
+  return props.offer.imageUrl ? [props.offer.imageUrl] : [];
 });
 
-// Gallery click vs swipe — track pointer displacement
+const urgency = computed(() => getDeadlineUrgency(props.offer.deadline, t));
+
+const availableFromFormatted = computed(() => {
+  if (!props.offer.availableFrom) return null;
+  return new Date(props.offer.availableFrom).toLocaleDateString("da-DK", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+});
+
+// Gallery click vs swipe
 let galleryStartX = 0;
 let galleryStartY = 0;
 
@@ -123,7 +130,7 @@ function onFinancialsClose() {
 }
 
 function handleMapClick() {
-  const address = `${props.appointment.residence.adressLine1}, ${props.appointment.residence.adressLine2}`;
+  const address = `${props.offer.residence.adressLine1}, ${props.offer.residence.adressLine2}`;
   window.open(
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,
     "_blank",
@@ -131,18 +138,31 @@ function handleMapClick() {
 }
 
 function openOnFindbolig() {
-  if (!hasValidOfferId.value) return;
   window.open(
-    `https://findbolig.nu/profile/my-offers?offerId=${props.appointment.offerId}`,
+    `https://findbolig.nu/profile/my-offers?offerId=${props.offer.id}`,
     "_blank",
   );
+}
+
+function promptAction(action: "accept" | "decline") {
+  confirmAction.value = action;
+}
+
+async function handleConfirm() {
+  if (!confirmAction.value) return;
+  const success = confirmAction.value === "accept"
+    ? await store.acceptOffer(props.offer.id)
+    : await store.declineOffer(props.offer.id);
+
+  if (success) {
+    confirmAction.value = null;
+  }
 }
 
 let closedViaPopState = false;
 
 function close() {
-  if (!visible.value) return; // guard against double-close
-
+  if (!visible.value) return;
   visible.value = false;
 
   if (!closedViaPopState) {
@@ -150,10 +170,8 @@ function close() {
     history.back();
   }
 
-  // Notify parent immediately so logical state stays in sync with touches
   emit("close");
 
-  // Signal DOM unmount after the CSS transition completes
   let fired = false;
   const emitAfterLeave = () => {
     if (!fired) {
@@ -162,26 +180,17 @@ function close() {
     }
   };
   sheetEl.value?.addEventListener("transitionend", emitAfterLeave, { once: true });
-  setTimeout(emitAfterLeave, 350); // fallback if transitionend doesn't fire
+  setTimeout(emitAfterLeave, 350);
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape" && !showGallery.value && !showFinancials.value) close();
+  if (e.key === "Escape" && !showGallery.value && !showFinancials.value && !confirmAction.value) close();
 }
 
 function onPopState(event: PopStateEvent) {
-  // Sub-modal open? Back closes it instead of the sheet
-  if (showGallery.value) {
-    showGallery.value = false;
-    return;
-  }
-  if (showFinancials.value) {
-    showFinancials.value = false;
-    return;
-  }
-  // Still at the sheet's own history entry — nothing to close
+  if (showGallery.value) { showGallery.value = false; return; }
+  if (showFinancials.value) { showFinancials.value = false; return; }
   if (event.state?.sheet) return;
-  // Past the sheet entry — close the sheet
   closedViaPopState = true;
   close();
 }
@@ -190,9 +199,7 @@ onMounted(() => {
   window.addEventListener("keydown", onKeydown);
   window.addEventListener("popstate", onPopState);
   history.pushState({ sheet: true }, "");
-  requestAnimationFrame(() => {
-    visible.value = true;
-  });
+  requestAnimationFrame(() => { visible.value = true; });
 });
 
 onUnmounted(() => {
@@ -270,7 +277,6 @@ onUnmounted(() => {
               </SwiperSlide>
             </Swiper>
 
-            <!-- Photo count -->
             <div
               v-if="allImages.length > 1"
               class="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-full
@@ -282,81 +288,60 @@ onUnmounted(() => {
 
           <!-- Content -->
           <div class="p-5 space-y-5">
-            <!-- Title + Address -->
+            <!-- Address -->
             <div>
               <h2 class="text-lg font-bold text-neutral-900 dark:text-white leading-snug">
-                {{ appointment.title }}
+                {{ offer.residence.adressLine1 }}
               </h2>
               <button class="flex items-center gap-1.5 mt-1.5 group" @click="handleMapClick">
-                <p
-                  class="text-sm text-neutral-500 dark:text-neutral-400
-                         group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors"
-                >
-                  {{ appointment.residence.adressLine1 }}, {{ appointment.residence.adressLine2 }}
+                <p class="text-sm text-neutral-500 dark:text-neutral-400
+                           group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors">
+                  {{ offer.residence.adressLine2 }}
                 </p>
-                <img
-                  src="/icons/map.svg"
-                  alt=""
-                  class="size-4 opacity-40 group-hover:opacity-70 transition-opacity dark:invert"
-                />
+                <img src="/icons/map.svg" alt="" class="size-4 opacity-40 group-hover:opacity-70 transition-opacity dark:invert" />
               </button>
+              <p v-if="offer.company" class="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+                {{ offer.company }}
+              </p>
             </div>
 
             <hr class="border-neutral-200 dark:border-neutral-700/50" />
 
-            <!-- Date + Time + Queue -->
+            <!-- Deadline + Queue -->
             <div class="flex items-start justify-between gap-4">
               <div>
-                <p
-                  class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1"
-                >
-                  {{ t("appointments.openHouse") }}
+                <p class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1">
+                  {{ t("offers.deadline") }}
                 </p>
-                <p
-                  v-if="appointment.date"
-                  class="text-sm font-medium text-neutral-800 dark:text-neutral-200 tabular-nums"
-                >
-                  {{ formatTimeSlot(appointment, true) }}
-                </p>
-                <p v-else class="text-sm italic text-neutral-400 dark:text-neutral-500">
-                  {{ t("appointments.noDate") }}
-                </p>
-
-                <!-- Calendar button -->
-                <div v-if="appointment.date" class="mt-3">
-                  <add-to-calendar-button
-                    :name="appointment.title"
-                    options="'Apple','Google','Microsoft365','Outlook.com'"
-                    :lightMode="isDark ? 'dark' : 'light'"
-                    :location="`${appointment.residence.adressLine1}, ${appointment.residence.adressLine2}`"
-                    :startDate="appointment.date"
-                    :endDate="appointment.date"
-                    :startTime="appointment.start"
-                    :endTime="appointment.end"
-                    timeZone="Europe/Copenhagen"
-                    listStyle="dropup-static"
-                    hideBackground
-                    :label="t('appointments.addToCalendar')"
-                    pastDateHandling=""
-                    hideTextLabelList
-                    size="4|3|3"
-                    buttonStyle="3d"
-                    hideBranding
-                  />
+                <div class="flex items-center gap-1.5">
+                  <span class="inline-block w-2 h-2 rounded-full" :class="urgencyColors[urgency.color].dot" />
+                  <p class="text-sm font-medium" :class="urgencyColors[urgency.color].text">
+                    {{ offer.deadline ? new Date(offer.deadline).toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" }) : t("offers.noDeadline") }}
+                  </p>
                 </div>
+                <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
+                  {{ urgency.relative }}
+                </p>
               </div>
 
-              <!-- Queue position -->
-              <div v-if="appointment.position != null" class="text-right shrink-0">
-                <p
-                  class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1"
-                >
-                  {{ t("appointments.queuePosition") }}
+              <div v-if="offer.position != null" class="text-right shrink-0">
+                <p class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1">
+                  {{ t("offers.queuePosition") }}
                 </p>
                 <p class="text-2xl font-bold tabular-nums text-neutral-800 dark:text-neutral-200">
-                  #{{ appointment.position }}
+                  #{{ offer.position }}
                 </p>
               </div>
+            </div>
+
+            <!-- Available from -->
+            <div v-if="availableFromFormatted">
+              <p class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1">
+                {{ t("offers.availableFrom") }}
+              </p>
+              <p class="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                {{ availableFromFormatted }}
+              </p>
             </div>
 
             <hr class="border-neutral-200 dark:border-neutral-700/50" />
@@ -370,14 +355,11 @@ onUnmounted(() => {
               @click="openFinancials"
             >
               <div>
-                <p
-                  class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5"
-                >
+                <p class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5">
                   {{ t("financials.rent") }}
                 </p>
                 <p class="text-base font-semibold tabular-nums text-neutral-800 dark:text-neutral-100">
-                  {{ formatCurrency(appointment.financials.monthlyRentIncludingAconto) }} /
-                  {{ t("financials.shortMonth") }}
+                  {{ formatCurrency(offer.financials.monthlyRentIncludingAconto) }} / {{ t("financials.shortMonth") }}
                 </p>
               </div>
               <div class="text-right">
@@ -385,19 +367,73 @@ onUnmounted(() => {
                   {{ t("financials.firstPayment") }}
                 </p>
                 <p class="text-sm font-medium tabular-nums text-neutral-700 dark:text-neutral-200">
-                  {{ formatCurrency(appointment.financials.firstPayment) }}
+                  {{ formatCurrency(offer.financials.firstPayment) }}
                 </p>
               </div>
-              <img
-                src="/icons/chevron-down.svg"
-                alt=""
-                class="size-4 -rotate-90 opacity-30 dark:invert shrink-0 ml-2"
-              />
+              <img src="/icons/chevron-down.svg" alt="" class="size-4 -rotate-90 opacity-30 dark:invert shrink-0 ml-2" />
             </button>
+
+            <hr class="border-neutral-200 dark:border-neutral-700/50" />
+
+            <!-- Action area -->
+            <div>
+              <p class="text-xs text-center text-neutral-500 dark:text-neutral-400 mb-3">
+                {{ t("offers.respondBefore") }}
+              </p>
+
+              <!-- OfferReceived: Accept + Decline -->
+              <div v-if="offer.recipientState === 'OfferReceived'" class="flex gap-3">
+                <button
+                  class="flex-1 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors"
+                  @click="promptAction('accept')"
+                >
+                  {{ t("offers.accept") }}
+                </button>
+                <button
+                  class="flex-1 py-3.5 rounded-xl border border-neutral-200 dark:border-neutral-700/50
+                         text-neutral-500 dark:text-neutral-400 font-semibold
+                         hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors"
+                  @click="promptAction('decline')"
+                >
+                  {{ t("offers.decline") }}
+                </button>
+              </div>
+
+              <!-- OfferAccepted: Undo (decline) -->
+              <div v-else-if="offer.recipientState === 'OfferAccepted'" class="flex gap-3">
+                <button
+                  class="flex-1 py-3.5 rounded-xl border border-amber-400/50
+                         text-amber-600 dark:text-amber-400 font-semibold
+                         hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
+                  @click="promptAction('decline')"
+                >
+                  {{ t("offers.undoAccept") }}
+                </button>
+                <div class="flex-1 py-3.5 rounded-xl bg-emerald-500/10 text-center">
+                  <span class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+                    &#x2713; {{ t("offers.accepted") }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- OfferDeclined: Accept again -->
+              <div v-else-if="offer.recipientState === 'OfferDeclined'" class="flex gap-3">
+                <button
+                  class="flex-1 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors"
+                  @click="promptAction('accept')"
+                >
+                  {{ t("offers.accept") }}
+                </button>
+                <div class="flex-1 py-3.5 rounded-xl bg-neutral-100 dark:bg-white/5 text-center">
+                  <span class="text-sm text-neutral-400 dark:text-neutral-500 font-medium">
+                    {{ t("offers.declined") }}
+                  </span>
+                </div>
+              </div>
+            </div>
 
             <!-- Open on findbolig -->
             <button
-              v-if="hasValidOfferId"
               class="w-full flex items-center justify-center gap-2 p-3 rounded-xl
                      border border-neutral-200 dark:border-neutral-700/50
                      hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors"
@@ -405,7 +441,7 @@ onUnmounted(() => {
             >
               <img src="/icons/external-link.svg" alt="" class="size-4 opacity-50 dark:invert" />
               <span class="text-sm font-medium text-neutral-600 dark:text-neutral-300">
-                {{ t("appointments.openOnFindbolig") }}
+                {{ t("offers.openOnFindbolig") }}
               </span>
             </button>
           </div>
@@ -413,11 +449,11 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Gallery modal (on top of detail sheet) -->
+    <!-- Gallery modal -->
     <ImageGalleryModal
       v-if="showGallery"
       :images="allImages"
-      :blueprints="appointment.blueprints ?? []"
+      :blueprints="offer.blueprints ?? []"
       :initial-index="galleryActiveIndex"
       :get-image-url="getImageUrl"
       @close="onGalleryClose"
@@ -426,8 +462,18 @@ onUnmounted(() => {
     <!-- Financials modal -->
     <FinancialsModal
       v-if="showFinancials"
-      :financials="appointment.financials"
+      :financials="offer.financials"
       @close="onFinancialsClose"
+    />
+
+    <!-- Confirm action dialog -->
+    <ConfirmActionDialog
+      v-if="confirmAction"
+      :action="confirmAction"
+      :address="`${offer.residence.adressLine1}, ${offer.residence.adressLine2}`"
+      :is-loading="store.isActioning"
+      @confirm="handleConfirm"
+      @cancel="confirmAction = null"
     />
   </Teleport>
 </template>
@@ -437,22 +483,18 @@ onUnmounted(() => {
   background: white;
   opacity: 0.5;
 }
-
 .detail-swiper :deep(.swiper-pagination-bullet-active) {
   opacity: 1;
 }
-
 .detail-swiper :deep(.swiper-button-next),
 .detail-swiper :deep(.swiper-button-prev) {
   color: rgba(255, 255, 255, 0.7);
   --swiper-navigation-size: 18px;
 }
-
 .detail-swiper :deep(.swiper-button-next:hover),
 .detail-swiper :deep(.swiper-button-prev:hover) {
   color: white;
 }
-
 @media (max-width: 639px) {
   .detail-swiper :deep(.swiper-button-next),
   .detail-swiper :deep(.swiper-button-prev) {
