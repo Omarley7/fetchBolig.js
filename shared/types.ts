@@ -12,6 +12,9 @@ export type Appointment = {
   images: string[];
   blueprints: string[];
   position: number | null;
+  recipientState: string | null;
+  accepted: string | null;
+  declined: string | null;
 };
 
 export type Financials = {
