@@ -43,6 +43,28 @@ Vigtige regler:
 - Hvis der er flere beskeder om fremvisning eller åbent hus, skal du bruge den seneste besked
 - Antag at året er {currentYear} hvis det ikke er specificeret`;
 
+const EMPTY_DETAILS: AppointmentDetails = { date: "", startTime: "", endTime: "", cancelled: false };
+
+async function callLLMForAppointmentDetails(
+  context: string,
+  currentYear: string,
+): Promise<AppointmentDetails> {
+  if (!context.trim()) {
+    return EMPTY_DETAILS;
+  }
+
+  const response = await openai.responses.parse({
+    model: "gpt-5-nano-2025-08-07",
+    instructions: EXTRACTION_PROMPT.replace("{currentYear}", currentYear),
+    input: `Ekstraher dato og tidspunkt fra følgende besked(er) om fremvisning/åbent hus:\n\n${context}`,
+    text: {
+      format: zodTextFormat(AppointmentDetailsSchema, "appointment_details"),
+    },
+  });
+
+  return response.output_parsed ?? EMPTY_DETAILS;
+}
+
 export async function extractAppointmentDetailsWithLLM(
   thread: ApiMessageThreadFull,
   currentYear: string,
@@ -69,24 +91,18 @@ export async function extractAppointmentDetailsWithLLM(
   });
 
   if (showingMessages.length === 0) {
-    return { date: "", startTime: "", endTime: "", cancelled: false };
+    return EMPTY_DETAILS;
   }
 
   const context = showingMessages.map((message) => message.body).join("\n\n");
 
-  const response = await openai.responses.parse({
-    model: "gpt-5-nano-2025-08-07",
-    instructions: EXTRACTION_PROMPT.replace("{currentYear}", currentYear),
-    input: `Ekstraher dato og tidspunkt fra følgende besked(er) om fremvisning/åbent hus:\n\n${context}`,
-    text: {
-      format: zodTextFormat(AppointmentDetailsSchema, "appointment_details"),
-    },
-  });
+  return callLLMForAppointmentDetails(context, currentYear);
+}
 
-  const showingDetails = response.output_parsed;
-
-  if (!showingDetails) {
-    return { date: "", startTime: "", endTime: "", cancelled: false };
-  }
-  return showingDetails;
+export async function extractAppointmentDetailsFromShowingText(
+  showingText: string,
+  currentYear: string,
+): Promise<AppointmentDetails> {
+  const cleanText = showingText.replace(/<[^>]*>?/g, "");
+  return callLLMForAppointmentDetails(cleanText, currentYear);
 }
