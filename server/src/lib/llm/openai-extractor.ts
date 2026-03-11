@@ -99,10 +99,36 @@ export async function extractAppointmentDetailsWithLLM(
   return callLLMForAppointmentDetails(context, currentYear);
 }
 
+const SHOWING_TEXT_PROMPT = `Du er en dansk tekst-analysator. Ekstraher dato og tidspunkt for en konkret planlagt fremvisning eller åbent hus fra beskeden.
+
+Vigtige regler:
+- Du skal KUN returnere dato/tid hvis der er en konkret planlagt fremvisning med dato OG tidspunkt
+- Svarfrister (f.eks. "svarfrist for deltagelse er...") er IKKE fremvisningsdatoer - ignorer dem
+- Udlejningsdatoer (f.eks. "klar til udlejning pr...") er IKKE fremvisningsdatoer - ignorer dem
+- Hvis beskeden kun nævner at der VIL BLIVE indkaldt til åbent hus (fremtid/ubestemt), men ingen konkret dato og tid er fastsat, returner tomme værdier
+- Datoen SKAL formateres som YYYY-MM-DD (f.eks. 2025-12-15)
+- Starttiden SKAL formateres som HH:mm (f.eks. 16:00)
+- Sluttiden SKAL formateres som HH:mm (f.eks. 16:00)
+- Hvis der ikke er en konkret dato med tilhørende tidspunkt, returner tomme værdier for alle felter
+- Antag at året er {currentYear} hvis det ikke er specificeret`;
+
 export async function extractAppointmentDetailsFromShowingText(
   showingText: string,
   currentYear: string,
 ): Promise<AppointmentDetails> {
-  const cleanText = showingText.replace(/<[^>]*>?/g, "");
-  return callLLMForAppointmentDetails(cleanText, currentYear);
+  const cleanText = showingText.replace(/<[^>]*>?/g, "").trim();
+  if (!cleanText) {
+    return EMPTY_DETAILS;
+  }
+
+  const response = await openai.responses.parse({
+    model: "gpt-5-nano-2025-08-07",
+    instructions: SHOWING_TEXT_PROMPT.replace("{currentYear}", currentYear),
+    input: `Ekstraher dato og tidspunkt for en konkret planlagt fremvisning/åbent hus fra følgende tekst:\n\n${cleanText}`,
+    text: {
+      format: zodTextFormat(AppointmentDetailsSchema, "appointment_details"),
+    },
+  });
+
+  return response.output_parsed ?? EMPTY_DETAILS;
 }

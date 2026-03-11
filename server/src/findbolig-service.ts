@@ -275,10 +275,15 @@ export async function getUpcomingAppointments(
 
         // Fallback: if no date from thread messages, try the offer's showingText
         if (!details.date && offer.showingText) {
-          details = await extractAppointmentDetailsFromShowingText(
+          const showingDetails = await extractAppointmentDetailsFromShowingText(
             offer.showingText,
             currentYear,
           );
+          // Only use showing text details if we got a date WITH times
+          // (a date without times likely means the LLM picked up a deadline/move-in date)
+          if (showingDetails.date && (showingDetails.startTime || showingDetails.endTime)) {
+            details = showingDetails;
+          }
         }
         const domainAppointment = mapAppointmentToDomain({
           offer,
