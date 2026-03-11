@@ -22,7 +22,7 @@ const ApiOffer = z.object({
   updated: z.string(), // ISO date string
   number: z.number(),
   offerText: z.string(),
-  showingText: z.string(),
+  showingText: z.string().nullable(),
   internalNote: z.string().nullable(),
   deadline: z.string().nullable(),
   recipients: z.array(ApiOfferRecipient).optional(),

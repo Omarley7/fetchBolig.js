@@ -14,13 +14,14 @@ export function mapAppointmentToDomain({
   details: AppointmentDetails;
   position: number | null;
 }): Appointment {
+  const recipient = offer.recipients?.[0];
   return {
     id: `DEAS-O-${offer.id}`,
     offerId: offer.id,
     title: residence.title,
-    date: details.date,
-    start: details.startTime,
-    end: details.endTime,
+    date: details.date || null,
+    start: details.startTime || null,
+    end: details.endTime || null,
     cancelled: details.cancelled,
     residence: {
       adressLine1: residence.addressLine1,
@@ -39,6 +40,9 @@ export function mapAppointmentToDomain({
     images: residence.images,
     blueprints: residence.blueprints,
     position,
+    recipientState: recipient?.state ?? null,
+    accepted: recipient?.accepted ?? null,
+    declined: recipient?.declined ?? null,
   };
 }
 

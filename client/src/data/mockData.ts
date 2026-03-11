@@ -42,6 +42,9 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] =
         "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/083a47c9-fb38-4e3b-9da0-ab7d097c86cf.png",
       ],
       position: 257,
+      recipientState: "OfferAccepted",
+      accepted: "2026-02-15T10:00:00Z",
+      declined: null,
     },
     {
       id: "DEAS-O-0bfadac8-9bc2-4fc4-b36f-08de747fab9e",
@@ -88,6 +91,9 @@ export const MOCK_DEAS_APPOINTMENTS: Appointment[] =
         "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/36763707-dd18-4904-9853-40f6dbaa8d2e.png",
       ],
       position: 262,
+      recipientState: "OfferAccepted",
+      accepted: "2026-02-20T14:00:00Z",
+      declined: null,
     },
   ];
 

@@ -8,7 +8,7 @@ import type {
   ApiMessageThreadFull,
   ApiMessageThreadsPage,
 } from "~/types/threads";
-import { extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
+import { extractAppointmentDetailsWithLLM, extractAppointmentDetailsFromShowingText } from "./lib/llm/openai-extractor";
 
 const BASE_URL = "https://findbolig.nu";
 
@@ -256,6 +256,8 @@ export async function getUpcomingAppointments(
       );
     }
 
+    const currentYear = new Date().getFullYear().toString();
+
     const offersWithResidenceAndThread = await Promise.all(
       offers.map(async (offer) => {
         if (!offer.residenceId || !offer.id) {
@@ -269,7 +271,15 @@ export async function getUpcomingAppointments(
         if (!thread) {
           return null;
         }
-        const details = await extractAppointmentDetailsWithLLM(thread);
+        let details = await extractAppointmentDetailsWithLLM(thread, currentYear);
+
+        // Fallback: if no date from thread messages, try the offer's showingText
+        if (!details.date && offer.showingText) {
+          details = await extractAppointmentDetailsFromShowingText(
+            offer.showingText,
+            currentYear,
+          );
+        }
         const domainAppointment = mapAppointmentToDomain({
           offer,
           residence,
