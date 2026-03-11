@@ -43,7 +43,22 @@ const showingMessages = agentMessages.filter((message) => {
 });
 ```
 
-Also update `EXTRACTION_PROMPT` to mention both "åbent hus" and "fremvisning" so the LLM recognizes both terms as referring to a viewing.
+Update `EXTRACTION_PROMPT` to mention both "åbent hus" and "fremvisning":
+
+```
+Du er en dansk tekst-analysator. Ekstraher dato og tidspunkt for fremvisning eller åbent hus fra beskeden.
+
+Vigtige regler:
+- Datoen SKAL formateres som YYYY-MM-DD (f.eks. 2025-12-15)
+- Starttiden SKAL formateres som HH:mm (f.eks. 16:00)
+- Sluttiden SKAL formateres som HH:mm (f.eks. 16:00)
+- Hvis der ikke findes nogen dato eller start- eller sluttid, returner en tom dato og tidspunkt
+- Hvis fremvisningen eller åbent hus er aflyst, returner cancelled som true, og date, startTime og endTime som tomme dato og tidspunkt
+- Hvis der er flere beskeder om fremvisning eller åbent hus, skal du bruge den seneste besked
+- Antag at året er {currentYear} hvis det ikke er specificeret
+```
+
+Also update the input text sent to the LLM to say "fremvisning/åbent hus" instead of only "åbent hus".
 
 ### 2. Extract shared LLM call helper + showingText fallback
 
@@ -51,7 +66,7 @@ Also update `EXTRACTION_PROMPT` to mention both "åbent hus" and "fremvisning" s
 
 Refactor `extractAppointmentDetailsWithLLM` into two parts:
 
-1. **`callLLMForAppointmentDetails(context: string, currentYear: string)`** — The core LLM call. Takes a text context string and current year, returns `AppointmentDetails`. This is the extracted inner logic (prompt formatting, OpenAI call, parsing).
+1. **`callLLMForAppointmentDetails(context: string, currentYear: string)`** — The core LLM call. Takes a text context string and current year, returns `AppointmentDetails`. This is the extracted inner logic (prompt formatting, OpenAI call, parsing). Returns the empty default if context is empty/whitespace-only (avoids wasting an API call).
 
 2. **`extractAppointmentDetailsWithLLM(thread, currentYear)`** — Stays as the primary entry point. Filters messages, builds context, calls `callLLMForAppointmentDetails`.
 
@@ -59,9 +74,12 @@ Refactor `extractAppointmentDetailsWithLLM` into two parts:
 
 **File:** `server/src/findbolig-service.ts`
 
-In `getUpcomingAppointments` (line 272), after extracting from thread:
+In `getUpcomingAppointments` (line 272), derive `currentYear` and pass it to both extraction paths:
 
 ```typescript
+const currentYear = new Date().getFullYear().toString();
+
+// ... inside the offers.map callback:
 let details = await extractAppointmentDetailsWithLLM(thread, currentYear);
 
 // Fallback: if no date from thread, try showingText
@@ -73,7 +91,7 @@ if (!details.date && offer.showingText) {
 }
 ```
 
-Note: `currentYear` is already missing from the call at line 272 — this will be fixed as part of this change.
+Note: `currentYear` is currently missing from the call at line 272 (passed as `undefined`) — this will be fixed as part of this change.
 
 ### 3. Recipient state on Appointment type
 
@@ -93,6 +111,8 @@ const ApiOfferRecipient = z.object({
 
 Update `ApiOffer.recipients` to `z.array(ApiOfferRecipient).optional()`.
 
+Also update `showingText` from `z.string()` to `z.string().nullable()` — if the API returns null for an offer with no showing text, the current non-nullable schema would reject the entire offer before the fallback logic is reached.
+
 **File:** `shared/types.ts`
 
 Add to `Appointment`:
@@ -105,16 +125,40 @@ declined: string | null;        // ISO timestamp when user declined
 
 **File:** `server/src/lib/findbolig-domain.ts`
 
-In `mapAppointmentToDomain`, extract from first recipient:
+In `mapAppointmentToDomain`, add three new fields to the existing inline return object (not using spread — matching the current pattern):
 
 ```typescript
 const recipient = offer.recipients?.[0];
 return {
-  ...existing,
+  // ... existing fields ...
   recipientState: recipient?.state ?? null,
   accepted: recipient?.accepted ?? null,
   declined: recipient?.declined ?? null,
 };
+```
+
+**Note:** The `ApiOfferRecipient` schema change in `offers.ts` must be applied before the domain mapper, since the current `z.array(z.unknown())` type would not allow `recipient?.state` to type-check.
+
+### 4. Empty-string to null normalization
+
+The LLM returns `""` for missing dates, but `Appointment.date` is typed as `string | null`. Add normalization in `mapAppointmentToDomain`:
+
+```typescript
+date: details.date || null,
+start: details.startTime || null,
+end: details.endTime || null,
+```
+
+### 5. Mock data update
+
+**File:** `client/src/data/mockData.ts`
+
+Add the three new fields to each mock `Appointment` object:
+
+```typescript
+recipientState: "OfferAccepted",
+accepted: "2026-02-15T10:00:00Z",
+declined: null,
 ```
 
 ## Reference: API Enums
