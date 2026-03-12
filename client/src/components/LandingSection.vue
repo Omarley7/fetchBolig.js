@@ -31,7 +31,7 @@ function handleDemoLogin() {
     <div class="w-full flex flex-col md:flex-row md:items-stretch gap-6">
       <!-- Preview video -->
       <div
-        class="w-1/2 mx-auto md:mx-0 md:flex-1 rounded-xl overflow-hidden shadow-md border border-neutral-200 dark:border-neutral-700/50"
+        class="w-full md:flex-1 rounded-xl overflow-hidden shadow-md border border-neutral-200 dark:border-neutral-700/50"
       >
         <video
           src="/preview_12032026.mp4"
