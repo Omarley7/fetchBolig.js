@@ -16,6 +16,10 @@ export function usePostHog() {
     api_host: "https://eu.i.posthog.com",
     defaults: "2026-01-30",
     person_profiles: "always",
+    session_recording: {
+      maskAllInputs: false,
+      maskInputOptions: { password: true, email: true },
+    },
     loaded: function (ph) {
       if (import.meta.env.DEV) {
         ph.opt_out_capturing();
