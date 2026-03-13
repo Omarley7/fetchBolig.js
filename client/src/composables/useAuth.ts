@@ -2,7 +2,9 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { identify } from "~/composables/usePostHog";
 import config from "~/config";
+import { clearAppointmentsCache } from "~/data/appointments";
 import { login as apiLogin, handleApiError, HttpError } from "~/data/appointmentsSource";
+import { clearOffersCache } from "~/data/offers";
 import { useI18n } from "~/i18n";
 import { useToastStore } from "~/stores/toast";
 
@@ -63,6 +65,7 @@ export const useAuth = defineStore(
     function loginAsDemo(demoName: string) {
       isDemo.value = true;
       name.value = demoName;
+      email.value = `${demoName.toLowerCase().replace(/\s+/g, "")}@example.com`;
       isAuthenticated.value = true;
       showLoginModal.value = false;
       toast.success(useI18n().t("auth.demoLoginSuccess"));
@@ -114,8 +117,11 @@ export const useAuth = defineStore(
       } catch {
         // Best-effort — clear client state regardless
       }
+      clearAppointmentsCache();
+      clearOffersCache();
       setAuthenticated(false);
       name.value = "";
+      email.value = "";
     }
 
     async function validateSession(): Promise<boolean> {

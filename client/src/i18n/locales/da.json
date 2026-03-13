@@ -72,7 +72,7 @@
   "auth": {
     "loggingIn": "Logger ind...",
     "loggingOut": "Logger ud...",
-    "logoutConfirm": "Dine data er stadig gemt på din enhed, men du vil ikke kunne hente nye opdateringer, før du logger ind igen.",
+    "logoutConfirm": "Er du sikker på, at du vil logge ud?",
     "cancel": "Annuller",
     "securityNote": "Din forbindelse til findbolig.nu er krypteret og sikker.",
     "findboligCredentials": "Forbind din findbolig.nu-konto",

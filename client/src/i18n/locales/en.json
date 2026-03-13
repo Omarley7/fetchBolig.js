@@ -72,7 +72,7 @@
   "auth": {
     "loggingIn": "Logging in...",
     "loggingOut": "Logging out...",
-    "logoutConfirm": "Your data is still stored on your device, but you will not be able to fetch new updates until you log in again.",
+    "logoutConfirm": "Are you sure you want to log out?",
     "cancel": "Cancel",
     "securityNote": "Your connection to findbolig.nu is encrypted and secure.",
     "findboligCredentials": "Connect your findbolig.nu account",

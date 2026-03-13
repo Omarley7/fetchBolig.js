@@ -1,7 +1,20 @@
 <script setup lang="ts">
+import { watch } from "vue";
+import { useRouter } from "vue-router";
 import AppHeader from "~/components/AppHeader.vue";
 import ToastContainer from "~/components/Base/ToastContainer.vue";
 import BottomNav from "~/components/BottomNav.vue";
+import { useAuth } from "~/composables/useAuth";
+
+const auth = useAuth();
+const router = useRouter();
+
+watch(
+  () => auth.isAuthenticated,
+  (isAuthenticated) => {
+    if (!isAuthenticated) router.push("/");
+  },
+);
 </script>
 
 <template>
@@ -14,7 +27,7 @@ import BottomNav from "~/components/BottomNav.vue";
       <router-view />
     </main>
 
-    <BottomNav />
+    <BottomNav v-if="auth.isAuthenticated" />
   </div>
   <ToastContainer />
 </template>

@@ -101,7 +101,7 @@ function confirmLogout() {
 
             <button
               type="submit"
-              :disabled="auth.isLoading"
+              :disabled="auth.isLoading || !auth.email || !password"
               class="disabled:opacity-50 bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 transition-colors font-medium"
             >
               {{ auth.isLoading ? t("auth.loggingIn") : t("common.login") }}

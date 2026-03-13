@@ -1,14 +1,14 @@
 import type { Offer, RecipientState } from "@/types";
 import { defineStore, storeToRefs } from "pinia";
 import { ref, watch } from "vue";
+import { useAuth } from "~/composables/useAuth";
+import config from "~/config";
+import { handleApiError, HttpError } from "~/data/appointmentsSource";
+import { MOCK_OFFERS } from "~/data/mockData";
 import { getOffers, isOffersCacheStale, persistOffersCache } from "~/data/offers";
 import { acceptOffer as apiAcceptOffer, declineOffer as apiDeclineOffer } from "~/data/offersSource";
-import { handleApiError, HttpError } from "~/data/appointmentsSource";
-import { useAuth } from "~/composables/useAuth";
-import { useToastStore } from "~/stores/toast";
 import { useI18n } from "~/i18n";
-import config from "~/config";
-import { MOCK_OFFERS } from "~/data/mockData";
+import { useToastStore } from "~/stores/toast";
 
 export const useOffersStore = defineStore("offers", () => {
   const offers = ref<Offer[]>([]);
@@ -172,6 +172,11 @@ export const useOffersStore = defineStore("offers", () => {
         pendingRefresh = false;
         refresh();
       }
+    } else {
+      offers.value = [];
+      updatedAt.value = null;
+      needsRefresh.value = false;
+      sessionExpired.value = false;
     }
   });
 

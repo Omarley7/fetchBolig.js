@@ -22,10 +22,7 @@ export function isCacheStale(thresholdMs = 24 * 60 * 60 * 1000): boolean {
   return age > thresholdMs;
 }
 
-export async function getAppointments(
-  forceRefresh: boolean = false,
-  includeAll: boolean = false,
-) {
+export async function getAppointments(forceRefresh: boolean = false, includeAll: boolean = false) {
   if (!forceRefresh) {
     const cached = localStorage.getItem(STORAGE_KEY);
     if (cached) {
@@ -42,4 +39,8 @@ export async function getAppointments(
   const payload = await fetchAppointments(includeAll);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   return payload;
+}
+
+export function clearAppointmentsCache() {
+  localStorage.removeItem(STORAGE_KEY);
 }

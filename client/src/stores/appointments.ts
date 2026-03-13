@@ -133,6 +133,11 @@ export const useAppointmentsStore = defineStore("appointments", () => {
         pendingRefresh = false;
         refresh();
       }
+    } else {
+      appointments.value = [];
+      updatedAt.value = null;
+      needsRefresh.value = false;
+      sessionExpired.value = false;
     }
   });
 

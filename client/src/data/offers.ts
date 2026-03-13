@@ -47,3 +47,7 @@ export async function getOffers(forceRefresh: boolean = false) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   return payload;
 }
+
+export function clearOffersCache() {
+  localStorage.removeItem(STORAGE_KEY);
+}
