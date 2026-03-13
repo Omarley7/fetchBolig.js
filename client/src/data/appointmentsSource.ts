@@ -1,11 +1,17 @@
 import type { Appointment, UserData } from "@/types";
-import { MOCK_DEAS_APPOINTMENTS } from "./mockData";
+import mockAppointmentsJson from "~/data/MOCK_APPOINTMENTS.json";
+
 import config from "~/config";
+import { dateInDays } from "~/lib/dateHelper";
 
 const TIMEOUT_LOGIN = 25_000;
 const TIMEOUT_APPOINTMENTS = 90_000;
 
-function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number,
+): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer));
@@ -40,16 +46,26 @@ export function handleApiError(
   }
 }
 
-export async function fetchAppointments(
-  includeAll: boolean = false
-): Promise<{
+const MOCK_DATES: (string | null)[] = [dateInDays(-7), dateInDays(0), dateInDays(0), dateInDays(7)];
+
+export function applyMockAppointmentDates(appointments: Appointment[]): Appointment[] {
+  return appointments.map((appt, i) => ({
+    ...appt,
+    date: i < MOCK_DATES.length ? MOCK_DATES[i] : null,
+  }));
+}
+
+export async function fetchAppointments(includeAll: boolean = false): Promise<{
   updatedAt: Date;
   appointments: Appointment[];
 }> {
   if (config.useMockData) {
     console.log("Using mock server data");
     await new Promise((resolve) => setTimeout(resolve, 800));
-    return { updatedAt: new Date(), appointments: MOCK_DEAS_APPOINTMENTS };
+    return {
+      updatedAt: new Date(),
+      appointments: applyMockAppointmentDates(mockAppointmentsJson as Appointment[]),
+    };
   }
 
   try {

@@ -1,7 +1,11 @@
+export const inDays = (n: number): string =>
+  new Date(Date.now() + n * 24 * 60 * 60 * 1000).toISOString().split("T")[0] + "T00:00:00Z";
+
+export const dateInDays = (n: number): string =>
+  new Date(Date.now() + n * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+
 export function getISOWeek(date: Date): number {
-  const d = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-  );
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
@@ -26,11 +30,13 @@ function capitalize(s: string): string {
 }
 
 export function formatDay(key: string, locale: string): string {
-  return capitalize(new Date(key).toLocaleDateString(toDateLocale(locale), {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-  }));
+  return capitalize(
+    new Date(key).toLocaleDateString(toDateLocale(locale), {
+      weekday: "long",
+      day: "2-digit",
+      month: "2-digit",
+    }),
+  );
 }
 
 export function formatWeek(key: string, locale: string, weekLabel: string): string {
@@ -55,8 +61,10 @@ export function formatWeek(key: string, locale: string, weekLabel: string): stri
 
 export function formatMonth(key: string, locale: string): string {
   const [year, month] = key.split("-");
-  return capitalize(new Date(`${year}-${month}-01`).toLocaleDateString(toDateLocale(locale), {
-    month: "long",
-    year: "numeric",
-  }));
+  return capitalize(
+    new Date(`${year}-${month}-01`).toLocaleDateString(toDateLocale(locale), {
+      month: "long",
+      year: "numeric",
+    }),
+  );
 }

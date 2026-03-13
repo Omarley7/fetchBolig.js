@@ -4,11 +4,17 @@ import { ref, watch } from "vue";
 import { useAuth } from "~/composables/useAuth";
 import config from "~/config";
 import { handleApiError, HttpError } from "~/data/appointmentsSource";
-import { MOCK_OFFERS } from "~/data/mockData";
+import MOCK_OFFERS_JSON from "~/data/MOCK_OFFERS.json";
 import { getOffers, isOffersCacheStale, persistOffersCache } from "~/data/offers";
 import { acceptOffer as apiAcceptOffer, declineOffer as apiDeclineOffer } from "~/data/offersSource";
 import { useI18n } from "~/i18n";
+import { inDays } from "~/lib/dateHelper";
 import { useToastStore } from "~/stores/toast";
+
+const MOCK_DEADLINES = [inDays(1), inDays(5), inDays(10)];
+function applyMockDeadlines(offers: Offer[]): Offer[] {
+  return offers.map((offer, i) => ({ ...offer, deadline: MOCK_DEADLINES[i % MOCK_DEADLINES.length] }));
+}
 
 export const useOffersStore = defineStore("offers", () => {
   const offers = ref<Offer[]>([]);
@@ -24,7 +30,7 @@ export const useOffersStore = defineStore("offers", () => {
     if (auth.isDemo) {
       isLoading.value = true;
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      offers.value = MOCK_OFFERS;
+      offers.value = applyMockDeadlines(MOCK_OFFERS_JSON as Offer[]);
       updatedAt.value = new Date();
       isLoading.value = false;
       return;
@@ -70,7 +76,7 @@ export const useOffersStore = defineStore("offers", () => {
 
     if (auth.isDemo) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      offers.value = MOCK_OFFERS;
+      offers.value = applyMockDeadlines(MOCK_OFFERS_JSON as Offer[]);
       updatedAt.value = new Date();
       isLoading.value = false;
       return;

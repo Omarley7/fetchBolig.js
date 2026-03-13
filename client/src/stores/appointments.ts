@@ -1,13 +1,13 @@
 import type { Appointment } from "@/types";
 import { defineStore, storeToRefs } from "pinia";
 import { ref, watch } from "vue";
-import { getAppointments, isCacheStale } from "~/data/appointments";
-import { handleApiError } from "~/data/appointmentsSource";
 import { useAuth } from "~/composables/useAuth";
-import { useToastStore } from "~/stores/toast";
-import { useI18n } from "~/i18n";
 import config from "~/config";
-import { MOCK_DEAS_APPOINTMENTS } from "~/data/mockData";
+import { getAppointments, isCacheStale } from "~/data/appointments";
+import { applyMockAppointmentDates, handleApiError } from "~/data/appointmentsSource";
+import mockAppointmentsJson from "~/data/MOCK_APPOINTMENTS.json";
+import { useI18n } from "~/i18n";
+import { useToastStore } from "~/stores/toast";
 
 export const useAppointmentsStore = defineStore("appointments", () => {
   const appointments = ref<Appointment[]>([]);
@@ -23,7 +23,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     if (auth.isDemo) {
       isLoading.value = true;
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      appointments.value = MOCK_DEAS_APPOINTMENTS;
+      appointments.value = applyMockAppointmentDates(mockAppointmentsJson as Appointment[]);
       updatedAt.value = new Date();
       isLoading.value = false;
       return;
@@ -69,7 +69,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
 
     if (auth.isDemo) {
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      appointments.value = MOCK_DEAS_APPOINTMENTS;
+      appointments.value = applyMockAppointmentDates(mockAppointmentsJson as Appointment[]);
       updatedAt.value = new Date();
       isLoading.value = false;
       return;

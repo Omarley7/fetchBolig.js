@@ -1,12 +1,17 @@
 import type { Offer, RecipientState } from "@/types";
-import { MOCK_OFFERS } from "./mockData";
-import { HttpError } from "./appointmentsSource";
 import config from "~/config";
+import MOCK_OFFERS from "~/data/MOCK_OFFERS.json";
+import { inDays } from "~/lib/dateHelper";
+import { HttpError } from "./appointmentsSource";
 
 const TIMEOUT_FETCH = 90_000;
 const TIMEOUT_ACTION = 25_000;
 
-function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number,
+): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(timer));
@@ -18,7 +23,12 @@ export async function fetchActiveOffers(): Promise<{
 }> {
   if (config.useMockData) {
     await new Promise((resolve) => setTimeout(resolve, 800));
-    return { updatedAt: new Date(), offers: MOCK_OFFERS };
+    const deadlines = [inDays(1), inDays(5), inDays(10)];
+    const offers = (MOCK_OFFERS as Offer[]).map((offer, i) => ({
+      ...offer,
+      deadline: deadlines[i % deadlines.length],
+    }));
+    return { updatedAt: new Date(), offers };
   }
 
   const res = await fetchWithTimeout(

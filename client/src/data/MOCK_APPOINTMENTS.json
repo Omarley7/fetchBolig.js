@@ -1,0 +1,225 @@
+[
+  {
+    "id": "DEAS-O-cc687d34-4ed5-4beb-b3b8-08de747fab9e",
+    "offerId": "cc687d34-4ed5-4beb-b3b8-08de747fab9e",
+    "title": "3 værelses Lejlighed på 83 m²",
+    "date": "",
+    "start": "16:00",
+    "end": "16:20",
+    "cancelled": false,
+    "residence": {
+      "adressLine1": "Nitivej 13, 1. th",
+      "adressLine2": "2000 Frederiksberg",
+      "location": {
+        "latitude": 55.69215,
+        "longitude": 12.53398
+      }
+    },
+    "financials": {
+      "monthlyRentIncludingAconto": 14288,
+      "monthlyRentExcludingAconto": 13488,
+      "utilityCosts": 800,
+      "deposit": 40464,
+      "prepaidRent": 40464,
+      "firstPayment": 95216
+    },
+    "imageUrl": "/data/media/ffe78efe-4660-4321-9fb7-f8ea69cd6d6d/4740c055-1a3a-4e2f-b416-f6464a0e6337.jpg",
+    "images": [
+      "/data/media/ffe78efe-4660-4321-9fb7-f8ea69cd6d6d/4740c055-1a3a-4e2f-b416-f6464a0e6337.jpg",
+      "/data/media/ffe78efe-4660-4321-9fb7-f8ea69cd6d6d/fee24eb6-c31c-499e-828e-a25de0a51cb1.jpg",
+      "/data/media/ffe78efe-4660-4321-9fb7-f8ea69cd6d6d/ee67592f-e5e5-4b16-92ca-e9c7d33cf22d.jpg",
+      "/data/media/8d98848f-1a86-4094-bc1f-030efee3faae/o_1c6ck00d31kjn12591rgp1n1cd48a.jpg"
+    ],
+    "blueprints": [],
+    "position": 252,
+    "recipientState": "OfferAccepted",
+    "accepted": "2026-03-11T22:26:27.5586636Z",
+    "declined": null
+  },
+  {
+    "id": "DEAS-O-0a9fce64-ab26-4d39-b3b7-08de747fab9e",
+    "offerId": "0a9fce64-ab26-4d39-b3b7-08de747fab9e",
+    "title": "3 værelses Lejlighed på 79 m²",
+    "date": "",
+    "start": "15:00",
+    "end": "15:20",
+    "cancelled": false,
+    "residence": {
+      "adressLine1": "Philip Schous Vej 21, 3. TH.",
+      "adressLine2": "2000 Frederiksberg",
+      "location": {
+        "latitude": 55.68127,
+        "longitude": 12.50502
+      }
+    },
+    "financials": {
+      "monthlyRentIncludingAconto": 13564.45,
+      "monthlyRentExcludingAconto": 12564.45,
+      "utilityCosts": 1000,
+      "deposit": 37032,
+      "prepaidRent": 37032,
+      "firstPayment": 87628.45
+    },
+    "imageUrl": "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/3ad8fe94-3f4b-4b4e-81c5-268c73b4d4a0.jpg",
+    "images": [
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/3ad8fe94-3f4b-4b4e-81c5-268c73b4d4a0.jpg",
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/27f5ab24-8352-4e30-9759-b054cf3b1e8c.jpg",
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/425a1ef7-91f9-4202-8689-eea352f6cfb5.jpg",
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/e620648b-4a7c-434d-a49b-783d169c6e5b.jpg",
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/31b942e8-af8d-48a7-a8b6-9c2ae28f0e94.jpg",
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/c178e54e-cce8-4ffa-b267-d2a72fb2cbb9.jpg",
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/a7a38c71-6a03-4d47-95de-3cc03715bbb4.jpg",
+      "/data/media/a248ae96-730b-4c2c-acf9-5dbaaaf85768/2a7a19de-dc61-4171-8ab7-a4ce5e816ed2.jpg",
+      "/data/media/a248ae96-730b-4c2c-acf9-5dbaaaf85768/b9105c41-804a-4d2c-a856-7320fd874069.jpg",
+      "/data/media/a248ae96-730b-4c2c-acf9-5dbaaaf85768/0fc48103-0f8c-4fd5-9ed2-d12143654c06.jpg",
+      "/data/media/a248ae96-730b-4c2c-acf9-5dbaaaf85768/172f209c-8ec3-4a5c-b752-5267b454ebed.jpg",
+      "/data/media/a248ae96-730b-4c2c-acf9-5dbaaaf85768/47e48b77-0253-4710-91de-6174a777a529.jpg",
+      "/data/media/a248ae96-730b-4c2c-acf9-5dbaaaf85768/571622c5-8e84-446d-b2ff-9facc9a50f39.jpg",
+      "/data/media/a248ae96-730b-4c2c-acf9-5dbaaaf85768/a344a3d6-d9a1-4265-a2cd-8e1936f3c922.jpg"
+    ],
+    "blueprints": [
+      "/data/media/6bcaba64-5483-4328-a2f5-f09aa5a7d8a3/e152bfa5-3804-433d-9deb-526c082ae875.png"
+    ],
+    "position": 230,
+    "recipientState": "OfferAccepted",
+    "accepted": "2026-03-11T22:26:32.9718581Z",
+    "declined": null
+  },
+  {
+    "id": "DEAS-O-3efc292d-667a-4792-b3b6-08de747fab9e",
+    "offerId": "3efc292d-667a-4792-b3b6-08de747fab9e",
+    "title": "3 værelses Lejlighed på 74 m²",
+    "start": null,
+    "end": null,
+    "cancelled": false,
+    "residence": {
+      "adressLine1": "Mariendalsvej 52A, 1. MF",
+      "adressLine2": "2000 Frederiksberg",
+      "location": {
+        "latitude": 55.69101,
+        "longitude": 12.53216
+      }
+    },
+    "financials": {
+      "monthlyRentIncludingAconto": 13174,
+      "monthlyRentExcludingAconto": 12074,
+      "utilityCosts": 1100,
+      "deposit": 36222,
+      "prepaidRent": 36222,
+      "firstPayment": 85618
+    },
+    "imageUrl": "/data/media/ef853a41-1b16-4e87-af8a-40d8ab0c8642/a02be410-ef03-4a67-8c82-0bba339e403f.jpg",
+    "images": [
+      "/data/media/ef853a41-1b16-4e87-af8a-40d8ab0c8642/a02be410-ef03-4a67-8c82-0bba339e403f.jpg",
+      "/data/media/ef853a41-1b16-4e87-af8a-40d8ab0c8642/98366e53-8fa0-4ec2-b60f-b73578c396cb.jpg",
+      "/data/media/ef853a41-1b16-4e87-af8a-40d8ab0c8642/5373d947-beb7-46b4-b50a-833d440a40c7.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/7b001a0b-2d59-4445-9224-9152a6f77dfa.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/o_1e8ahp31s11cmk3d6ko173j35e.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/o_1e8ahp31s1ia61b1n1m0t1rg0g0ld.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/o_1e8ahp31s1slo61s1m6icci1lhdc.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/592a345f-59f3-4099-a708-cca11d79d5ce.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/4179b9d9-8df0-4d5b-81a6-2ee553c38198.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/ae7c130c-f002-41a4-91e9-e9d6add84b0b.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/3acf9a9a-3efd-4fc6-858c-a0c5c80fcbbd.jpg"
+    ],
+    "blueprints": [
+      "/data/media/ef853a41-1b16-4e87-af8a-40d8ab0c8642/904acada-5f3b-4d73-a0cf-c0efd7b7a534.png"
+    ],
+    "position": 274,
+    "recipientState": "OfferDeclined",
+    "accepted": null,
+    "declined": "2026-03-11T22:26:49.564089Z"
+  },
+  {
+    "id": "DEAS-O-20ecaa22-e813-4dcd-b370-08de747fab9e",
+    "offerId": "20ecaa22-e813-4dcd-b370-08de747fab9e",
+    "title": "2 værelses Lejlighed på 65 m²",
+    "date": "",
+    "start": "15:30",
+    "end": "15:50",
+    "cancelled": false,
+    "residence": {
+      "adressLine1": "Ved Kløvermarken 6, 4. tv.",
+      "adressLine2": "2300 København S",
+      "location": {
+        "latitude": 55.66749,
+        "longitude": 12.59881
+      }
+    },
+    "financials": {
+      "monthlyRentIncludingAconto": 11225.17,
+      "monthlyRentExcludingAconto": 10525.17,
+      "utilityCosts": 700,
+      "deposit": 31575.51,
+      "prepaidRent": 31575.51,
+      "firstPayment": 74376.19
+    },
+    "imageUrl": "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/4a495ae4-da44-4f65-827b-f51463d67111.jpg",
+    "images": [
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/4a495ae4-da44-4f65-827b-f51463d67111.jpg",
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/1f611538-1a1f-4b51-ae27-6ba37c784a23.jpg",
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/0675e7db-0238-4331-9469-837765896653.jpg",
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/39baf478-f16e-494b-937a-b07a55b8d34c.jpg",
+      "/data/media/d0c0abca-b405-4cff-865b-2706da28e05d/69de1d05-3df2-4522-b3c6-5d33fcd08ab8.jpg",
+      "/data/media/d0c0abca-b405-4cff-865b-2706da28e05d/9848a09b-b28e-4fff-8576-7310b2f80e45.jpg",
+      "/data/media/d0c0abca-b405-4cff-865b-2706da28e05d/96d8906d-557a-4576-9c8d-3c45f5a30516.jpg",
+      "/data/media/d0c0abca-b405-4cff-865b-2706da28e05d/45d03d07-fd3e-4f9e-93b5-83af472a9567.jpg",
+      "/data/media/d0c0abca-b405-4cff-865b-2706da28e05d/929387df-da24-4b70-9da5-b6c0632bbbfd.jpg"
+    ],
+    "blueprints": [
+      "/data/media/a6a99bfb-ef48-4de0-8462-a21739c7f1e6/083a47c9-fb38-4e3b-9da0-ab7d097c86cf.png"
+    ],
+    "position": 257,
+    "recipientState": "OfferAccepted",
+    "accepted": "2026-02-26T09:53:43.7549604Z",
+    "declined": null
+  },
+  {
+    "id": "DEAS-O-0bfadac8-9bc2-4fc4-b36f-08de747fab9e",
+    "offerId": "0bfadac8-9bc2-4fc4-b36f-08de747fab9e",
+    "title": "2 værelses Lejlighed på 60 m²",
+    "start": null,
+    "end": null,
+    "cancelled": false,
+    "residence": {
+      "adressLine1": "Mariendalsvej 52G, 2. TV",
+      "adressLine2": "2000 Frederiksberg",
+      "location": {
+        "latitude": 55.69138,
+        "longitude": 12.5318
+      }
+    },
+    "financials": {
+      "monthlyRentIncludingAconto": 10799,
+      "monthlyRentExcludingAconto": 9799,
+      "utilityCosts": 1000,
+      "deposit": 29397,
+      "prepaidRent": 29397,
+      "firstPayment": 69593
+    },
+    "imageUrl": "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/a0203081-cfb0-485e-8f5e-d0e2cb4df99f.jpg",
+    "images": [
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/a0203081-cfb0-485e-8f5e-d0e2cb4df99f.jpg",
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/76019d7c-d1b5-41b3-be2b-63b66962c512.jpg",
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/03e6da45-21d3-432f-a32c-efba4e33f465.jpg",
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/1c0505a1-4467-4c6c-a9f7-2609c67d4be5.jpg",
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/1ad576b1-daf2-4bba-a9df-f232a4215e37.jpg",
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/f7e95775-582b-456b-aa71-765db61a736d.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/7b001a0b-2d59-4445-9224-9152a6f77dfa.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/o_1e8ahp31s11cmk3d6ko173j35e.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/o_1e8ahp31s1ia61b1n1m0t1rg0g0ld.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/o_1e8ahp31s1slo61s1m6icci1lhdc.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/592a345f-59f3-4099-a708-cca11d79d5ce.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/4179b9d9-8df0-4d5b-81a6-2ee553c38198.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/ae7c130c-f002-41a4-91e9-e9d6add84b0b.jpg",
+      "/data/media/983ba8e4-8ca0-44cb-88c4-e0c64ac07f8e/3acf9a9a-3efd-4fc6-858c-a0c5c80fcbbd.jpg"
+    ],
+    "blueprints": [
+      "/data/media/d7e91ff6-3b48-4e79-8e96-df0c710f7898/36763707-dd18-4904-9853-40f6dbaa8d2e.png"
+    ],
+    "position": 262,
+    "recipientState": "OfferAccepted",
+    "accepted": "2026-02-26T09:35:40.2636766Z",
+    "declined": null
+  }
+]
