@@ -78,6 +78,8 @@
     "findboligCredentials": "Forbind din findbolig.nu-konto",
     "loginSuccess": "Du er nu logget ind!",
     "demoLogin": "Prøv som demo",
+    "demoNamePlaceholder": "Dit navn (til demo)",
+    "demoNameHint": "Indtast dit navn for at prøve demoen.",
     "demoLoginSuccess": "Du er nu i demo-tilstand.",
     "orSeparator": "eller"
   },

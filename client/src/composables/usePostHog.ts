@@ -15,3 +15,7 @@ export function usePostHog() {
 
   return { posthog };
 }
+
+export function identify(userId: string, properties?: { email?: string; name?: string }) {
+  posthog.identify(userId, properties);
+}

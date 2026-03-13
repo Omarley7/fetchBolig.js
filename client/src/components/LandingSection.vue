@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import DemoLoginButton from "~/components/DemoLoginButton.vue";
 import { useAuth } from "~/composables/useAuth";
 
 const auth = useAuth();
@@ -11,10 +12,6 @@ async function handleLogin() {
   if (await auth.login(auth.email, password.value)) {
     password.value = "";
   }
-}
-
-function handleDemoLogin() {
-  auth.loginAsDemo();
 }
 </script>
 
@@ -83,14 +80,7 @@ function handleDemoLogin() {
             <div class="grow border-t border-violet-200 dark:border-violet-800"></div>
           </div>
 
-          <button
-            type="button"
-            @click="handleDemoLogin"
-            :disabled="auth.isLoading"
-            class="disabled:opacity-50 border border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-300 px-4 py-2 rounded-md hover:bg-violet-100 dark:hover:bg-violet-900 transition-colors font-medium"
-          >
-            {{ t("auth.demoLogin") }}
-          </button>
+          <DemoLoginButton :disabled="auth.isLoading" />
         </form>
 
         <!-- Security note -->

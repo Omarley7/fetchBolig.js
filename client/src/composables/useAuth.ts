@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { login as apiLogin, handleApiError, HttpError } from "~/data/appointmentsSource";
-import { useToastStore } from "~/stores/toast";
-import { useI18n } from "~/i18n";
+import { identify } from "~/composables/usePostHog";
 import config from "~/config";
+import { login as apiLogin, handleApiError, HttpError } from "~/data/appointmentsSource";
+import { useI18n } from "~/i18n";
+import { useToastStore } from "~/stores/toast";
 
 const TIMEOUT_REFRESH = 15_000;
 
@@ -34,6 +35,7 @@ export const useAuth = defineStore(
         if (ok) {
           startKeepAlive();
           toast.success(useI18n().t("auth.loginSuccess"));
+          identify(userEmail, { email: userEmail, name: userData.fullName });
         }
         return ok;
       } catch (err) {
@@ -58,38 +60,42 @@ export const useAuth = defineStore(
       return value;
     }
 
-    function loginAsDemo() {
+    function loginAsDemo(demoName: string) {
       isDemo.value = true;
-      name.value = "Demo User";
+      name.value = demoName;
       isAuthenticated.value = true;
       showLoginModal.value = false;
       toast.success(useI18n().t("auth.demoLoginSuccess"));
+      identify(demoName, { name: demoName });
     }
 
     function startKeepAlive() {
       stopKeepAlive();
-      keepAliveTimer = window.setInterval(async () => {
-        try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), TIMEOUT_REFRESH);
-          const res = await fetch(`${config.backendDomain}/api/auth/refresh`, {
-            method: "GET",
-            credentials: "include",
-            signal: controller.signal,
-          });
-          clearTimeout(timer);
+      keepAliveTimer = window.setInterval(
+        async () => {
+          try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), TIMEOUT_REFRESH);
+            const res = await fetch(`${config.backendDomain}/api/auth/refresh`, {
+              method: "GET",
+              credentials: "include",
+              signal: controller.signal,
+            });
+            clearTimeout(timer);
 
-          if (!res.ok) {
-            if (res.status === 401) setAuthenticated(false);
-            return;
+            if (!res.ok) {
+              if (res.status === 401) setAuthenticated(false);
+              return;
+            }
+
+            const data = await res.json();
+            if (data?.fullName) name.value = data.fullName;
+          } catch (e) {
+            console.error("Keep-alive failed:", e);
           }
-
-          const data = await res.json();
-          if (data?.fullName) name.value = data.fullName;
-        } catch (e) {
-          console.error("Keep-alive failed:", e);
-        }
-      }, 3 * 60 * 1000);
+        },
+        3 * 60 * 1000,
+      );
     }
 
     function stopKeepAlive() {
@@ -163,7 +169,21 @@ export const useAuth = defineStore(
       await ensureSession();
     });
 
-    return { email, isLoading, isAuthenticated, isDemo, name, showLoginModal, login, loginAsDemo, logout, startKeepAlive, stopKeepAlive, validateSession, ensureSession };
+    return {
+      email,
+      isLoading,
+      isAuthenticated,
+      isDemo,
+      name,
+      showLoginModal,
+      login,
+      loginAsDemo,
+      logout,
+      startKeepAlive,
+      stopKeepAlive,
+      validateSession,
+      ensureSession,
+    };
   },
   {
     persist: {

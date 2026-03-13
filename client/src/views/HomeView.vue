@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { useAuth } from "~/composables/useAuth";
-import { useAppointmentsStore } from "~/stores/appointments";
-import { useOffersStore } from "~/stores/offers";
 import { useI18n } from "vue-i18n";
+import LandingSection from "~/components/LandingSection.vue";
+import { useAuth } from "~/composables/useAuth";
 import { getCacheAge } from "~/data/appointments";
 import { getOffersCacheAge } from "~/data/offers";
-import LandingSection from "~/components/LandingSection.vue";
+import { useAppointmentsStore } from "~/stores/appointments";
+import { useOffersStore } from "~/stores/offers";
 
 const auth = useAuth();
 const store = useAppointmentsStore();
@@ -23,7 +23,7 @@ onMounted(() => {
 
 const hasAppointments = computed(() => store.appointments.length > 0);
 const offerCount = computed(() => offersStore.offers.length);
-const firstName = computed(() => auth.name.split(" ")[0] || "");
+const firstName = computed(() => auth.name?.split(" ")[0] || "");
 
 const lastUpdatedText = computed(() => {
   const age = getCacheAge();
@@ -69,8 +69,13 @@ const lastUpdatedText = computed(() => {
   </div>
 
   <!-- Returning user: has cached data -->
-  <div v-else class="flex flex-col items-center justify-center gap-4 py-12 px-4 max-w-md mx-auto text-center">
-    <h2 class="text-2xl font-bold">{{ firstName ? t("home.welcomeBack", [firstName]) : t("home.welcomeBackAnonymous") }}</h2>
+  <div
+    v-else
+    class="flex flex-col items-center justify-center gap-4 py-12 px-4 max-w-md mx-auto text-center"
+  >
+    <h2 class="text-2xl font-bold">
+      {{ firstName ? t("home.welcomeBack", [firstName]) : t("home.welcomeBackAnonymous") }}
+    </h2>
     <p v-if="lastUpdatedText" class="text-sm text-gray-500 dark:text-gray-400">
       {{ lastUpdatedText }}
     </p>
@@ -79,11 +84,7 @@ const lastUpdatedText = computed(() => {
       <!-- Appointments card -->
       <router-link
         to="/appointments"
-        class="w-full flex items-center gap-4 p-4 rounded-xl
-               bg-neutral-100 dark:bg-white/5
-               border border-neutral-200 dark:border-neutral-700/50
-               hover:bg-neutral-200/70 dark:hover:bg-white/8
-               transition-colors text-left"
+        class="w-full flex items-center gap-4 p-4 rounded-xl bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-neutral-700/50 hover:bg-neutral-200/70 dark:hover:bg-white/8 transition-colors text-left"
       >
         <img src="/icons/calendar-days.svg" alt="" class="size-8 dark:invert opacity-60 shrink-0" />
         <div class="min-w-0 flex-1">
@@ -92,17 +93,17 @@ const lastUpdatedText = computed(() => {
             {{ t("home.viewAppointments", [store.appointments.length]) }}
           </p>
         </div>
-        <img src="/icons/chevron-down.svg" alt="" class="size-5 -rotate-90 opacity-30 dark:invert shrink-0" />
+        <img
+          src="/icons/chevron-down.svg"
+          alt=""
+          class="size-5 -rotate-90 opacity-30 dark:invert shrink-0"
+        />
       </router-link>
 
       <!-- Offers card -->
       <router-link
         to="/offers"
-        class="w-full flex items-center gap-4 p-4 rounded-xl
-               bg-neutral-100 dark:bg-white/5
-               border border-neutral-200 dark:border-neutral-700/50
-               hover:bg-neutral-200/70 dark:hover:bg-white/8
-               transition-colors text-left"
+        class="w-full flex items-center gap-4 p-4 rounded-xl bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-neutral-700/50 hover:bg-neutral-200/70 dark:hover:bg-white/8 transition-colors text-left"
       >
         <img src="/icons/cloud-download.svg" alt="" class="size-8 dark:invert opacity-60 shrink-0" />
         <div class="min-w-0 flex-1">
@@ -111,7 +112,11 @@ const lastUpdatedText = computed(() => {
             {{ offerCount > 0 ? t("home.viewOffers", [offerCount]) : t("home.checkOffers") }}
           </p>
         </div>
-        <img src="/icons/chevron-down.svg" alt="" class="size-5 -rotate-90 opacity-30 dark:invert shrink-0" />
+        <img
+          src="/icons/chevron-down.svg"
+          alt=""
+          class="size-5 -rotate-90 opacity-30 dark:invert shrink-0"
+        />
       </router-link>
     </div>
   </div>

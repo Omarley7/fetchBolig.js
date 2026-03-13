@@ -78,6 +78,8 @@
     "findboligCredentials": "Connect your findbolig.nu account",
     "loginSuccess": "You are now logged in!",
     "demoLogin": "Try as demo",
+    "demoNamePlaceholder": "Your name (for demo)",
+    "demoNameHint": "Enter your name to try the demo.",
     "demoLoginSuccess": "You are now in demo mode.",
     "orSeparator": "or"
   },
