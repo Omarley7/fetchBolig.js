@@ -35,7 +35,7 @@ export const useAuth = defineStore(
         if (ok) {
           startKeepAlive();
           toast.success(useI18n().t("auth.loginSuccess"));
-          identify(userEmail, { email: userEmail, name: userData.fullName });
+          identify({ email: userEmail, name: userData.fullName });
         }
         return ok;
       } catch (err) {
@@ -66,7 +66,7 @@ export const useAuth = defineStore(
       isAuthenticated.value = true;
       showLoginModal.value = false;
       toast.success(useI18n().t("auth.demoLoginSuccess"));
-      identify(demoName, { name: demoName });
+      identify({ name: demoName });
     }
 
     function startKeepAlive() {
