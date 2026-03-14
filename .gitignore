@@ -71,3 +71,6 @@ __screenshots__/
 .env*
 !.env.example
 .superpowers/
+
+# AI
+.devcontainer/

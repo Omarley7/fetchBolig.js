@@ -113,8 +113,14 @@ export const useOffersStore = defineStore("offers", () => {
   async function acceptOffer(offerId: string): Promise<boolean> {
     const toast = useToastStore();
     const { t } = useI18n();
+    const auth = useAuth();
     isActioning.value = true;
     try {
+      if (auth.isDemo) {
+        updateLocalOfferState(offerId, "OfferAccepted");
+        toast.success(t("offers.acceptSuccess"));
+        return true;
+      }
       const newState = await apiAcceptOffer(offerId);
       updateLocalOfferState(offerId, newState);
       toast.success(t("offers.acceptSuccess"));
@@ -130,8 +136,14 @@ export const useOffersStore = defineStore("offers", () => {
   async function declineOffer(offerId: string): Promise<boolean> {
     const toast = useToastStore();
     const { t } = useI18n();
+    const auth = useAuth();
     isActioning.value = true;
     try {
+      if (auth.isDemo) {
+        updateLocalOfferState(offerId, "OfferDeclined");
+        toast.success(t("offers.declineSuccess"));
+        return true;
+      }
       const newState = await apiDeclineOffer(offerId);
       updateLocalOfferState(offerId, newState);
       toast.success(t("offers.declineSuccess"));
