@@ -8,6 +8,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import * as findboligService from "~/findbolig-service";
+import type { SyncAppointmentsRequest } from "@/types";
 import { TimeoutError } from "~/findbolig-service";
 import { AuthError, withReauth } from "~/lib/auth-helpers";
 import {
@@ -145,6 +146,20 @@ appointments.get("/upcoming", async (c) => {
     const includeAll = c.req.query("includeAll") === "true";
     const result = await withReauth(c, (cookies) =>
       findboligService.getUpcomingAppointments(cookies, includeAll)
+    );
+    return c.json(result);
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
+appointments.post("/sync", async (c) => {
+  try {
+    const body = await c.req.json<SyncAppointmentsRequest>();
+    const cached = Array.isArray(body?.cached) ? body.cached : [];
+    const includeAll = body?.includeAll === true;
+    const result = await withReauth(c, (cookies) =>
+      findboligService.getUpcomingAppointments(cookies, includeAll, cached)
     );
     return c.json(result);
   } catch (error) {
