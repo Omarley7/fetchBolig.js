@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import type { CachedAppointmentEntry } from "@/types";
 import { UserData } from "@/types";
 import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain, mapOfferToDomain } from "~/lib/findbolig-domain";
 import type { ApiOffer, ApiOffersPage, ApiUserData } from "~/types/offers";
@@ -236,19 +237,25 @@ export async function getThreadForOffer(
   return JSON.parse(text) as ApiMessageThreadFull;
 }
 
+function isDateInPast(dateStr: string | null): boolean {
+  if (!dateStr) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  return dateStr < today;
+}
+
 /**
- * Fetches upcoming appointments
+ * Fetches upcoming appointments with optional incremental sync.
+ * When `cached` is provided, the server skips expensive work for past and unchanged appointments.
  * @param includeAll - If true, fetches all offers; if false, only fetches active offers (Finished/Published)
- * @returns
+ * @param cached - Optional cached appointment entries from the client for incremental sync
  */
 export async function getUpcomingAppointments(
   cookies: string,
   includeAll: boolean = false,
+  cached?: CachedAppointmentEntry[],
 ) {
   try {
     let offers = (await fetchOffers(cookies)).results;
-    // So far it seems that the default state once you get the offer is either 'Finished' or 'Published'
-    // there may be other state values used that represents same state
 
     if (!includeAll) {
       offers = offers.filter(
@@ -256,46 +263,80 @@ export async function getUpcomingAppointments(
       );
     }
 
+    const cacheMap = new Map(
+      (cached ?? []).map((entry) => [entry.offerId, entry]),
+    );
+
     const currentYear = new Date().getFullYear().toString();
 
-    const offersWithResidenceAndThread = await Promise.all(
+    const results = await Promise.all(
       offers.map(async (offer) => {
         if (!offer.residenceId || !offer.id) {
           return null;
         }
+
+        const cachedEntry = cacheMap.get(offer.id);
+
+        // Path 1: Past appointment with cached data — echo back as-is
+        if (cachedEntry && isDateInPast(cachedEntry.date)) {
+          return cachedEntry.appointment;
+        }
+
+        // Fetch thread (needed for Path 2 comparison and Path 3 extraction)
         const [residence, thread, position] = await Promise.all([
           getResidence(offer.residenceId, cookies),
           getThreadForOffer(offer.id, cookies),
           getPositionOnOffer(offer.id, cookies).catch(() => null),
         ]);
+
         if (!thread) {
           return null;
         }
+
+        // Path 2: Unchanged thread — skip LLM, reuse cached details
+        if (
+          cachedEntry &&
+          thread.messages.length === cachedEntry.messageCount
+        ) {
+          const details = {
+            date: cachedEntry.appointment.date ?? "",
+            startTime: cachedEntry.appointment.start ?? "",
+            endTime: cachedEntry.appointment.end ?? "",
+            cancelled: cachedEntry.appointment.cancelled,
+          };
+          return mapAppointmentToDomain({
+            offer,
+            residence,
+            details,
+            position,
+            messageCount: thread.messages.length,
+          });
+        }
+
+        // Path 3: New or changed — full LLM extraction
         let details = await extractAppointmentDetailsWithLLM(thread, currentYear);
 
-        // Fallback: if no date from thread messages, try the offer's showingText
         if (!details.date && offer.showingText) {
           const showingDetails = await extractAppointmentDetailsFromShowingText(
             offer.showingText,
             currentYear,
           );
-          // Only use showing text details if we got a date WITH times
-          // (a date without times likely means the LLM picked up a deadline/move-in date)
           if (showingDetails.date && (showingDetails.startTime || showingDetails.endTime)) {
             details = showingDetails;
           }
         }
-        const domainAppointment = mapAppointmentToDomain({
+
+        return mapAppointmentToDomain({
           offer,
           residence,
           details,
           position,
+          messageCount: thread.messages.length,
         });
-        return domainAppointment;
       }),
     );
 
-    return offersWithResidenceAndThread.filter(
+    return results.filter(
       (a): a is NonNullable<typeof a> => a !== null,
     );
   } catch (error) {
