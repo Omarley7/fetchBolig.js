@@ -1,4 +1,4 @@
-import type { Appointment, UserData } from "@/types";
+import type { Appointment, CachedAppointmentEntry, SyncAppointmentsRequest, UserData } from "@/types";
 import mockAppointmentsJson from "~/data/MOCK_APPOINTMENTS.json";
 
 import config from "~/config";
@@ -87,6 +87,31 @@ export async function fetchAppointments(includeAll: boolean = false): Promise<{
     console.error("Failed to fetch appointments:", error);
     throw error;
   }
+}
+
+export async function syncAppointments(
+  cached: CachedAppointmentEntry[],
+  includeAll: boolean = false,
+): Promise<{
+  updatedAt: Date;
+  appointments: Appointment[];
+}> {
+  const body: SyncAppointmentsRequest = { cached, includeAll };
+  const result = await fetchWithTimeout(
+    `${config.backendDomain}/api/appointments/sync`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    },
+    TIMEOUT_APPOINTMENTS,
+  );
+  if (!result.ok) {
+    throw new HttpError(`Failed to sync appointments: ${result.status}`, result.status);
+  }
+  const data = await result.json();
+  return { updatedAt: new Date(), appointments: data as Appointment[] };
 }
 
 export async function login(
