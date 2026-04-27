@@ -8,11 +8,13 @@ export function mapAppointmentToDomain({
   residence,
   details,
   position,
+  messageCount,
 }: {
   offer: ApiOffer;
   residence: Residence;
   details: AppointmentDetails;
   position: number | null;
+  messageCount: number;
 }): Appointment {
   const recipient = offer.recipients?.[0];
   return {
@@ -43,6 +45,7 @@ export function mapAppointmentToDomain({
     recipientState: recipient?.state ?? null,
     accepted: recipient?.accepted ?? null,
     declined: recipient?.declined ?? null,
+    messageCount,
   };
 }
 
