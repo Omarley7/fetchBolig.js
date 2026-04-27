@@ -7,6 +7,7 @@ import { useAuth } from "~/composables/useAuth";
 const auth = useAuth();
 const { t } = useI18n();
 const password = ref("");
+const showPassword = ref(false);
 const isLogoutModalOpen = ref(false);
 
 async function handleLogin() {
@@ -88,15 +89,24 @@ function confirmLogout() {
               />
             </div>
 
-            <div class="flex flex-col gap-2">
+            <div class="relative flex flex-col gap-2">
               <input
                 id="password"
                 v-model="password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 :placeholder="t('landing.passwordPlaceholder')"
                 :disabled="auth.isLoading"
-                class="disabled:opacity-50 px-3 py-2 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent"
+                class="disabled:opacity-50 px-3 py-2 pr-10 border border-violet-200 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-transparent"
               />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                tabindex="-1"
+              >
+                <img v-if="showPassword" src="/icons/eye-off.svg" alt="Hide password" class="size-5 dark:invert opacity-60" />
+                <img v-else src="/icons/eye.svg" alt="Show password" class="size-5 dark:invert opacity-60" />
+              </button>
             </div>
 
             <button
