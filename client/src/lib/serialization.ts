@@ -10,6 +10,7 @@ export function deserializeAppointments(data: any[]): Appointment[] {
     // start and end are already strings (HH:mm format)
     // Derive offerId from id if missing (e.g. stale cache from before offerId was added)
     offerId: item.offerId ?? item.id?.replace(/^DEAS-O-/, "") ?? "",
+    messageCount: item.messageCount ?? 0,
   }));
 }
 
