@@ -15,6 +15,7 @@ export type Appointment = {
   recipientState: string | null;
   accepted: string | null;
   declined: string | null;
+  messageCount?: number;
 };
 
 export type Financials = {
@@ -53,4 +54,16 @@ export type Offer = {
   images: string[];
   blueprints: string[];
   position: number | null;
+};
+
+export type CachedAppointmentEntry = {
+  offerId: string;
+  messageCount: number;
+  date: string | null;
+  appointment: Appointment;
+};
+
+export type SyncAppointmentsRequest = {
+  cached: CachedAppointmentEntry[];
+  includeAll: boolean;
 };
