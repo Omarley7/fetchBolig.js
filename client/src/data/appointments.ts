@@ -1,6 +1,7 @@
+import type { CachedAppointmentEntry } from "@/types";
 import { deserializeAppointmentsPayload } from "~/lib/serialization";
 import { useToastStore } from "~/stores/toast";
-import { fetchAppointments } from "./appointmentsSource";
+import { fetchAppointments, syncAppointments } from "./appointmentsSource";
 
 const STORAGE_KEY = "appointments_cache";
 
@@ -22,6 +23,23 @@ export function isCacheStale(thresholdMs = 24 * 60 * 60 * 1000): boolean {
   return age > thresholdMs;
 }
 
+function buildCacheEntries(): CachedAppointmentEntry[] {
+  const cached = localStorage.getItem(STORAGE_KEY);
+  if (!cached) return [];
+  try {
+    const parsed = JSON.parse(cached);
+    const appointments = parsed.appointments ?? [];
+    return appointments.map((appt: any) => ({
+      offerId: appt.offerId ?? appt.id?.replace(/^DEAS-O-/, "") ?? "",
+      messageCount: appt.messageCount ?? 0,
+      date: appt.date ?? null,
+      appointment: appt,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getAppointments(forceRefresh: boolean = false, includeAll: boolean = false) {
   if (!forceRefresh) {
     const cached = localStorage.getItem(STORAGE_KEY);
@@ -36,7 +54,10 @@ export async function getAppointments(forceRefresh: boolean = false, includeAll:
     }
   }
 
-  const payload = await fetchAppointments(includeAll);
+  const cacheEntries = buildCacheEntries();
+  const payload = cacheEntries.length > 0
+    ? await syncAppointments(cacheEntries, includeAll)
+    : await fetchAppointments(includeAll);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   return payload;
 }
