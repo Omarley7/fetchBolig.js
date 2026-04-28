@@ -7,7 +7,9 @@
     "backToHome": "Tilbage til forsiden",
     "day": "Dag",
     "week": "Uge",
-    "month": "Måned"
+    "month": "Måned",
+    "today": "I dag",
+    "tomorrow": "I morgen"
   },
   "appointments": {
     "emptyTitle": "Ingen kommende aftaler",

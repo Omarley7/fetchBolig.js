@@ -7,7 +7,9 @@
     "backToHome": "Back to home",
     "day": "Day",
     "week": "Week",
-    "month": "Month"
+    "month": "Month",
+    "today": "Today",
+    "tomorrow": "Tomorrow"
   },
   "appointments": {
     "emptyTitle": "No upcoming appointments",

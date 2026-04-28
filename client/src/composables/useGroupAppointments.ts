@@ -64,6 +64,15 @@ export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: 
         break;
     }
 
+    // Sort appointments within each group ascending by date then start time
+    for (const [, items] of groups) {
+      items.sort((a, b) => {
+        const dateComp = (a.date ?? "").localeCompare(b.date ?? "");
+        if (dateComp !== 0) return dateComp;
+        return (a.start ?? "").localeCompare(b.start ?? "");
+      });
+    }
+
     // Sort groups by date, with non-parseable dates last
     return groups.sort(([keyA], [keyB]) => {
       // Check if keys are the special NO_DATE_KEY
@@ -82,8 +91,8 @@ export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: 
       if (isValidA && !isValidB) return -1;
       if (!isValidA && !isValidB) return 0;
 
-      // Both valid, sort chronologically (newest first)
-      return dateB.getTime() - dateA.getTime();
+      // Both valid, sort chronologically (soonest first)
+      return dateA.getTime() - dateB.getTime();
     });
   });
 
@@ -95,8 +104,13 @@ export function useGroupAppointments(appointments: Ref<Appointment[]>, groupBy: 
     }
     const loc = unref(locale);
     switch (groupBy.value) {
-      case "day":
+      case "day": {
+        const today = new Date().toISOString().slice(0, 10);
+        const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+        if (key === today) return t("common.today");
+        if (key === tomorrow) return t("common.tomorrow");
         return formatDay(key, loc);
+      }
       case "week":
         return formatWeek(key, loc, t("common.week"));
       case "month":
