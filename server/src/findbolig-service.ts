@@ -2,13 +2,14 @@ import "dotenv/config";
 
 import type { CachedAppointmentEntry } from "@/types";
 import { UserData } from "@/types";
-import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain, mapOfferToDomain } from "~/lib/findbolig-domain";
+import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain, mapOfferToDomain, mapWaitingListToDomain } from "~/lib/findbolig-domain";
 import type { ApiOffer, ApiOffersPage, ApiUserData } from "~/types/offers";
 import type { ApiResidence } from "~/types/residences";
 import type {
   ApiMessageThreadFull,
   ApiMessageThreadsPage,
 } from "~/types/threads";
+import type { ApiPositionForProperty, ApiPropertySearchPage, ApiResidenceApplication } from "~/types/waiting-lists";
 import { extractAppointmentDetailsWithLLM, extractAppointmentDetailsFromShowingText } from "./lib/llm/openai-extractor";
 
 const BASE_URL = "https://findbolig.nu";
@@ -453,4 +454,141 @@ export async function refreshSession(cookies: string) {
 
   // Return the mapped user data together with any Set-Cookie headers
   return apiUserDataToDomain(await res.json() as ApiUserData, res.headers.getSetCookie() ?? []);
+}
+
+/** Fetches raw residence-application rows (one per applied residence) for the current user. */
+export async function fetchResidenceApplications(cookies: string): Promise<ApiResidenceApplication[]> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/residence-applications`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to fetch residence applications: ${res.status}`,
+      res.status,
+    );
+  }
+
+  return (await res.json()) as ApiResidenceApplication[];
+}
+
+/** Fetches property metadata for a batch of propertyIds using the search endpoint. */
+export async function searchPropertiesByIds(
+  propertyIds: string[],
+  cookies: string,
+): Promise<ApiPropertySearchPage["results"]> {
+  if (propertyIds.length === 0) return [];
+
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/search`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+      body: JSON.stringify({
+        filters: { propertyId: propertyIds },
+        mixedResults: true,
+        pageSize: propertyIds.length,
+      }),
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to search properties: ${res.status}`,
+      res.status,
+    );
+  }
+
+  const data = (await res.json()) as ApiPropertySearchPage;
+  return data.results ?? [];
+}
+
+/** Fetches the user's waiting-list position info for a property. Shape varies; see extractBestPosition. */
+export async function getPositionForProperty(
+  propertyId: string,
+  cookies: string,
+): Promise<ApiPositionForProperty | null> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/search/waiting-lists/applicants/position-for-property/${propertyId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to fetch position for property ${propertyId}: ${res.status}`,
+      res.status,
+    );
+  }
+
+  const text = await res.text();
+  if (!text) return null;
+  return JSON.parse(text) as ApiPositionForProperty;
+}
+
+/** Reactivates a waiting list (property-level). */
+export async function setWaitingListActive(propertyId: string, cookies: string): Promise<void> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/residence-applications/property/${propertyId}/set-active`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to set waiting list active for property ${propertyId}: ${res.status}`,
+      res.status,
+    );
+  }
+}
+
+/** Unsubscribes the user from a waiting list (property-level). Upstream returns 204. */
+export async function unsubscribeFromWaitingList(propertyId: string, cookies: string): Promise<void> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/residence-applications/property/${propertyId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to unsubscribe from waiting list for property ${propertyId}: ${res.status}`,
+      res.status,
+    );
+  }
 }
