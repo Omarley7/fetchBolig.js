@@ -231,7 +231,7 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
 
     const succeeded = passive.length - failed.length;
     if (failed.length === 0) {
-      toast.success(t("waitingLists.actions.reactivateAllSuccess", { count: succeeded }, succeeded));
+      toast.success(t("waitingLists.actions.reactivateAllSuccess", { count: succeeded }));
     } else {
       toast.warning(
         t("waitingLists.actions.reactivateAllPartial", {
