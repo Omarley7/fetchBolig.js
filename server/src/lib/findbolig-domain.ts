@@ -1,7 +1,8 @@
-import type { Appointment, Offer, RecipientState, UserData } from "@/types";
+import type { Appointment, Offer, RecipientState, UserData, WaitingList, WaitingListStatus } from "@/types";
 import type { AppointmentDetails } from "~/lib/llm/openai-extractor";
 import type { ApiOffer, ApiUserData } from "~/types/offers";
 import type { ApiResidence, Residence } from "~/types/residences";
+import type { ApiPositionForProperty, ApiPropertySearchResult, ApiResidenceApplication } from "~/types/waiting-lists";
 
 export function mapAppointmentToDomain({
   offer,
@@ -84,6 +85,87 @@ export function mapOfferToDomain({
     images: residence.images,
     blueprints: residence.blueprints,
     position,
+  };
+}
+
+/**
+ * The position-for-property endpoint may return:
+ *   - a bare number ("your best position is X")
+ *   - { position: X }
+ *   - an array of { residenceId, position } per applied residence
+ * We accept all three and return the lowest (best) position or null.
+ */
+function extractBestPosition(raw: ApiPositionForProperty): number | null {
+  if (raw == null) return null;
+  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
+  if (typeof raw === "object" && raw !== null) {
+    if (Array.isArray(raw)) {
+      const positions = raw
+        .map((r: any) => (typeof r?.position === "number" ? r.position : null))
+        .filter((n): n is number => n !== null && Number.isFinite(n));
+      return positions.length ? Math.min(...positions) : null;
+    }
+    const single = (raw as any).position;
+    if (typeof single === "number" && Number.isFinite(single)) return single;
+  }
+  return null;
+}
+
+export function mapWaitingListToDomain({
+  applications,
+  property,
+  position,
+  imageBaseUrl,
+}: {
+  applications: ApiResidenceApplication[];   // all rows for one propertyId
+  property: ApiPropertySearchResult;
+  position: ApiPositionForProperty | null;
+  imageBaseUrl?: string;                     // unused, but reserved if we want to absolute-ify
+}): WaitingList {
+  if (applications.length === 0) {
+    throw new Error(`mapWaitingListToDomain called with empty applications for property ${property.id}`);
+  }
+
+  // Status: any-Active → Active, all-Passive → Passive (matches property-level set-active semantic)
+  const status: WaitingListStatus = applications.some((a) => a.status === "Active") ? "Active" : "Passive";
+
+  // appliedSince: earliest `created`
+  const appliedSince = applications.reduce(
+    (earliest, a) => (a.created < earliest ? a.created : earliest),
+    applications[0].created,
+  );
+
+  return {
+    propertyId: property.id,
+    status,
+    propertyShortId: property.shortId,
+    name: property.name,
+    address: property.propertyAddress,
+    city: property.city,
+    postalCode: property.postalCode,
+    location: { latitude: property.latitude, longitude: property.longitude },
+    images: property.media.images,
+    blueprints: property.media.blueprints,
+    minRent: property.minRent,
+    maxRent: property.maxRent,
+    minRooms: property.minRooms,
+    maxRooms: property.maxRooms,
+    minArea: property.minArea,
+    maxArea: property.maxArea,
+    residencesCount: property.residencesCount,
+    residencesAppliedCount: applications.length,
+    bestPosition: extractBestPosition(position),
+    appliedSince,
+    organization: {
+      id: property.propertyOrganizationId,
+      name: property.propertyOrganizationName,
+      logoUrl: property.organizationLogo ?? null,
+    },
+    company: {
+      id: property.propertyCompanyId,
+      name: property.propertyCompanyName,
+      logoUrl: property.companyLogo ?? null,
+    },
   };
 }
 
