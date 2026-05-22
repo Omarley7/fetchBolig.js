@@ -67,3 +67,52 @@ export type SyncAppointmentsRequest = {
   cached: CachedAppointmentEntry[];
   includeAll: boolean;
 };
+
+export type WaitingListStatus = "Active" | "Passive";
+
+export type WaitingList = {
+  propertyId: string;
+  status: WaitingListStatus;
+
+  // Property metadata (from /api/search)
+  propertyShortId: number;             // for building the findbolig.nu link
+  name: string;                        // e.g. "Hasselgården"
+  address: string;                     // e.g. "Ålekistevej 59. m. fl, 2720 Vanløse"
+  city: string;
+  postalCode: number;
+  location: { latitude: number; longitude: number } | null;
+  images: string[];                    // residence photos, [0] is hero
+  blueprints: string[];
+
+  // Rent / size range
+  minRent: number;
+  maxRent: number;
+  minRooms: number;
+  maxRooms: number;
+  minArea: number;
+  maxArea: number;
+  residencesCount: number;             // total residences in property
+
+  // User's application footprint
+  residencesAppliedCount: number;
+  bestPosition: number | null;
+  appliedSince: string;                // ISO
+
+  organization: {
+    id: string;
+    name: string;
+    logoUrl: string | null;
+  };
+  company: {
+    id: string;
+    name: string;
+    logoUrl: string | null;
+  };
+};
+
+// Client-side persisted snapshot for status-flip detection
+export type WaitingListSnapshot = {
+  propertyId: string;
+  status: WaitingListStatus;
+  observedAt: string;
+};
