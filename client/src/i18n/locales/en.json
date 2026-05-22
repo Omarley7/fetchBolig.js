@@ -60,6 +60,56 @@
     "respondBefore": "Would you like to be considered?",
     "refresh": "Refresh"
   },
+  "waitingLists": {
+    "pageTitle": "Waiting lists",
+    "count": "{count} waiting list | {count} waiting lists",
+    "refresh": "Refresh",
+    "emptyTitle": "You are not on any waiting lists",
+    "emptyDescription": "Find properties on FindBolig.nu and sign up to a waiting list to receive offers.",
+    "groups": {
+      "passive": "Passive",
+      "active": "Active"
+    },
+    "card": {
+      "bestPosition": "Best position",
+      "noPosition": "—",
+      "residencesApplied": "Signed up for {count} residence | Signed up for {count} residences",
+      "rentRange": "{min} – {max} kr/mo",
+      "statusActive": "Active",
+      "statusPassive": "Passive",
+      "reactivate": "Set active"
+    },
+    "detail": {
+      "rent": "Rent",
+      "rooms": "{min}–{max} rooms",
+      "area": "{min}–{max} m²",
+      "appliedSince": "Applied since {date}",
+      "openOnFindbolig": "Open on findbolig.nu",
+      "dangerZone": "Danger zone",
+      "unsubscribe": "Remove me from waiting list"
+    },
+    "actions": {
+      "reactivateAll": "Reactivate all",
+      "reactivating": "Reactivating {done} of {total}…",
+      "reactivateAllSuccess": "{count} waiting list reactivated | {count} waiting lists reactivated",
+      "reactivateAllPartial": "{done} of {total} reactivated — {failed} failed",
+      "reactivateSuccess": "{name} is now active",
+      "reactivateFailed": "Could not reactivate {name}",
+      "unsubscribeSuccess": "You have been removed from {name}",
+      "unsubscribeFailed": "Could not remove you from {name}"
+    },
+    "banner": {
+      "title": "You have been set passive",
+      "body": "{count} waiting list has gone passive since last refresh. Reactivate it to keep receiving offers. | {count} waiting lists have gone passive since last refresh. Reactivate them to keep receiving offers.",
+      "dismiss": "Dismiss"
+    },
+    "confirm": {
+      "unsubscribeTitle": "Remove yourself from {name}?",
+      "unsubscribeBody": "You will lose your seniority and have to start over if you re-apply. This cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Remove me"
+    }
+  },
   "financials": {
     "rent": "Rent",
     "perMonth": "per month",
@@ -105,7 +155,8 @@
   "nav": {
     "home": "Home",
     "appointments": "Appointments",
-    "offers": "Offers"
+    "offers": "Offers",
+    "waitingLists": "Waiting lists"
   },
   "landing": {
     "tagline": "A better dashboard for your FindBolig.nu account",
