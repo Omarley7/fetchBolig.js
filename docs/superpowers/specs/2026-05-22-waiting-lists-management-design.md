@@ -210,6 +210,8 @@ waitingLists.delete("/:propertyId", async (c) => {
 
 All wrapped in `withReauth`. No bulk endpoint server-side — the client fans out parallel `set-active` calls to keep the server stateless and let the client own progress UI.
 
+**Known interaction with `withReauth`:** each parallel client→server POST is a separate server request that passes through `withReauth` independently. If the upstream findbolig session has expired, each request will observe a 401 and call `login()` on findbolig.nu concurrently — multiplying re-auth traffic by the fan-out factor (up to 5). The browser cookie ends up set to whichever sealed-session response finishes last, which is fine because all are valid sessions for the same user. Functionally correct but wasteful in this edge case. Acceptable for v1 given typical bulk sizes (a handful of properties); if it becomes a problem, the plan can introduce a single warm-up call before fan-out.
+
 ## Frontend
 
 ### Route
@@ -252,14 +254,22 @@ state:
 actions:
   init()                          // load cache, queue refresh if stale
   refresh()                       // hard refetch + run snapshot diff
-  setActive(propertyId)           // optimistic: flip locally → POST → on failure revert + toast
+  setActive(propertyId)           // optimistic: flip locally + persistWaitingListsCache → POST →
+                                  //   on failure revert + persist again + toast
   reactivateAll()                 // gather Passive ids, p-limit(5) parallel setActive calls,
-                                  //   progress toast "Reactivating X of N", final summary toast
+                                  //   counter rendered on the in-progress button ("Aktiverer X af N"),
+                                  //   final summary toast
   unsubscribe(propertyId)         // confirmation lives in component; this just runs DELETE,
-                                  //   removes from `lists` on success
-  dismissPassivatedBanner()       // clears recentlyPassivated[]
-  getImageUrl(path)               // same as offers
+                                  //   removes from `lists` + persistWaitingListsCache on success
+  dismissPassivatedBanner()       // clears recentlyPassivated[] in memory only
+  getImageUrl(path)               // same as offers — used both for property images and org logos
+                                  //   (organization.logoUrl, company.logoUrl)
 ```
+
+**State persistence summary:**
+- `lists` is mirrored to localStorage cache after every successful mutation (`setActive`, `unsubscribe`) — same invariant offers maintains via `persistOffersCache`.
+- `recentlyPassivated` is **in-memory only**. The snapshot diff already encodes the "since-last-refresh" semantic: once snapshots are overwritten at the end of a refresh, the next refresh won't re-detect the same transition. Persisting `recentlyPassivated` would just duplicate that signal and risk going stale.
+- `WaitingListSnapshot[]` is the only piece of state that persists *for diffing purposes* across sessions.
 
 ### Composable: `useGroupWaitingLists(lists)`
 
@@ -278,7 +288,9 @@ Returns `{ key: "Passive" | "Active", label, lists, isFirst }[]`:
 
 **`components/waitingList/WaitingListsList.vue`** — calls `store.init()` on mount. Loading skeletons (reuse `CompactCardSkeleton`). Passes grouped lists to `WaitingListGroup`. Empty state when no lists.
 
-**`components/waitingList/WaitingListGroup.vue`** — reuses `AppointmentGroup`/`OfferGroup` collapsible header pattern. The Passive group's header includes a small "Reactivate all" button (visible only when `lists.length > 0` and `key === "Passive"`); fires `store.reactivateAll()`. Grid layout: 1 col mobile, 2 cols desktop.
+**`components/waitingList/WaitingListGroup.vue`** — reuses `AppointmentGroup`/`OfferGroup` collapsible header pattern. The Passive group's header includes a small "Reactivate all" button (visible only when `lists.length > 0` and `key === "Passive"`); fires `store.reactivateAll()`. While the bulk action runs, the button text is replaced with a live counter ("Aktiverer X af N") driven by store state. Grid layout: 1 col mobile, 2 cols desktop.
+
+**No map button on the group header.** Offers and appointments include one because those are geographic, time-bounded decisions ("which open house should I attend?"). Waiting lists are not actionable on a map — you don't go to them — so the affordance is deliberately omitted in v1.
 
 **`components/waitingList/WaitingListCard.vue`** — compact card. Shows:
 - Thumbnail (`compactThumb` transform)
@@ -295,7 +307,7 @@ Returns `{ key: "Passive" | "Active", label, lists, isFirst }[]`:
 - Image gallery (Swiper) + photo count
 - Title, full address with map link
 - Rent / area / rooms ranges
-- Best position, residences applied, applied-since date
+- Best position, residences applied, applied-since date (the only place `appliedSince` is surfaced)
 - Org chip
 - Action area adapts to status (Passive → prominent "Meld mig aktiv"; Active → muted status text)
 - "Åbn på findbolig.nu" link → `https://findbolig.nu/property/${propertyShortId}`
