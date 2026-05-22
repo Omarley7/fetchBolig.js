@@ -592,3 +592,75 @@ export async function unsubscribeFromWaitingList(propertyId: string, cookies: st
     );
   }
 }
+
+/** Minimal concurrency limiter — runs at most `limit` tasks in parallel, preserving input order. */
+async function pLimit<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let cursor = 0;
+
+  async function worker() {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      results[i] = await fn(items[i], i);
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(limit, items.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
+}
+
+/**
+ * Aggregates per-residence application rows into per-property WaitingList objects,
+ * enriching with property metadata (from /api/search) and best-position info.
+ */
+export async function getWaitingLists(cookies: string) {
+  const applications = await fetchResidenceApplications(cookies);
+
+  // Group by propertyId
+  const byProperty = new Map<string, ApiResidenceApplication[]>();
+  for (const app of applications) {
+    const list = byProperty.get(app.propertyId);
+    if (list) list.push(app);
+    else byProperty.set(app.propertyId, [app]);
+  }
+
+  const propertyIds = Array.from(byProperty.keys());
+  if (propertyIds.length === 0) return [];
+
+  // One batched search for all properties
+  const properties = await searchPropertiesByIds(propertyIds, cookies);
+  const propertyById = new Map(properties.map((p) => [p.id, p]));
+
+  // Per-property position fetches with concurrency cap 5
+  const positions = await pLimit(propertyIds, 5, async (propertyId) => {
+    try {
+      return await getPositionForProperty(propertyId, cookies);
+    } catch (err) {
+      console.warn(`Position fetch failed for ${propertyId}:`, err);
+      return null;
+    }
+  });
+
+  // Map and merge
+  const lists = propertyIds.map((propertyId, i) => {
+    const property = propertyById.get(propertyId);
+    if (!property) {
+      console.warn(`No property metadata found for ${propertyId} — skipping`);
+      return null;
+    }
+    const apps = byProperty.get(propertyId)!;
+    return mapWaitingListToDomain({
+      applications: apps,
+      property,
+      position: positions[i],
+    });
+  });
+
+  return lists.filter((l): l is NonNullable<typeof l> => l !== null);
+}
