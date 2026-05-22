@@ -47,6 +47,7 @@ const threads = new Hono().basePath("/threads");
 const users = new Hono().basePath("/users");
 const residences = new Hono().basePath("/residence");
 const appointments = new Hono().basePath("/appointments");
+const waitingLists = new Hono().basePath("/waiting-lists");
 
 const ALLOWED_ORIGINS =
   process.env.NODE_ENV === "production"
@@ -264,12 +265,50 @@ residences.get("/:residenceId", async (c) => {
   }
 });
 
+waitingLists.get("/", async (c) => {
+  try {
+    const result = await withReauth(c, (cookies) =>
+      findboligService.getWaitingLists(cookies)
+    );
+    return c.json(result);
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
+waitingLists.post("/:propertyId/set-active", async (c) => {
+  try {
+    const propertyId = c.req.param("propertyId");
+    if (!propertyId) return c.json({ error: "Property ID is required" }, 400);
+    await withReauth(c, (cookies) =>
+      findboligService.setWaitingListActive(propertyId, cookies)
+    );
+    return c.json({ ok: true });
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
+waitingLists.delete("/:propertyId", async (c) => {
+  try {
+    const propertyId = c.req.param("propertyId");
+    if (!propertyId) return c.json({ error: "Property ID is required" }, 400);
+    await withReauth(c, (cookies) =>
+      findboligService.unsubscribeFromWaitingList(propertyId, cookies)
+    );
+    return c.json({ ok: true });
+  } catch (error) {
+    return handleError(c, error);
+  }
+});
+
 api.route("/", auth);
 api.route("/", offers);
 api.route("/", threads);
 api.route("/", users);
 api.route("/", residences);
 api.route("/", appointments);
+api.route("/", waitingLists);
 
 app.route("/api", api);
 
