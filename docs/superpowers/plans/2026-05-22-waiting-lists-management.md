@@ -397,7 +397,7 @@ export async function searchPropertiesByIds(
 export async function getPositionForProperty(
   propertyId: string,
   cookies: string,
-): Promise<ApiPositionForProperty> {
+): Promise<ApiPositionForProperty | null> {
   const res = await fetchWithTimeout(
     `${BASE_URL}/api/search/waiting-lists/applicants/position-for-property/${propertyId}`,
     {
@@ -419,7 +419,7 @@ export async function getPositionForProperty(
   }
 
   const text = await res.text();
-  if (!text) return null as unknown as ApiPositionForProperty;
+  if (!text) return null;
   return JSON.parse(text) as ApiPositionForProperty;
 }
 ```
@@ -665,15 +665,20 @@ cd server && npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 5: Manual server smoke test (optional but recommended)**
+- [ ] **Step 5: Manual server smoke test (required — this is the only end-to-end gate before client work)**
 
-Start the server (`npm run dev:server`), then in another shell, with a valid session cookie:
+Start the server (`npm run dev:server`), log in via the client at least once so a session cookie is set, then with that cookie:
 
 ```bash
 curl -i --cookie "fb_session=<your-session-cookie>" http://localhost:3000/api/waiting-lists/
 ```
 
-Expected: 200 with a JSON array of `WaitingList` objects (or an empty array if you have no applications).
+Expected: 200 with a JSON array of `WaitingList` objects (or `[]` if you have no applications). At least confirm:
+- `propertyId`, `status`, `name`, `address` are populated on each entry
+- `bestPosition` is either a number or `null` (never `undefined`)
+- `organization.name` and `organization.logoUrl` are populated
+
+If any field is missing or the shape diverges, fix the mapper or `extractBestPosition` before moving on.
 
 - [ ] **Step 6: Commit**
 
@@ -717,6 +722,7 @@ Insert after the existing `offers` block in `client/src/i18n/locales/da.json` (b
     "reactivate": "Meld mig aktiv"
   },
   "detail": {
+    "rent": "Husleje",
     "rooms": "{min}–{max} værelser",
     "area": "{min}–{max} m²",
     "appliedSince": "Skrevet op siden {date}",
@@ -773,6 +779,7 @@ Same key structure, English translation:
     "reactivate": "Set active"
   },
   "detail": {
+    "rent": "Rent",
     "rooms": "{min}–{max} rooms",
     "area": "{min}–{max} m²",
     "appliedSince": "Applied since {date}",
@@ -1306,6 +1313,7 @@ import {
   persistWaitingListsCache,
 } from "~/data/waitingLists";
 import {
+  fetchWaitingLists,
   setWaitingListActive as apiSetActive,
   unsubscribeFromWaitingList as apiUnsubscribe,
 } from "~/data/waitingListsSource";
@@ -1331,31 +1339,27 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
   async function init() {
     const auth = useAuth();
 
-    if (auth.isDemo) {
-      isLoading.value = true;
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      const { fetchWaitingLists } = await import("~/data/waitingListsSource");
-      const payload = await fetchWaitingLists();
-      lists.value = payload.lists;
-      updatedAt.value = payload.updatedAt;
-      // Seed the banner once on demo first-mount: pretend the Passive ones just flipped.
-      recentlyPassivated.value = payload.lists.filter((l) => l.status === "Passive").map((l) => l.propertyId);
-      isLoading.value = false;
-      return;
-    }
-
     isLoading.value = true;
     try {
+      // Cache-first (same path for demo and real — config.useMockData inside fetchWaitingLists handles the demo case)
       const cached = await getWaitingLists(false);
       lists.value = cached.lists;
       updatedAt.value = cached.updatedAt;
 
-      if (!auth.isAuthenticated) {
+      // Demo: seed the banner once on first ever mount so the demo user can see the alert UI.
+      if (auth.isDemo && getSnapshots().length === 0) {
+        recentlyPassivated.value = cached.lists
+          .filter((l) => l.status === "Passive")
+          .map((l) => l.propertyId);
+        persistSnapshots(buildSnapshots(cached.lists));
+      }
+
+      if (!auth.isDemo && !auth.isAuthenticated) {
         sessionExpired.value = true;
         return;
       }
 
-      if (isWaitingListsCacheStale()) {
+      if (!auth.isDemo && isWaitingListsCacheStale()) {
         const sessionValid = await auth.ensureSession();
         if (sessionValid) {
           needsRefresh.value = true;
@@ -1364,7 +1368,7 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
         }
       }
     } catch {
-      if (!auth.isAuthenticated) return;
+      if (!auth.isDemo && !auth.isAuthenticated) return;
       try {
         const payload = await getWaitingLists(true);
         lists.value = payload.lists;
@@ -1386,7 +1390,8 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
 
     if (auth.isDemo) {
       await new Promise((resolve) => setTimeout(resolve, 600));
-      // Demo refresh keeps current lists; banner already shown on first init.
+      // Demo refresh keeps current lists but bumps timestamp so the page header updates.
+      updatedAt.value = new Date();
       isLoading.value = false;
       return;
     }
@@ -1422,6 +1427,7 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
   }
 
   function runDiff(newLists: WaitingList[]) {
+    // detectPassivated handles empty prev snapshots correctly (returns []) — no first-load false alerts.
     const prev = getSnapshots();
     recentlyPassivated.value = detectPassivated(newLists, prev);
     persistSnapshots(buildSnapshots(newLists));
@@ -1444,8 +1450,6 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
       if (!auth.isDemo) await apiSetActive(propertyId);
       // Persist snapshot so we don't re-alert on next refresh
       persistSnapshots(buildSnapshots(lists.value));
-      // Acknowledge in banner
-      recentlyPassivated.value = recentlyPassivated.value.filter((id) => id !== propertyId);
       toast.success(t("waitingLists.actions.reactivateSuccess", { name: list.name }));
       return true;
     } catch (error) {
@@ -1455,6 +1459,8 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
       handleApiError(error, toast, t, t("waitingLists.actions.reactivateFailed", { name: list.name }));
       return false;
     } finally {
+      // Per spec: remove from banner whether success or failure — the user has acknowledged it.
+      recentlyPassivated.value = recentlyPassivated.value.filter((id) => id !== propertyId);
       isMutating.value = false;
     }
   }
@@ -1473,17 +1479,27 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
 
     let cursor = 0;
     const failed: WaitingList[] = [];
+    let sessionExpiredDuringBulk = false;
 
     async function worker() {
       while (true) {
+        // Short-circuit if session died — don't keep firing failing requests.
+        if (sessionExpiredDuringBulk) return;
         const i = cursor++;
         if (i >= passive.length) return;
         const list = passive[i];
         try {
           if (!auth.isDemo) await apiSetActive(list.propertyId);
           list.status = "Active";
+          // Persist after each successful flip so partial progress survives a tab close.
+          persistWaitingListsCache(lists.value, updatedAt.value);
           recentlyPassivated.value = recentlyPassivated.value.filter((id) => id !== list.propertyId);
-        } catch {
+        } catch (error) {
+          if (error instanceof HttpError && error.status === 401) {
+            sessionExpiredDuringBulk = true;
+            failed.push(list);
+            return;
+          }
           failed.push(list);
         } finally {
           bulkDone.value++;
@@ -1502,6 +1518,15 @@ export const useWaitingListsStore = defineStore("waitingLists", () => {
 
     bulkInProgress.value = false;
     isMutating.value = false;
+
+    if (sessionExpiredDuringBulk) {
+      const recovered = await auth.ensureSession();
+      if (!recovered) {
+        sessionExpired.value = true;
+        return;
+      }
+      // Session restored — let the user retry; we don't auto-retry to avoid surprise side effects.
+    }
 
     const succeeded = passive.length - failed.length;
     if (failed.length === 0) {
@@ -1721,13 +1746,31 @@ git commit -m "feat(waiting-lists): add PassivatedBanner component"
 **Files:**
 - Create: `client/src/components/waitingList/card/WaitingListCard.vue`
 
-- [ ] **Step 1: Create the directory and file**
+- [ ] **Step 1: Create the directory, write a stub for the detail sheet, and write the card**
 
 ```bash
-mkdir -p client/src/components/waitingList/card
+mkdir -p client/src/components/waitingList/card client/src/components/waitingList/detail
 ```
 
-Create `client/src/components/waitingList/card/WaitingListCard.vue`:
+`WaitingListCard.vue` (below) imports `../detail/WaitingListDetailSheet.vue`, which is implemented properly in Chunk 4 / Task 17. To keep the build green at the chunk boundary, drop a minimal stub now:
+
+Create `client/src/components/waitingList/detail/WaitingListDetailSheet.vue` with:
+
+```vue
+<script setup lang="ts">
+import type { WaitingList } from "@/types";
+
+defineProps<{ list: WaitingList }>();
+defineEmits<{ close: []; "after-leave": [] }>();
+</script>
+
+<template>
+  <!-- Stub — replaced by full implementation in Task 17 -->
+  <div hidden />
+</template>
+```
+
+Then create `client/src/components/waitingList/card/WaitingListCard.vue`:
 
 ```vue
 <script setup lang="ts">
@@ -1834,7 +1877,14 @@ async function handleReactivate(e: MouseEvent) {
               :src="orgLogoUrl"
               :alt="list.organization.name"
               class="shrink-0 h-3 w-auto opacity-70"
+              :title="list.organization.name"
             />
+            <span
+              v-else
+              class="shrink-0 px-1 text-[0.625rem] font-medium rounded bg-neutral-200 dark:bg-white/10 text-neutral-600 dark:text-neutral-400"
+            >
+              {{ list.organization.name }}
+            </span>
           </div>
           <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">
             {{ list.address }}
@@ -1888,11 +1938,11 @@ async function handleReactivate(e: MouseEvent) {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add client/src/components/waitingList/card/WaitingListCard.vue
-git commit -m "feat(waiting-lists): add WaitingListCard component"
+git add client/src/components/waitingList/card/WaitingListCard.vue client/src/components/waitingList/detail/WaitingListDetailSheet.vue
+git commit -m "feat(waiting-lists): add WaitingListCard with detail sheet stub"
 ```
 
-Note: typecheck will fail until `WaitingListDetailSheet` exists (Task 17). That is expected; we'll typecheck at the chunk boundary.
+The stub keeps `vue-tsc` green during Chunks 3 and 4. Task 17 replaces it with the real implementation.
 
 ---
 
@@ -2485,7 +2535,9 @@ onUnmounted(() => {
             <!-- Rent -->
             <div class="p-3 rounded-xl bg-neutral-100 dark:bg-white/5">
               <p class="text-xs font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-0.5">
-                {{ t("waitingLists.card.rentRange", { min: '', max: '' }).replace(/[–\s]+kr.*/, '').trim() ? '' : '' }}
+                {{ t("waitingLists.detail.rent") }}
+              </p>
+              <p class="text-sm font-medium tabular-nums text-neutral-800 dark:text-neutral-200">
                 {{ t("waitingLists.card.rentRange", { min: formatCurrency(list.minRent), max: formatCurrency(list.maxRent) }) }}
               </p>
             </div>
@@ -2694,15 +2746,19 @@ git commit -m "feat(waiting-lists): add view and route"
 **Files:**
 - Modify: `client/src/components/BottomNav.vue`
 
-- [ ] **Step 1: Confirm an icon exists**
+- [ ] **Step 1: Add a list icon**
 
-Verify that `client/public/icons/` contains an appropriate icon. Use `list.svg` if present; otherwise pick the closest available (e.g. `cloud-download.svg` is already used for offers — pick something distinct).
+`client/public/icons/` doesn't contain a list/queue icon yet. Existing icons (e.g. `calendar-days.svg`, `cloud-download.svg`) are Lucide-style. Add a Lucide list icon at `client/public/icons/list.svg` with this content:
 
-```bash
-ls client/public/icons/ | grep -E "list|queue|users|bookmark"
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
 ```
 
-If `list.svg` is not present, use `bookmark.svg` or `users.svg`. Pick one and stick with it.
+Verify:
+
+```bash
+ls client/public/icons/list.svg
+```
 
 - [ ] **Step 2: Add the nav item**
 
@@ -2713,17 +2769,13 @@ const navItems = [
   { to: "/", icon: "/icons/home.svg", labelKey: "nav.home", exact: true },
   { to: "/appointments", icon: "/icons/calendar-days.svg", labelKey: "nav.appointments" },
   { to: "/offers", icon: "/icons/cloud-download.svg", labelKey: "nav.offers" },
-  { to: "/waiting-lists", icon: "/icons/list.svg", labelKey: "nav.waitingLists" }, // adjust icon path if needed
+  { to: "/waiting-lists", icon: "/icons/list.svg", labelKey: "nav.waitingLists" },
 ];
 ```
 
-(If you picked a different icon in step 1, use its path here.)
-
 - [ ] **Step 3: Add the badge for `recentlyPassivated`**
 
-In the same file, import the store and badge the waiting-lists nav item when there are pending alerts:
-
-Inside `<script setup>`:
+In the same file, import the store inside `<script setup>`:
 
 ```typescript
 import { storeToRefs } from "pinia";
@@ -2733,11 +2785,23 @@ const waitingListsStore = useWaitingListsStore();
 const { recentlyPassivated } = storeToRefs(waitingListsStore);
 ```
 
-Inside the template, on the same `<button>` that renders each nav item, add a badge wrapper. The simplest approach: wrap the icon in a `<div class="relative">` and add a red dot. Place this only on the waiting-lists item:
+In the template, **wrap the existing `<img>` inside each `<button>` with a `<div class="relative">`**, and put the badge `<span>` inside that div — gated by `v-if` on the waiting-lists item so it only renders for that nav button. Apply the wrapper to every button (so layout stays consistent across all four nav entries); the badge itself is per-item.
+
+The relevant section of the template becomes (the `<img>` is the existing one — do not duplicate it):
 
 ```vue
 <div class="relative">
-  <img ... />
+  <img
+    :src="item.icon"
+    :alt="t(item.labelKey)"
+    class="size-5 transition-opacity"
+    :class="(item.exact ? isExactActive : isActive)
+      ? 'opacity-100 dark:invert-0'
+      : 'opacity-50 dark:invert'"
+    :style="(item.exact ? isExactActive : isActive)
+      ? { filter: 'invert(37%) sepia(74%) saturate(1500%) hue-rotate(200deg) brightness(97%) contrast(97%)' }
+      : undefined"
+  />
   <span
     v-if="item.to === '/waiting-lists' && recentlyPassivated.length > 0"
     class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-4 h-4 px-1 text-[0.625rem] font-bold rounded-full bg-red-500 text-white"
@@ -2746,8 +2810,6 @@ Inside the template, on the same `<button>` that renders each nav item, add a ba
   </span>
 </div>
 ```
-
-(Wrap the existing `<img>` in the div; don't duplicate the img.)
 
 - [ ] **Step 4: Commit**
 
@@ -2905,13 +2967,12 @@ If a known-quarantined org refuses set-active, verify the error toast surfaces c
 
 - [ ] **Step 5: Simulate a status flip to test the banner**
 
-In browser devtools console, manually edit the snapshots:
+Load the page first so snapshots are written. Then in browser devtools console, edit the snapshots — pick a propertyId you know is currently Passive on the server:
 
 ```js
 const snaps = JSON.parse(localStorage.getItem("waiting_lists_snapshots"));
-// Pick a propertyId you know is currently Passive on the server.
-// Set its prior snapshot status to "Active":
 const target = snaps.find((s) => s.propertyId === "<some-passive-propertyId>");
+if (!target) throw new Error("Snapshot not found — load /waiting-lists once first.");
 target.status = "Active";
 localStorage.setItem("waiting_lists_snapshots", JSON.stringify(snaps));
 ```
