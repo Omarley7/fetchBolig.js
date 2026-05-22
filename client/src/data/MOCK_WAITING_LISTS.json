@@ -1,0 +1,141 @@
+[
+  {
+    "propertyId": "69303b76-1b87-475c-a329-60ea8b666ecf",
+    "status": "Active",
+    "propertyShortId": 1722,
+    "name": "Hasselgården",
+    "address": "Ålekistevej 59. m. fl, 2720 Vanløse",
+    "city": "Vanløse",
+    "postalCode": 2720,
+    "location": { "latitude": 55.68148, "longitude": 12.4833 },
+    "images": [
+      "/data/media/69303b76-1b87-475c-a329-60ea8b666ecf/165d7b03-818c-474e-9eab-128fb7695bf0.png",
+      "/data/media/69303b76-1b87-475c-a329-60ea8b666ecf/256d4bd7-d76a-4ae6-9cc0-f01061a80c0a.png"
+    ],
+    "blueprints": [],
+    "minRent": 3104.85,
+    "maxRent": 9401,
+    "minRooms": 1,
+    "maxRooms": 3,
+    "minArea": 44,
+    "maxArea": 88,
+    "residencesCount": 69,
+    "residencesAppliedCount": 18,
+    "bestPosition": 333,
+    "appliedSince": "2025-10-16T16:07:05.1260437Z",
+    "organization": {
+      "id": "8d5cb9e8-feba-4bc3-b61b-56fd9d0a42ab",
+      "name": "PFA",
+      "logoUrl": "/sitecore/shell/-/media/findbolig/content/udlejere/pfa/pfa.jpg"
+    },
+    "company": {
+      "id": "37844dfa-4cf2-419b-bbf2-44b4fe5aab58",
+      "name": "PFA (Capital Investment)",
+      "logoUrl": "/data/media/37844dfa-4cf2-419b-bbf2-44b4fe5aab58/46ea5ba8-8f9a-4ab1-a08b-dca72d3b3c7d.png"
+    }
+  },
+  {
+    "propertyId": "8f959523-3e9c-471a-8425-db750c9e2b78",
+    "status": "Passive",
+    "propertyShortId": 1681,
+    "name": "Vodroffsvej 16",
+    "address": "Vodroffsvej 16, 1900 Frederiksberg C",
+    "city": "Frederiksberg C",
+    "postalCode": 1900,
+    "location": { "latitude": 55.67649, "longitude": 12.55454 },
+    "images": [
+      "/data/media/8f959523-3e9c-471a-8425-db750c9e2b78/o_1e7gvpg37s7l1g2ms6k1iu2j1md.jpg"
+    ],
+    "blueprints": [],
+    "minRent": 7365.95,
+    "maxRent": 22468.5,
+    "minRooms": 2,
+    "maxRooms": 3,
+    "minArea": 93.7,
+    "maxArea": 143.3,
+    "residencesCount": 11,
+    "residencesAppliedCount": 2,
+    "bestPosition": null,
+    "appliedSince": "2025-12-01T17:34:53.5591409Z",
+    "organization": {
+      "id": "8d5cb9e8-feba-4bc3-b61b-56fd9d0a42ab",
+      "name": "PFA",
+      "logoUrl": "/sitecore/shell/-/media/findbolig/content/udlejere/pfa/pfa.jpg"
+    },
+    "company": {
+      "id": "d158a575-baa5-436b-8c86-3f87c320273a",
+      "name": "PFA (DEAS)",
+      "logoUrl": "/data/media/d158a575-baa5-436b-8c86-3f87c320273a/49115653-4310-4390-9bbd-3c45383c1318.png"
+    }
+  },
+  {
+    "propertyId": "cc8639df-1e69-42d2-b197-a50f3f1bbc78",
+    "status": "Active",
+    "propertyShortId": 1253,
+    "name": "Enighedsvej 16 & 16 A - B",
+    "address": "Enighedsvej 16, 2920 Charlottenlund",
+    "city": "Charlottenlund",
+    "postalCode": 2920,
+    "location": { "latitude": 55.75298, "longitude": 12.56833 },
+    "images": [
+      "/data/media/cc8639df-1e69-42d2-b197-a50f3f1bbc78/f5004dcb-a45d-437c-956c-e1e0f703411c.jpg",
+      "/data/media/cc8639df-1e69-42d2-b197-a50f3f1bbc78/4875cd95-c385-4f2a-a7ff-0852aa18c79d.jpg"
+    ],
+    "blueprints": [],
+    "minRent": 686.05,
+    "maxRent": 14240.49,
+    "minRooms": 1,
+    "maxRooms": 6,
+    "minArea": 9,
+    "maxArea": 210,
+    "residencesCount": 42,
+    "residencesAppliedCount": 5,
+    "bestPosition": 12,
+    "appliedSince": "2023-04-12T10:30:00Z",
+    "organization": {
+      "id": "116e5561-b5b3-458d-8f68-7729aab755d3",
+      "name": "Sampension",
+      "logoUrl": "/sitecore/shell/-/media/findbolig/content/udlejere/sampension/sampension/sampension_logo_primre_rgb.jpg"
+    },
+    "company": {
+      "id": "5868a396-7fb0-459f-9b2e-00c0ae8d094c",
+      "name": "Sampension",
+      "logoUrl": "/data/media/5868a396-7fb0-459f-9b2e-00c0ae8d094c/d49a0d4c-dac0-4dd4-b451-e4f9ca799f6a.jpg"
+    }
+  },
+  {
+    "propertyId": "9f6b3be9-b383-4989-b967-69b34d827ba3",
+    "status": "Passive",
+    "propertyShortId": 2184,
+    "name": "Vigerslevvej 41-57C",
+    "address": "Vigerslevvej 41-57C, 2500 Valby",
+    "city": "Valby",
+    "postalCode": 2500,
+    "location": { "latitude": 55.66829, "longitude": 12.48835 },
+    "images": [
+      "/data/media/9f6b3be9-b383-4989-b967-69b34d827ba3/2b8144c9-fb8c-4a0c-a9fe-5142cdf28d43.jpg",
+      "/data/media/9f6b3be9-b383-4989-b967-69b34d827ba3/1341e960-ca1f-4e6f-b0d3-c16bc2b8df03.jpg"
+    ],
+    "blueprints": [],
+    "minRent": 2572.85,
+    "maxRent": 12198.16,
+    "minRooms": 1,
+    "maxRooms": 4,
+    "minArea": 58,
+    "maxArea": 104,
+    "residencesCount": 66,
+    "residencesAppliedCount": 8,
+    "bestPosition": 47,
+    "appliedSince": "2024-02-14T09:00:00Z",
+    "organization": {
+      "id": "8d5cb9e8-feba-4bc3-b61b-56fd9d0a42ab",
+      "name": "PFA",
+      "logoUrl": "/sitecore/shell/-/media/findbolig/content/udlejere/pfa/pfa.jpg"
+    },
+    "company": {
+      "id": "37844dfa-4cf2-419b-bbf2-44b4fe5aab58",
+      "name": "PFA (Capital Investment)",
+      "logoUrl": "/data/media/37844dfa-4cf2-419b-bbf2-44b4fe5aab58/46ea5ba8-8f9a-4ab1-a08b-dca72d3b3c7d.png"
+    }
+  }
+]
