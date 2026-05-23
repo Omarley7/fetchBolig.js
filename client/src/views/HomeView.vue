@@ -5,24 +5,30 @@ import LandingSection from "~/components/LandingSection.vue";
 import { useAuth } from "~/composables/useAuth";
 import { getCacheAge } from "~/data/appointments";
 import { getOffersCacheAge } from "~/data/offers";
+import { getWaitingListsCacheAge } from "~/data/waitingLists";
 import { useAppointmentsStore } from "~/stores/appointments";
 import { useOffersStore } from "~/stores/offers";
+import { useWaitingListsStore } from "~/stores/waitingLists";
 
 const auth = useAuth();
 const store = useAppointmentsStore();
 const offersStore = useOffersStore();
+const waitingListsStore = useWaitingListsStore();
 const { t } = useI18n();
 
 const hasCache = computed(() => getCacheAge() !== null);
 const hasOffersCache = computed(() => getOffersCacheAge() !== null);
+const hasWaitingListsCache = computed(() => getWaitingListsCacheAge() !== null);
 
 onMounted(() => {
   if (auth.isAuthenticated || hasCache.value) store.init();
   if (auth.isAuthenticated || hasOffersCache.value) offersStore.init();
+  if (auth.isAuthenticated || hasWaitingListsCache.value) waitingListsStore.init();
 });
 
 const hasAppointments = computed(() => store.appointments.length > 0);
 const offerCount = computed(() => offersStore.offers.length);
+const waitingListsCount = computed(() => waitingListsStore.lists.length);
 const firstName = computed(() => auth.name?.split(" ")[0] || "");
 
 const lastUpdatedText = computed(() => {
@@ -110,6 +116,33 @@ const lastUpdatedText = computed(() => {
           <p class="font-semibold text-neutral-800 dark:text-neutral-100">{{ t("nav.offers") }}</p>
           <p class="text-sm text-neutral-500 dark:text-neutral-400">
             {{ offerCount > 0 ? t("home.viewOffers", [offerCount]) : t("home.checkOffers") }}
+          </p>
+        </div>
+        <img
+          src="/icons/chevron-down.svg"
+          alt=""
+          class="size-5 -rotate-90 opacity-30 dark:invert shrink-0"
+        />
+      </router-link>
+
+      <!-- Waiting lists card -->
+      <router-link
+        to="/waiting-lists"
+        class="w-full flex items-center gap-4 p-4 rounded-xl bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-neutral-700/50 hover:bg-neutral-200/70 dark:hover:bg-white/8 transition-colors text-left relative"
+      >
+        <img src="/icons/list.svg" alt="" class="size-8 dark:invert opacity-60 shrink-0" />
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold text-neutral-800 dark:text-neutral-100 flex items-center gap-2">
+            {{ t("nav.waitingLists") }}
+            <span
+              v-if="waitingListsStore.recentlyPassivated.length > 0"
+              class="inline-flex items-center justify-center min-w-4 h-4 px-1 text-[0.625rem] font-bold rounded-full bg-red-500 text-white"
+            >
+              {{ waitingListsStore.recentlyPassivated.length }}
+            </span>
+          </p>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400">
+            {{ waitingListsCount > 0 ? t("home.viewWaitingLists", [waitingListsCount]) : t("home.checkWaitingLists") }}
           </p>
         </div>
         <img

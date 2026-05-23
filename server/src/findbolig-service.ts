@@ -2,14 +2,15 @@ import "dotenv/config";
 
 import type { CachedAppointmentEntry } from "@/types";
 import { UserData } from "@/types";
-import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain, mapOfferToDomain } from "~/lib/findbolig-domain";
+import { apiResidenceToDomain, apiUserDataToDomain, mapAppointmentToDomain, mapOfferToDomain, mapWaitingListToDomain } from "~/lib/findbolig-domain";
 import type { ApiOffer, ApiOffersPage, ApiUserData } from "~/types/offers";
 import type { ApiResidence } from "~/types/residences";
 import type {
   ApiMessageThreadFull,
   ApiMessageThreadsPage,
 } from "~/types/threads";
-import { extractAppointmentDetailsWithLLM, extractAppointmentDetailsFromShowingText } from "./lib/llm/openai-extractor";
+import type { ApiPositionForProperty, ApiPropertySearchPage, ApiResidenceApplication } from "~/types/waiting-lists";
+import { extractAppointmentDetailsFromShowingText, extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
 
 const BASE_URL = "https://findbolig.nu";
 
@@ -453,4 +454,213 @@ export async function refreshSession(cookies: string) {
 
   // Return the mapped user data together with any Set-Cookie headers
   return apiUserDataToDomain(await res.json() as ApiUserData, res.headers.getSetCookie() ?? []);
+}
+
+/** Fetches raw residence-application rows (one per applied residence) for the current user. */
+export async function fetchResidenceApplications(cookies: string): Promise<ApiResidenceApplication[]> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/residence-applications`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to fetch residence applications: ${res.status}`,
+      res.status,
+    );
+  }
+
+  return (await res.json()) as ApiResidenceApplication[];
+}
+
+/** Fetches property metadata for a batch of propertyIds using the search endpoint. */
+export async function searchPropertiesByIds(
+  propertyIds: string[],
+  cookies: string,
+): Promise<ApiPropertySearchPage["results"]> {
+  if (propertyIds.length === 0) return [];
+
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/search`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+      body: JSON.stringify({
+        filters: { propertyId: propertyIds },
+        mixedResults: true,
+        pageSize: propertyIds.length,
+      }),
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to search properties: ${res.status}`,
+      res.status,
+    );
+  }
+
+  const data = (await res.json()) as ApiPropertySearchPage;
+  return data.results ?? [];
+}
+
+/** Fetches the user's waiting-list position info for a property. Shape varies; see extractBestPosition. */
+export async function getPositionForProperty(
+  propertyId: string,
+  cookies: string,
+): Promise<ApiPositionForProperty | null> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/search/waiting-lists/applicants/position-for-property/${propertyId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to fetch position for property ${propertyId}: ${res.status}`,
+      res.status,
+    );
+  }
+
+  const text = await res.text();
+  if (!text) return null;
+  return JSON.parse(text) as ApiPositionForProperty;
+}
+
+/** Reactivates a waiting list (property-level). Upstream uses PUT and returns 204. */
+export async function setWaitingListActive(propertyId: string, cookies: string): Promise<void> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/residence-applications/property/${propertyId}/set-active`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to set waiting list active for property ${propertyId}: ${res.status}`,
+      res.status,
+    );
+  }
+}
+
+/** Unsubscribes the user from a waiting list (property-level). Upstream returns 204. */
+export async function unsubscribeFromWaitingList(propertyId: string, cookies: string): Promise<void> {
+  const res = await fetchWithTimeout(
+    `${BASE_URL}/api/data/residence-applications/property/${propertyId}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: cookies,
+      },
+    },
+    TIMEOUT_DATA,
+  );
+
+  if (!res.ok) {
+    throw new UpstreamHttpError(
+      `Failed to unsubscribe from waiting list for property ${propertyId}: ${res.status}`,
+      res.status,
+    );
+  }
+}
+
+/** Minimal concurrency limiter — runs at most `limit` tasks in parallel, preserving input order. */
+async function pLimit<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let cursor = 0;
+
+  async function worker() {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      results[i] = await fn(items[i], i);
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(limit, items.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
+}
+
+/**
+ * Aggregates per-residence application rows into per-property WaitingList objects,
+ * enriching with property metadata (from /api/search) and best-position info.
+ */
+export async function getWaitingLists(cookies: string) {
+  const applications = await fetchResidenceApplications(cookies);
+
+  // Group by propertyId
+  const byProperty = new Map<string, ApiResidenceApplication[]>();
+  for (const app of applications) {
+    const list = byProperty.get(app.propertyId);
+    if (list) list.push(app);
+    else byProperty.set(app.propertyId, [app]);
+  }
+
+  const propertyIds = Array.from(byProperty.keys());
+  if (propertyIds.length === 0) return [];
+
+  // One batched search for all properties
+  const properties = await searchPropertiesByIds(propertyIds, cookies);
+  const propertyById = new Map(properties.map((p) => [p.id, p]));
+
+  // Per-property position fetches with concurrency cap 5
+  const positions = await pLimit(propertyIds, 5, async (propertyId) => {
+    try {
+      return await getPositionForProperty(propertyId, cookies);
+    } catch (err) {
+      console.warn(`Position fetch failed for ${propertyId}:`, err);
+      return null;
+    }
+  });
+
+  // Map and merge
+  const lists = propertyIds.map((propertyId, i) => {
+    const property = propertyById.get(propertyId);
+    if (!property) {
+      console.warn(`No property metadata found for ${propertyId} — skipping`);
+      return null;
+    }
+    const apps = byProperty.get(propertyId)!;
+    return mapWaitingListToDomain({
+      applications: apps,
+      property,
+      position: positions[i],
+    });
+  });
+
+  return lists.filter((l): l is NonNullable<typeof l> => l !== null);
 }

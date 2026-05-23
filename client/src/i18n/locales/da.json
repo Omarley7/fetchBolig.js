@@ -60,6 +60,56 @@
     "respondBefore": "Ønsker du at komme i betragtning?",
     "refresh": "Opdatér"
   },
+  "waitingLists": {
+    "pageTitle": "Ventelister",
+    "count": "{count} venteliste | {count} ventelister",
+    "refresh": "Opdatér",
+    "emptyTitle": "Du er ikke skrevet op til nogen ventelister",
+    "emptyDescription": "Find boliger på FindBolig.nu og skriv dig op til en venteliste for at modtage tilbud.",
+    "groups": {
+      "passive": "Passive",
+      "active": "Aktive"
+    },
+    "card": {
+      "bestPosition": "Bedste placering",
+      "noPosition": "—",
+      "residencesApplied": "Skrevet op til {count} bolig | Skrevet op til {count} boliger",
+      "rentRange": "{min} – {max} kr/md",
+      "statusActive": "Aktiv",
+      "statusPassive": "Passiv",
+      "reactivate": "Meld mig aktiv"
+    },
+    "detail": {
+      "rent": "Husleje",
+      "rooms": "{min}–{max} værelser",
+      "area": "{min}–{max} m²",
+      "appliedSince": "Skrevet op siden {date}",
+      "openOnFindbolig": "Åbn på findbolig.nu",
+      "dangerZone": "Fareområde",
+      "unsubscribe": "Fjern mig fra ventelisten"
+    },
+    "actions": {
+      "reactivateAll": "Aktivér alle",
+      "reactivating": "Aktiverer {done} af {total}…",
+      "reactivateAllSuccess": "{count} venteliste aktiveret | {count} ventelister aktiveret",
+      "reactivateAllPartial": "{done} af {total} aktiveret — {failed} fejlede",
+      "reactivateSuccess": "{name} er nu aktiv",
+      "reactivateFailed": "Kunne ikke aktivere {name}",
+      "unsubscribeSuccess": "Du er fjernet fra {name}",
+      "unsubscribeFailed": "Kunne ikke fjerne dig fra {name}"
+    },
+    "banner": {
+      "title": "Du er blevet sat passiv",
+      "body": "{count} venteliste er gået passiv siden sidst. Aktivér den igen for at modtage tilbud. | {count} ventelister er gået passive siden sidst. Aktivér dem igen for at modtage tilbud.",
+      "dismiss": "Afvis"
+    },
+    "confirm": {
+      "unsubscribeTitle": "Fjern dig fra {name}?",
+      "unsubscribeBody": "Du mister din anciennitet og skal starte forfra hvis du skriver dig op igen. Dette kan ikke fortrydes.",
+      "cancel": "Annullér",
+      "confirm": "Fjern mig"
+    }
+  },
   "financials": {
     "rent": "Leje",
     "perMonth": "pr. måned",
@@ -100,12 +150,15 @@
     "noAppointmentsHint": "Har du ingen aftaler endnu? Brug findbolig.nu til at søge efter boliger og vent på invitationer.",
     "lastUpdated": "Sidst opdateret for {0} siden",
     "viewOffers": "Se dine {0} tilbud",
-    "checkOffers": "Tjek for boligtilbud"
+    "checkOffers": "Tjek for boligtilbud",
+    "viewWaitingLists": "Se dine {0} ventelister",
+    "checkWaitingLists": "Tjek dine ventelister"
   },
   "nav": {
     "home": "Hjem",
     "appointments": "Fremvisninger",
-    "offers": "Tilbud"
+    "offers": "Tilbud",
+    "waitingLists": "Ventelister"
   },
   "landing": {
     "tagline": "Et bedre dashboard til din FindBolig.nu-konto",
