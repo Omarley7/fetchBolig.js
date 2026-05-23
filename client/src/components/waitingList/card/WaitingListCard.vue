@@ -45,11 +45,6 @@ const thumbUrl = computed(() => {
   return compactThumb(getImageUrl(first));
 });
 
-const orgLogoUrl = computed(() => {
-  if (!props.list.organization.logoUrl) return null;
-  return getImageUrl(props.list.organization.logoUrl);
-});
-
 const positionLabel = computed(() =>
   props.list.bestPosition != null ? `#${props.list.bestPosition}` : t("waitingLists.card.noPosition"),
 );
@@ -93,28 +88,9 @@ async function handleReactivate(e: MouseEvent) {
       <!-- Text content -->
       <div class="flex flex-col justify-between min-w-0 flex-1 py-0.5">
         <div class="min-w-0">
-          <div class="flex items-center gap-1.5 min-w-0">
-            <p class="font-semibold text-[0.8125rem] leading-snug truncate dark:text-neutral-100">
-              {{ list.name }}
-            </p>
-            <span
-              v-if="orgLogoUrl"
-              class="shrink-0 inline-flex items-center justify-center h-4 px-1 rounded bg-white"
-              :title="list.organization.name"
-            >
-              <img
-                :src="orgLogoUrl"
-                :alt="list.organization.name"
-                class="block h-full w-auto object-contain"
-              />
-            </span>
-            <span
-              v-else
-              class="shrink-0 px-1 text-[0.625rem] font-medium rounded bg-neutral-200 dark:bg-white/10 text-neutral-600 dark:text-neutral-400"
-            >
-              {{ list.organization.name }}
-            </span>
-          </div>
+          <p class="font-semibold text-[0.8125rem] leading-snug truncate dark:text-neutral-100">
+            {{ list.name }}
+          </p>
           <p class="text-xs text-neutral-500 dark:text-neutral-400 truncate">
             {{ list.address }}
           </p>

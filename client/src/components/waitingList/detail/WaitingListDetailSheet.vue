@@ -287,7 +287,7 @@ onUnmounted(() => {
                 </div>
                 <div
                   v-if="orgLogoUrl"
-                  class="shrink-0 inline-flex items-center justify-center h-8 px-2 rounded-md bg-white"
+                  class="shrink-0 inline-flex items-center justify-center h-5 px-1 rounded bg-white"
                 >
                   <img
                     :src="orgLogoUrl"

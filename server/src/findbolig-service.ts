@@ -547,12 +547,12 @@ export async function getPositionForProperty(
   return JSON.parse(text) as ApiPositionForProperty;
 }
 
-/** Reactivates a waiting list (property-level). */
+/** Reactivates a waiting list (property-level). Upstream uses PUT and returns 204. */
 export async function setWaitingListActive(propertyId: string, cookies: string): Promise<void> {
   const res = await fetchWithTimeout(
     `${BASE_URL}/api/data/residence-applications/property/${propertyId}/set-active`,
     {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
