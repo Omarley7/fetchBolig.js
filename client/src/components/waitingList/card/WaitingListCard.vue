@@ -106,7 +106,7 @@ async function handleReactivate(e: MouseEvent) {
             </p>
           </div>
 
-          <div class="text-right shrink-0">
+          <div v-if="list.status === 'Active'" class="text-right shrink-0">
             <p class="text-[0.625rem] font-medium text-neutral-500 dark:text-neutral-400 leading-tight">
               {{ t("waitingLists.card.bestPosition") }}
             </p>
