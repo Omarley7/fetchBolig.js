@@ -285,8 +285,15 @@ onUnmounted(() => {
                     <img src="/icons/map.svg" alt="" class="size-4 opacity-40 group-hover:opacity-70 transition-opacity dark:invert" />
                   </button>
                 </div>
-                <div v-if="orgLogoUrl" class="shrink-0">
-                  <img :src="orgLogoUrl" :alt="list.organization.name" class="h-6 w-auto opacity-90" />
+                <div
+                  v-if="orgLogoUrl"
+                  class="shrink-0 inline-flex items-center justify-center h-8 px-2 rounded-md bg-white"
+                >
+                  <img
+                    :src="orgLogoUrl"
+                    :alt="list.organization.name"
+                    class="block h-full w-auto object-contain"
+                  />
                 </div>
               </div>
               <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
@@ -343,7 +350,7 @@ onUnmounted(() => {
             <div>
               <button
                 v-if="list.status === 'Passive'"
-                class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold transition-colors disabled:opacity-60"
+                class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-colors disabled:opacity-60"
                 :disabled="store.isMutating"
                 @click="handleReactivate"
               >

@@ -97,13 +97,17 @@ async function handleReactivate(e: MouseEvent) {
             <p class="font-semibold text-[0.8125rem] leading-snug truncate dark:text-neutral-100">
               {{ list.name }}
             </p>
-            <img
+            <span
               v-if="orgLogoUrl"
-              :src="orgLogoUrl"
-              :alt="list.organization.name"
-              class="shrink-0 h-3 w-auto opacity-70"
+              class="shrink-0 inline-flex items-center justify-center h-4 px-1 rounded bg-white"
               :title="list.organization.name"
-            />
+            >
+              <img
+                :src="orgLogoUrl"
+                :alt="list.organization.name"
+                class="block h-full w-auto object-contain"
+              />
+            </span>
             <span
               v-else
               class="shrink-0 px-1 text-[0.625rem] font-medium rounded bg-neutral-200 dark:bg-white/10 text-neutral-600 dark:text-neutral-400"
@@ -141,7 +145,7 @@ async function handleReactivate(e: MouseEvent) {
 
         <button
           v-if="list.status === 'Passive'"
-          class="mt-1.5 w-full py-1.5 px-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold transition-colors disabled:opacity-60"
+          class="mt-1.5 w-full py-1.5 px-2 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition-colors disabled:opacity-60"
           :disabled="store.isMutating"
           @click="handleReactivate"
         >

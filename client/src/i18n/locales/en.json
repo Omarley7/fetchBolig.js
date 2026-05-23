@@ -150,7 +150,9 @@
     "noAppointmentsHint": "Don't have any appointments yet? Use findbolig.nu to search for housing and wait for invitations.",
     "lastUpdated": "Last updated {0} ago",
     "viewOffers": "View your {0} offers",
-    "checkOffers": "Check for housing offers"
+    "checkOffers": "Check for housing offers",
+    "viewWaitingLists": "View your {0} waiting lists",
+    "checkWaitingLists": "Check your waiting lists"
   },
   "nav": {
     "home": "Home",

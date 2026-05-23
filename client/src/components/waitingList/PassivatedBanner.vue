@@ -45,7 +45,7 @@ const nameList = computed(() => affected.value.map((l) => l.name).join(", "));
       </button>
     </div>
     <button
-      class="mt-2 w-full py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-colors disabled:opacity-60"
+      class="mt-2 w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors disabled:opacity-60"
       :disabled="store.isMutating"
       @click="store.reactivateAll()"
     >

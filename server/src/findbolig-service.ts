@@ -10,7 +10,7 @@ import type {
   ApiMessageThreadsPage,
 } from "~/types/threads";
 import type { ApiPositionForProperty, ApiPropertySearchPage, ApiResidenceApplication } from "~/types/waiting-lists";
-import { extractAppointmentDetailsWithLLM, extractAppointmentDetailsFromShowingText } from "./lib/llm/openai-extractor";
+import { extractAppointmentDetailsFromShowingText, extractAppointmentDetailsWithLLM } from "./lib/llm/openai-extractor";
 
 const BASE_URL = "https://findbolig.nu";
 

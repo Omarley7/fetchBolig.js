@@ -23,7 +23,7 @@ export async function fetchWaitingLists(): Promise<{ updatedAt: Date; lists: Wai
   }
 
   const res = await fetchWithTimeout(
-    `${config.backendDomain}/api/waiting-lists/`,
+    `${config.backendDomain}/api/waiting-lists`,
     { method: "GET", credentials: "include" },
     TIMEOUT_FETCH,
   );

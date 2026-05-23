@@ -51,7 +51,7 @@ async function onReactivateAll(e: MouseEvent) {
         <button
           v-if="groupKey === 'passive' && lists.length > 1"
           class="px-2.5 py-1 rounded-md text-xs font-semibold
-                 bg-amber-500 hover:bg-amber-600 text-white
+                 bg-emerald-500 hover:bg-emerald-600 text-white
                  disabled:opacity-60 transition-colors"
           :disabled="store.isMutating"
           @click="onReactivateAll"
