@@ -45,10 +45,6 @@ const thumbUrl = computed(() => {
   return compactThumb(getImageUrl(first));
 });
 
-const positionLabel = computed(() =>
-  props.list.bestPosition != null ? `#${props.list.bestPosition}` : t("waitingLists.card.noPosition"),
-);
-
 async function handleReactivate(e: MouseEvent) {
   e.stopPropagation();
   await store.setActive(props.list.propertyId);
@@ -106,15 +102,12 @@ async function handleReactivate(e: MouseEvent) {
             </p>
           </div>
 
-          <div v-if="list.status === 'Active'" class="text-right shrink-0">
+          <div v-if="list.bestPosition != null" class="text-right shrink-0">
             <p class="text-[0.625rem] font-medium text-neutral-500 dark:text-neutral-400 leading-tight">
               {{ t("waitingLists.card.bestPosition") }}
             </p>
-            <p
-              class="text-base font-bold tabular-nums leading-tight"
-              :class="list.bestPosition != null ? 'text-neutral-800 dark:text-neutral-200' : 'text-neutral-300 dark:text-neutral-600'"
-            >
-              {{ positionLabel }}
+            <p class="text-base font-bold tabular-nums leading-tight text-neutral-800 dark:text-neutral-200">
+              #{{ list.bestPosition }}
             </p>
           </div>
         </div>
