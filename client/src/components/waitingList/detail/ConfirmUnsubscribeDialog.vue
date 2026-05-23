@@ -5,7 +5,7 @@ import { useScrollLock } from "~/composables/useScrollLock";
 const { t } = useI18n();
 useScrollLock();
 
-defineProps<{
+const props = defineProps<{
   name: string;
   isLoading: boolean;
 }>();
@@ -14,6 +14,10 @@ const emit = defineEmits<{
   confirm: [];
   cancel: [];
 }>();
+
+function onBackdropClick() {
+  if (!props.isLoading) emit("cancel");
+}
 </script>
 
 <template>
@@ -22,7 +26,7 @@ const emit = defineEmits<{
       <!-- Backdrop -->
       <div
         class="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        @click="emit('cancel')"
+        @click="onBackdropClick"
       />
 
       <!-- Dialog -->

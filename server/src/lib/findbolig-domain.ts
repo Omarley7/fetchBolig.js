@@ -115,12 +115,10 @@ export function mapWaitingListToDomain({
   applications,
   property,
   position,
-  imageBaseUrl,
 }: {
   applications: ApiResidenceApplication[];   // all rows for one propertyId
   property: ApiPropertySearchResult;
   position: ApiPositionForProperty | null;
-  imageBaseUrl?: string;                     // unused, but reserved if we want to absolute-ify
 }): WaitingList {
   if (applications.length === 0) {
     throw new Error(`mapWaitingListToDomain called with empty applications for property ${property.id}`);
