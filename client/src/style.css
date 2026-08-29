@@ -27,7 +27,7 @@ a:hover {
 }
 
 html {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 body {
