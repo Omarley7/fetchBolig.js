@@ -12,7 +12,7 @@ Carl Christian Hasselbalch
 ## Licensed Work
 
 The licensed work is the software and source code available in this repository:
-https://github.com/Omarley7/fetchBolig.js
+https://github.com/Omarley7/sebolig.nu
 
 ## Additional Use Grant
 
