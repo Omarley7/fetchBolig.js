@@ -10,8 +10,11 @@ const { isDark, toggle: toggleDarkMode } = useDarkMode();
 
 <template>
   <nav class="flex items-center gap-3">
-    <!-- Left: spacer (equal width to right for centering) -->
-    <div class="flex-1" />
+    <!-- Left: logo (equal width to right for centering) -->
+    <div class="flex-1 flex items-center">
+      <img v-if="isDark" src="/sebolig_logo_dark.svg" alt="SeBolig.nu" class="h-8" />
+      <img v-else src="/sebolig_logo_light.svg" alt="SeBolig.nu" class="h-8" />
+    </div>
 
     <!-- Center: title (true center, shrinks on small screens) -->
     <router-link to="/" class="min-w-0 shrink-0 text-center">

@@ -19,10 +19,14 @@ async function handleLogin() {
 <template>
   <div class="flex flex-col items-center gap-8 py-12 px-4 max-w-lg md:max-w-3xl mx-auto">
     <!-- Hero -->
-    <div class="text-center space-y-3">
-      <h1 class="text-3xl font-bold">{{ t("home.welcome") }}</h1>
-      <p class="text-lg text-gray-500 dark:text-gray-400">{{ t("landing.tagline") }}</p>
-      <p class="text-sm text-gray-400 dark:text-gray-500">{{ t("landing.description") }}</p>
+    <div class="text-center space-y-4">
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight dark:text-white">
+        {{ t("home.welcome") }}
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-300 font-medium">{{ t("landing.tagline") }}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+        {{ t("landing.description") }}
+      </p>
     </div>
 
     <!-- GIF + Login side by side on md+ -->
@@ -71,8 +75,18 @@ async function handleLogin() {
               class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
               tabindex="-1"
             >
-              <img v-if="showPassword" src="/icons/eye-off.svg" alt="Hide password" class="size-5 dark:invert opacity-60" />
-              <img v-else src="/icons/eye.svg" alt="Show password" class="size-5 dark:invert opacity-60" />
+              <img
+                v-if="showPassword"
+                src="/icons/eye-off.svg"
+                alt="Hide password"
+                class="size-5 dark:invert opacity-60"
+              />
+              <img
+                v-else
+                src="/icons/eye.svg"
+                alt="Show password"
+                class="size-5 dark:invert opacity-60"
+              />
             </button>
           </div>
 
