@@ -1,6 +1,6 @@
 # Business Source License 1.1
 
-Copyright (c) 2026 Fetchbolig
+Copyright (c) 2026 SeBolig
 
 Use of this software is governed by the Business Source License included below.
 

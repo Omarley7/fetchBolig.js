@@ -480,7 +480,7 @@ Small-scale app with a handful of users where simplicity is more valuable than r
 
 ## Option 4: Full Own-Auth Layer (JWT + Decoupled findbolig Session)
 
-**Philosophy**: fetchBolig.js becomes its own platform with proper user accounts. findbolig.nu is treated as an external integration that users link to their account.
+**Philosophy**: SeBolig.js becomes its own platform with proper user accounts. findbolig.nu is treated as an external integration that users link to their account.
 
 ### Architecture
 
@@ -506,9 +506,9 @@ Small-scale app with a handful of users where simplicity is more valuable than r
 
 ### How it works
 
-1. **Sign up**: User creates a fetchBolig.js account (email + password). Password is hashed with bcrypt and stored in the database.
+1. **Sign up**: User creates a SeBolig.js account (email + password). Password is hashed with bcrypt and stored in the database.
 2. **Link findbolig account**: After signing in, user enters their findbolig.nu credentials in a "Link Account" flow. Server validates them against findbolig.nu, then stores them encrypted in the database.
-3. **Normal usage**: Client authenticates with fetchBolig.js JWT only. Server manages findbolig session entirely — client has zero awareness of findbolig auth.
+3. **Normal usage**: Client authenticates with SeBolig.js JWT only. Server manages findbolig session entirely — client has zero awareness of findbolig auth.
 4. **Session management**: Server maintains findbolig sessions (keep-alive + auto re-auth) as in Option 2 or 3.
 
 ### Code examples
@@ -602,9 +602,9 @@ auth.post("/link-findbolig", async (c) => {
 
 ### Pros
 
-- **Best security** — user's fetchBolig.js password is bcrypt-hashed. findbolig credentials are encrypted and isolated. Client never handles any sensitive tokens.
-- **Best transparency** — clear separation: "Your fetchBolig.js password is hashed. Your findbolig.nu credentials are encrypted and only used to sync your data. You can unlink at any time."
-- **Session is permanent** — user stays logged into fetchBolig.js for days/weeks (long-lived JWT). findbolig session is fully server-managed.
+- **Best security** — user's SeBolig.js password is bcrypt-hashed. findbolig credentials are encrypted and isolated. Client never handles any sensitive tokens.
+- **Best transparency** — clear separation: "Your SeBolig.js password is hashed. Your findbolig.nu credentials are encrypted and only used to sync your data. You can unlink at any time."
+- **Session is permanent** — user stays logged into SeBolig.js for days/weeks (long-lived JWT). findbolig session is fully server-managed.
 - **Future-proof** — enables features like: multiple housing platform integrations, user preferences, notification settings, sharing between users.
 - **Can run anywhere** — Cloud Run + Cloud SQL, or VPS + SQLite.
 
@@ -618,7 +618,7 @@ auth.post("/link-findbolig", async (c) => {
 
 ### Best for
 
-**When fetchBolig.js becomes a real product** with multiple users, potential for multiple integrations, and a need for a professional auth story. Not recommended for the current stage unless you're planning to grow significantly.
+**When SeBolig.js becomes a real product** with multiple users, potential for multiple integrations, and a need for a professional auth story. Not recommended for the current stage unless you're planning to grow significantly.
 
 ---
 
@@ -647,6 +647,6 @@ auth.post("/link-findbolig", async (c) => {
 
 2. **Next iteration**: Implement Option 2 with Firestore. It's the best fit for Cloud Run, removes plaintext credentials from the client, and gives a clear security story. Firestore's free tier means near-zero cost increase.
 
-3. **Longer term**: If fetchBolig.js grows into a multi-user product, evolve toward Option 4. The session store from Option 2 becomes the `linkedAccounts` table, so it's a natural progression rather than a rewrite.
+3. **Longer term**: If SeBolig.js grows into a multi-user product, evolve toward Option 4. The session store from Option 2 becomes the `linkedAccounts` table, so it's a natural progression rather than a rewrite.
 
 Option 3 (VPS) is a good alternative to Option 2 if you value simplicity over resilience. The main trade-off is losing sessions on deploys and having no horizontal scaling — totally fine for a small user base, but Cloud Run + Firestore is arguably simpler to operate long-term.

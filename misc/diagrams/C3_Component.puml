@@ -1,4 +1,4 @@
-@startuml C4 Container Diagram for FetchBolig.js
+@startuml C4 Container Diagram for SeBolig.js
 !include <C4/C4_Component>
 Container_Boundary(web_app, "Web Application") {
     Component(loginPage, "Login Page", "Alpine, HTML", "Allows users to enter their credentials and log in to the application.")

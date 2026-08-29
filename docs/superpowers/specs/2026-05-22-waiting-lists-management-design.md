@@ -4,7 +4,7 @@ Display and manage a user's property waiting lists from findbolig.nu: see all li
 
 ## Context
 
-FindBolig.nu maintains a per-property waiting list for each housing application. Properties on the list can be Active (you receive offers) or Passive (you don't, but you keep accruing seniority in most orgs). Lists go Passive periodically without notification — currently the user has no way to learn this except by manually inspecting `/da-dk/profile/my-waiting-lists` on findbolig.nu. This feature surfaces that state in fetchBolig and lets the user fix it.
+FindBolig.nu maintains a per-property waiting list for each housing application. Properties on the list can be Active (you receive offers) or Passive (you don't, but you keep accruing seniority in most orgs). Lists go Passive periodically without notification — currently the user has no way to learn this except by manually inspecting `/da-dk/profile/my-waiting-lists` on findbolig.nu. This feature surfaces that state in SeBolig and lets the user fix it.
 
 ### Data hierarchy
 

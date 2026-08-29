@@ -1,6 +1,6 @@
 import posthog from "posthog-js";
 
-const USER_ID_KEY = "fetchbolig_uid";
+const USER_ID_KEY = "sebolig_uid";
 
 export function getOrCreateUserId(): string {
   let id = localStorage.getItem(USER_ID_KEY);
