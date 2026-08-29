@@ -1,8 +1,8 @@
 {
-  "name": "fetchbolig",
+  "name": "sebolig",
   "private": true,
   "version": "1.0.0",
-  "description": "FetchBolig monorepo",
+  "description": "SeBolig monorepo",
   "scripts": {
     "build": "npm run build:client",
     "build:client": "npm run build --workspace=client",

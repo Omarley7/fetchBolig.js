@@ -1,6 +1,6 @@
 # Contributor License Agreement (CLA)
 
-Thank you for contributing to Fetchbolig.
+Thank you for contributing to SeBolig.
 
 In order to accept contributions to this repository, contributors must agree to the following terms.
 
@@ -8,7 +8,7 @@ In order to accept contributions to this repository, contributors must agree to 
 
 You retain the copyright to your contributions.
 
-However, by submitting a contribution (including pull requests, patches, commits, or other changes) to this repository, you grant Fetchbolig and its maintainers a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to:
+However, by submitting a contribution (including pull requests, patches, commits, or other changes) to this repository, you grant SeBolig and its maintainers a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to:
 
 - use
 - reproduce

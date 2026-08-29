@@ -3,9 +3,9 @@ Contact: omarg@live.dk
 
 All contributors agree to the CLA defined in CLA.md by submitting a pull request.
 
-# FetchBolig.js
+# SeBolig.js
 
-Better dashboard for FindBolig.nu with local storage and offline access. Currently live on https://fetchBolig.dk.
+Better dashboard for FindBolig.nu with local storage and offline access. Currently live on https://sebolig.nu.
 
 ## Architecture
 
@@ -16,7 +16,7 @@ Better dashboard for FindBolig.nu with local storage and offline access. Current
 ## Repository layout
 
 ```
-fetchBolig.js/
+SeBolig.js/
 ├── README.md
 ├── package.json
 ├── client/                     # Vue 3 client app (Vite + TypeScript + Tailwind)

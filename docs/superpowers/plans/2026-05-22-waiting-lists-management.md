@@ -2961,7 +2961,7 @@ Open the browser devtools Network tab while the page loads. Find a `position-for
 
 Pick a Passive list. Click "Meld mig aktiv". Verify:
 - Toast says success
-- After refresh, the list shows as Active both in fetchBolig and on findbolig.nu
+- After refresh, the list shows as Active both in SeBolig and on findbolig.nu
 
 If a known-quarantined org refuses set-active, verify the error toast surfaces correctly.
 
