@@ -10,7 +10,10 @@ import config from "./config";
 const auth = useAuth();
 const router = useRouter();
 
-if (`${config.backendDomain}`.split(":")[1] !== window.location.origin.split(":")[1]) {
+if (
+  `${config.backendDomain}` &&
+  `${config.backendDomain}`.split(":")[1] !== window.location.origin.split(":")[1]
+) {
   alert(
     `Backend domain ${config.backendDomain} does not match the current origin ${window.location.origin} - will result in CORS errors.`,
   );
