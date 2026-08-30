@@ -5,9 +5,16 @@ import AppHeader from "~/components/AppHeader.vue";
 import ToastContainer from "~/components/Base/ToastContainer.vue";
 import BottomNav from "~/components/BottomNav.vue";
 import { useAuth } from "~/composables/useAuth";
+import config from "./config";
 
 const auth = useAuth();
 const router = useRouter();
+
+if (`${config.backendDomain}`.split(":")[1] !== window.location.origin.split(":")[1]) {
+  alert(
+    `Backend domain ${config.backendDomain} does not match the current origin ${window.location.origin} - will result in CORS errors.`,
+  );
+}
 
 watch(
   () => auth.isAuthenticated,

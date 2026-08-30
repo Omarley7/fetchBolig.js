@@ -120,8 +120,6 @@ export async function login(
   remember: boolean = true,
 ): Promise<UserData | null> {
   try {
-    console.log("Attempting login for", email);
-    console.log(config.backendDomain);
     const result = await fetchWithTimeout(
       `${config.backendDomain}/api/auth/login`,
       {
