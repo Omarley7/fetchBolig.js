@@ -139,7 +139,8 @@
   },
   "gallery": {
     "photos": "Fotos",
-    "blueprints": "Plantegninger"
+    "blueprints": "Plantegninger",
+    "blueprintCount": "{count} plantegning | {count} plantegninger"
   },
   "home": {
     "welcomeUser": "Velkommen, {0}!",

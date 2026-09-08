@@ -35,6 +35,7 @@ const showGallery = ref(false);
 const showFinancials = ref(false);
 const confirmAction = ref<"accept" | "decline" | null>(null);
 const galleryActiveIndex = ref(0);
+const galleryTab = ref<"images" | "blueprints">("images");
 const sheetEl = ref<HTMLElement | null>(null);
 
 // Drag-to-dismiss
@@ -88,6 +89,8 @@ const allImages = computed(() => {
   return props.offer.imageUrl ? [props.offer.imageUrl] : [];
 });
 
+const blueprints = computed(() => props.offer.blueprints ?? []);
+
 const facts = computed(() => {
   const parts: string[] = [];
   if (props.offer.rooms != null) parts.push(t("offers.rooms", { count: props.offer.rooms }));
@@ -117,6 +120,13 @@ function onGalleryPointerDown(e: PointerEvent) {
 
 function openGallery(e: MouseEvent) {
   if (Math.abs(e.clientX - galleryStartX) > 5 || Math.abs(e.clientY - galleryStartY) > 5) return;
+  galleryTab.value = "images";
+  showGallery.value = true;
+  history.pushState({ sheet: true, gallery: true }, "");
+}
+
+function openBlueprints() {
+  galleryTab.value = "blueprints";
   showGallery.value = true;
   history.pushState({ sheet: true, gallery: true }, "");
 }
@@ -283,6 +293,19 @@ onUnmounted(() => {
                 />
               </SwiperSlide>
             </Swiper>
+
+            <!-- Blueprint shortcut -->
+            <button
+              v-if="blueprints.length > 0"
+              class="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full
+                     bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white text-xs font-medium tabular-nums
+                     transition-colors"
+              @pointerdown.stop
+              @click.stop="openBlueprints"
+            >
+              <img src="/icons/blueprint.svg" alt="" class="size-3.5 invert" />
+              {{ t("gallery.blueprintCount", { count: blueprints.length }).toLowerCase() }}
+            </button>
 
             <div
               v-if="allImages.length > 1"
@@ -467,8 +490,9 @@ onUnmounted(() => {
     <ImageGalleryModal
       v-if="showGallery"
       :images="allImages"
-      :blueprints="offer.blueprints ?? []"
+      :blueprints="blueprints"
       :initial-index="galleryActiveIndex"
+      :initial-tab="galleryTab"
       :get-image-url="getImageUrl"
       @close="onGalleryClose"
     />

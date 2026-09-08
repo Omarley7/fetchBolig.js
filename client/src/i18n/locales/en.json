@@ -139,7 +139,8 @@
   },
   "gallery": {
     "photos": "Photos",
-    "blueprints": "Blueprints"
+    "blueprints": "Blueprints",
+    "blueprintCount": "{count} blueprint | {count} blueprints"
   },
   "home": {
     "welcomeUser": "Welcome, {0}!",
