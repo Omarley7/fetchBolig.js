@@ -299,7 +299,7 @@ onUnmounted(() => {
               class="absolute bottom-3 right-3 z-10 px-2.5 py-1 rounded-full
                      bg-black/40 backdrop-blur-sm text-white text-xs tabular-nums pointer-events-none"
             >
-              {{ allImages.length }} {{ t("gallery.photos").toLowerCase() }}
+              {{ t("gallery.photoCount", { count: allImages.length }).toLowerCase() }}
             </div>
           </div>
 
