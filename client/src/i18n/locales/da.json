@@ -58,7 +58,9 @@
     "queuePosition": "Placering",
     "mapOfLocations": "Kort over {count} lokationer",
     "respondBefore": "Ønsker du at komme i betragtning?",
-    "refresh": "Opdatér"
+    "refresh": "Opdatér",
+    "rooms": "{count} værelse | {count} værelser",
+    "area": "{value} m²"
   },
   "waitingLists": {
     "pageTitle": "Ventelister",
