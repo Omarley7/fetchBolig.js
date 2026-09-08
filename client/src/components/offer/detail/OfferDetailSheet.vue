@@ -88,6 +88,13 @@ const allImages = computed(() => {
   return props.offer.imageUrl ? [props.offer.imageUrl] : [];
 });
 
+const facts = computed(() => {
+  const parts: string[] = [];
+  if (props.offer.rooms != null) parts.push(t("offers.rooms", { count: props.offer.rooms }));
+  if (props.offer.area != null) parts.push(t("offers.area", { value: props.offer.area }));
+  return parts.join(" · ");
+});
+
 const urgency = computed(() => getDeadlineUrgency(props.offer.deadline, t));
 
 const availableFromFormatted = computed(() => {
@@ -293,6 +300,9 @@ onUnmounted(() => {
               <h2 class="text-lg font-bold text-neutral-900 dark:text-white leading-snug">
                 {{ offer.residence.adressLine1 }}
               </h2>
+              <p v-if="facts" class="text-sm font-medium text-neutral-700 dark:text-neutral-300 mt-0.5 tabular-nums">
+                {{ facts }}
+              </p>
               <button class="flex items-center gap-1.5 mt-1.5 group" @click="handleMapClick">
                 <p class="text-sm text-neutral-500 dark:text-neutral-400
                            group-hover:text-neutral-700 dark:group-hover:text-neutral-300 transition-colors">

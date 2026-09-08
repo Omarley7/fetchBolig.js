@@ -58,7 +58,9 @@
     "queuePosition": "Position",
     "mapOfLocations": "Map of {count} locations",
     "respondBefore": "Would you like to be considered?",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "rooms": "{count} room | {count} rooms",
+    "area": "{value} m²"
   },
   "waitingLists": {
     "pageTitle": "Waiting lists",
